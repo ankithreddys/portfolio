@@ -112,7 +112,3 @@ This builds the Chroma index used by the chatbot.
 npm run build
 npm run preview
 ```
-
-## License
-
-MIT
