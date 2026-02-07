@@ -1,0 +1,92 @@
+Portfolio RAG Chatbot
+
+Branding note: The logo uses a sigma with "A·R" and a superscript "S" which represents my name. The sigma references the attention mechanism (Q * K^T), reflecting deep learning roots.
+
+Ankith Reddy Subhanpuram is a graduate student in Artificial Intelligence Systems at the University of Florida and an AI researcher specializing in large language models, retrieval-augmented generation systems, speech recognition, and scalable machine learning infrastructure. His work focuses on building production-oriented AI systems that integrate data engineering, model training, evaluation, and deployment pipelines. His experience spans biomedical AI, conversational AI systems, automatic speech recognition, and computer vision applications, with strong emphasis on distributed training, model optimization, and real-world deployment.
+
+PROFESSIONAL EXPERIENCE
+
+University of Florida – Intelligent Clinical Care Center (IC3)
+Research Assistant
+Gainesville, Florida, United States
+August 2025 – Present
+
+At the Biomedical AI Collaborative, Ankith contributes to the development of clinical AI systems designed for hospital-scale deployment. His work focuses on generating synthetic electronic health record (EHR) datasets using frontier language models trained on clinically validated data sources. These synthetic datasets are designed to preserve clinical utility while enabling safe experimentation and model training without exposing sensitive patient information.
+
+He implemented an embedding-based data deduplication pipeline using FAISS for vector similarity search combined with Jaccard similarity metrics. This system reduced dataset redundancy by 36 percent and improved model accuracy by approximately 4 percent when compared with similar open-source architectures. The deduplication framework improved both training efficiency and dataset quality by removing semantically overlapping samples.
+
+Ankith also fine-tuned open-source large language models using the Axolotl training framework on HiPerGator’s infrastructure equipped with four NVIDIA B200 GPUs. Training was conducted using Fully Sharded Data Parallel (FSDP2) to optimize memory utilization and enable efficient large-scale distributed training.
+
+In addition, he developed a comprehensive LLM-as-judge evaluation framework consisting of fourteen independent evaluation agents. This system validated over 110,000 EHR samples and evaluated model outputs across dimensions including clinical reasoning quality, diagnostic accuracy, and treatment recommendation validity. The evaluation framework supports systematic benchmarking of fine-tuned clinical models.
+
+His ongoing work includes orchestrating an end-to-end MLOps pipeline using PyTorch, HuggingFace, MLflow, and Docker on NVIDIA DGX systems. The goal is to enable scalable experimentation, reproducible training workflows, and deployment-ready clinical AI avatars.
+
+Scholarship Auditions
+Artificial Intelligence Engineer Intern
+Nashville, Tennessee, United States
+May 2025 – August 2025
+
+During his internship, Ankith architected a Retrieval-Augmented Generation (RAG) chatbot designed to support dynamic and context-aware interactions. The system utilized ChromaDB as the vector database and OpenAI language models for generation. The chatbot enabled efficient retrieval of relevant context and improved response accuracy through grounding in external knowledge sources.
+
+He also contributed to deep learning research in computer vision by developing models for classifying music transcription images. The work addressed domain-specific challenges in music education datasets, including symbol ambiguity and layout variations.
+
+Additionally, he developed automated web scraping pipelines using Scrapy and Selenium to collect and structure large-scale datasets from web sources. These pipelines enabled continuous data ingestion and improved dataset availability for downstream AI model training.
+
+Centre for Artificial Intelligence and Robotics (DRDO)
+Artificial Intelligence Research Intern
+Bengaluru, India
+October 2023 – March 2024
+
+At DRDO’s Centre for Artificial Intelligence and Robotics, Ankith worked on automatic speech recognition (ASR) systems targeting low-resource languages. He engineered Wav2Vec2-based ASR models using NVIDIA DGX GPU systems and implemented distributed data parallel training in PyTorch to accelerate model development.
+
+He applied Byte Pair Encoding (BPE) for efficient vocabulary construction in multilingual settings, improving tokenization efficiency and language coverage. His work focused on improving recognition accuracy for Assamese and Bengali, two low-resource languages with limited labeled datasets.
+
+The project included extensive data preprocessing techniques such as Voice Activity Detection (VAD), noise reduction, and audio normalization to improve input data quality. These optimizations contributed to improved system robustness across noisy environments.
+
+Through model fine-tuning and hyperparameter optimization, the ASR system achieved a word error rate (WER) of 8.3 and improved robustness by approximately 20 percent in low-resource and noisy conditions.
+
+EDUCATION
+
+University of Florida
+Herbert Wertheim College of Engineering
+Master of Science in Artificial Intelligence Systems
+August 2024 – May 2026
+Cumulative GPA: 3.83 / 4.00
+
+Vignana Bharathi Institute of Technology
+Bachelor of Technology in Computer Science and Engineering (Artificial Intelligence and Machine Learning)
+May 2020 – May 2024
+Cumulative GPA: 8.76 / 10.0
+
+PROJECTS
+
+MSAIS Program Assistant
+
+Ankith designed a conversational AI assistant for the University of Florida’s Master of Science in Artificial Intelligence Systems program. The system implemented a Retrieval-Augmented Generation pipeline using LangChain, FAISS, and HuggingFace components. Data was collected and structured through web scraping using Scrapy, and the system was deployed on HuggingFace Spaces with a Gradio-based interface. Model inference was powered by Llama-3.3-70B via the NaviGator Toolkit API, enabling accurate responses grounded in official program information.
+
+Personal AI Assistant
+
+He developed an autonomous personal assistant powered by LangGraph agent workflows and OpenAI models. The assistant interprets natural language commands and executes multi-step actions such as drafting emails, scheduling calendar events, and publishing posts on social platforms. The system integrates action-taking agents capable of real-time API execution, enabling end-to-end task automation.
+
+Virtual Surya Namaskar Coach
+
+Ankith built a computer vision-based movement tracking system using OpenCV and TensorFlow to analyze participant posture during online yoga sessions. The system identified common movement errors and provided insights that were later used to improve instructional materials and training feedback mechanisms.
+
+TECHNICAL SKILLS
+
+Programming Languages: Python, C
+
+Core Areas: Artificial Intelligence, Machine Learning, Data Science, Data Analytics, Natural Language Processing, Large Language Models, Retrieval-Augmented Generation Systems, LLM Fine-tuning, Deep Learning, Speech Recognition, Audio Processing, Computer Vision, Video Processing
+
+Infrastructure and Tools: Linux, MLflow, Docker, Git, Apache Airflow, NVIDIA DGX Systems, Distributed Data Parallel Training, Selenium, BeautifulSoup, Scrapy, Web Scraping
+
+Frameworks and Libraries: PyTorch, TensorFlow, Scikit-learn, Pandas, NumPy, NLTK, SpaCy, Keras, Librosa, HuggingFace Transformers
+
+LEADERSHIP EXPERIENCE
+
+EpsilonPI Machine Learning Club, VBIT
+Machine Learning Associate (Alumni)
+July 2023 – May 2024
+
+Ankith led a team of four members focused on research and applied machine learning projects aimed at improving university-level AI adoption. His responsibilities included mentoring team members, coordinating research tasks, and guiding implementation of AI-driven solutions for academic applications.
+

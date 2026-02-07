@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+chromadb
+openai
+pydantic
+pydantic-settings
+langchain
+langchain-community
+langchain-openai
+langchain-text-splitters
+langgraph
+langchain-chroma

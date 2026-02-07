@@ -1,0 +1,33 @@
+/* ================================
+   BLOGS SECTION STYLES
+   ================================ */
+
+.blogs {
+  position: relative;
+}
+
+.blogs-placeholder {
+  margin-top: 32px;
+  display: flex;
+  justify-content: center;
+}
+
+.blogs-card {
+  max-width: 720px;
+  width: 100%;
+  background: var(--bg-secondary);
+  border: 1px solid var(--bg-tertiary);
+  border-radius: var(--border-radius);
+  padding: 32px;
+  text-align: center;
+}
+
+.blogs-card h3 {
+  font-size: 1.4rem;
+  margin-bottom: 12px;
+}
+
+.blogs-card p {
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
