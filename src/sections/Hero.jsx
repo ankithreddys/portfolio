@@ -201,8 +201,8 @@ function Hero() {
 
             {/* Description */}
             <p className="hero-description animate-fade-in-up delay-3">
-              Master's student in AI Systems building intelligent healthcare solutions. 
-              Specializing in LLMs, RAG systems, and clinical AI at the Biomedical AI Collaborative.
+            Master’s student in AI Systems building intelligent healthcare solutions.
+            Specializing in LLMs, RAG systems, and Multimodal AI at the Biomedical AI Collaborative.
             </p>
 
             {/* CTA Buttons */}

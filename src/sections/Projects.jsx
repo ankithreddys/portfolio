@@ -88,15 +88,15 @@ function Projects() {
       emoji: '🎓',
       gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
       github: 'https://github.com/ankithreddys',
-      demo: 'https://huggingface.co/spaces'
+      demo: 'https://huggingface.co/spaces/arsubhanpuram/MSAIS_ASSISTANT'
     },
     {
-      title: 'Personal AI Assistant',
+      title: 'OrchestrAI',
       description: 'Autonomous assistant powered by LangGraph agents and OpenAI. Executes tasks from natural-language prompts: drafting emails, creating calendar events, posting on X. End-to-end task automation with real-time API execution.',
       tags: ['LangGraph', 'OpenAI', 'Agents', 'Automation'],
       emoji: '🤖',
       gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-      github: 'https://github.com/ankithreddys'
+      github: 'https://github.com/ankithreddys/OrchestrAI'
     },
     {
       title: 'Multilingual ASR System (Wav2Vec2)',
