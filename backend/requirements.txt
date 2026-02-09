@@ -1,6 +1,4 @@
 fastapi
-uvicorn[standard]
-gunicorn
 chromadb
 openai
 pydantic
@@ -11,3 +9,5 @@ langchain-openai
 langchain-text-splitters
 langgraph
 langchain-chroma
+uvicorn[standard]
+gunicorn
