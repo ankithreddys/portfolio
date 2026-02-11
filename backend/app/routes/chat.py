@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
@@ -7,6 +9,7 @@ from app.services.sessions import append_message, get_history
 
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
 class ChatRequest(BaseModel):
@@ -47,9 +50,12 @@ def chat(request: ChatRequest) -> ChatResponse:
 
 @router.post("/contact", response_model=ContactResponse)
 def contact(request: ContactRequest) -> ContactResponse:
+  logger.info("Received contact request from email=%s name=%s", request.email, request.name)
   try:
     send_contact_email(request.name, request.email, request.message)
   except Exception as exc:
+    logger.exception("Contact email failed for email=%s name=%s", request.email, request.name)
     raise HTTPException(status_code=500, detail=str(exc)) from exc
 
+  logger.info("Contact email sent successfully for email=%s", request.email)
   return ContactResponse(status="sent")
