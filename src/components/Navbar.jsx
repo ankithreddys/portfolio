@@ -64,6 +64,7 @@ function Navbar() {
     { name: 'About', href: '/#about' },
     { name: 'Projects', href: '/#projects' },
     { name: 'Skills', href: '/#skills' },
+    { name: 'Leadership', href: '/#leadership' },
     { name: 'Contact', href: '/#contact' },
     { name: 'Resume', href: '/resume.pdf' },
   ]
