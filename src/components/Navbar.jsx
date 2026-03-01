@@ -22,7 +22,7 @@
 import { useState, useEffect } from 'react'
 import './Navbar.css'
 
-function Navbar() {
+function Navbar({ theme, onToggleTheme }) {
   // React Concept #3: STATE with useState
   // 
   // State is data that can CHANGE over time.
@@ -66,7 +66,7 @@ function Navbar() {
     { name: 'Skills', href: '/#skills' },
     { name: 'Leadership', href: '/#leadership' },
     { name: 'Contact', href: '/#contact' },
-    { name: 'Resume', href: '/RESUME 1.pdf' },
+    { name: 'Resume', href: '/RESUME.pdf' },
   ]
 
   return (
@@ -107,21 +107,31 @@ function Navbar() {
           ))}
         </ul>
 
-        {/* Resume Button */}
-        <a href="/blogs" className="btn btn-primary navbar-cta">
-          Blogs
-        </a>
+        <div className="navbar-actions">
+          <button
+            className="theme-toggle"
+            onClick={onToggleTheme}
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            <span aria-hidden="true">{theme === 'dark' ? '☀' : '☾'}</span>
+          </button>
 
-        {/* Mobile Menu Button */}
-        <button 
-          className={`mobile-menu-btn ${isMobileMenuOpen ? 'open' : ''}`}
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label="Toggle menu"
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
+          <a href="/blogs" className="btn btn-primary navbar-cta">
+            Blogs
+          </a>
+
+          {/* Mobile Menu Button */}
+          <button
+            className={`mobile-menu-btn ${isMobileMenuOpen ? 'open' : ''}`}
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}

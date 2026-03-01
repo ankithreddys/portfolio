@@ -6,28 +6,116 @@
   position: relative;
 }
 
-.blogs-placeholder {
+.blogs-list {
   margin-top: 32px;
-  display: flex;
-  justify-content: center;
 }
 
 .blogs-card {
+  margin: 32px auto 0;
   max-width: 720px;
   width: 100%;
   background: var(--bg-secondary);
   border: 1px solid var(--bg-tertiary);
   border-radius: var(--border-radius);
   padding: 32px;
-  text-align: center;
 }
 
-.blogs-card h3 {
-  font-size: 1.4rem;
-  margin-bottom: 12px;
+.blog-link-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  margin-top: 0;
+  transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
-.blogs-card p {
+.blog-link-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--text-secondary);
+}
+
+.blog-post-header {
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--bg-tertiary);
+}
+
+.blog-post-meta {
+  font-size: 0.9rem;
+  margin-bottom: 10px;
   color: var(--text-secondary);
+}
+
+.blog-post-title {
+  font-size: 1.6rem;
+  line-height: 1.35;
+  margin-bottom: 14px;
+}
+
+.blog-post-excerpt {
+  margin: 0 0 14px;
   line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.blog-post-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.blog-tag {
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+  color: var(--text-secondary);
+  background: var(--bg-primary);
+  border: 1px solid var(--bg-tertiary);
+  border-radius: 999px;
+  padding: 6px 10px;
+}
+
+.blog-post-content {
+  margin-top: 22px;
+}
+
+.blog-post-content p {
+  color: var(--text-secondary);
+  margin: 0 0 14px;
+  line-height: 1.7;
+}
+
+.blog-post-content h4 {
+  margin: 24px 0 10px;
+  font-size: 1.06rem;
+}
+
+.blog-post-content ul {
+  margin: 0 0 14px;
+  padding-left: 20px;
+}
+
+.blog-post-content li {
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
+.blog-code-block {
+  margin: 14px 0;
+  padding: 14px;
+  border: 1px solid var(--bg-tertiary);
+  border-radius: 12px;
+  background: var(--bg-primary);
+  overflow-x: auto;
+  white-space: pre;
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+@media (max-width: 768px) {
+  .blogs-card {
+    padding: 24px;
+  }
+
+  .blog-post-title {
+    font-size: 1.35rem;
+  }
 }

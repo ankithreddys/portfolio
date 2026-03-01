@@ -102,8 +102,23 @@ function Hero() {
 
     // Mouse interaction - listen on window so it works even over other elements
     const handleMouseMove = (event) => {
-      mouse.x = event.clientX
-      mouse.y = event.clientY
+      const rect = canvas.getBoundingClientRect()
+
+      if (
+        event.clientX < rect.left ||
+        event.clientX > rect.right ||
+        event.clientY < rect.top ||
+        event.clientY > rect.bottom
+      ) {
+        mouse.active = false
+        return
+      }
+
+      const scaleX = canvas.width / rect.width
+      const scaleY = canvas.height / rect.height
+
+      mouse.x = (event.clientX - rect.left) * scaleX
+      mouse.y = (event.clientY - rect.top) * scaleY
       mouse.active = true
     }
 

@@ -8,7 +8,7 @@ A personal portfolio website with a built-in RAG chatbot and contact form. The f
 - RAG chatbot widget (“Prompt-to-Ankith”) with session memory
 - Contact form that delivers emails via SMTP
 - Local document ingestion for the chatbot knowledge base
-- Resume file served from `public/Resume 2.pdf`
+- Resume file served from `public/RESUME.pdf`
 
 ## Tech Stack
 

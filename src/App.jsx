@@ -24,6 +24,7 @@
 */
 
 // Import global styles (applies to whole app)
+import { useEffect, useState } from 'react'
 import './index.css'
 
 // Import our components
@@ -38,13 +39,31 @@ import Blogs from './pages/Blogs'
 import ChatWidget from './components/Chat/ChatWidget'
 
 function App() {
+  const [theme, setTheme] = useState(() => {
+    const savedTheme = localStorage.getItem('theme')
+    if (savedTheme === 'light' || savedTheme === 'dark') {
+      return savedTheme
+    }
+
+    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
+  })
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+    localStorage.setItem('theme', theme)
+  }, [theme])
+
+  const toggleTheme = () => {
+    setTheme((currentTheme) => (currentTheme === 'dark' ? 'light' : 'dark'))
+  }
+
   return (
     // React Concept: Fragments
     // The <> </> is called a Fragment - it lets us return multiple
     // elements without adding extra divs to the DOM
     <>
       {/* Navigation - fixed at top */}
-      <Navbar />
+      <Navbar theme={theme} onToggleTheme={toggleTheme} />
 
       {/* Main content wrapper */}
       <Routes>
