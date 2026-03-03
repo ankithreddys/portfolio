@@ -26,7 +26,7 @@ function Blogs() {
         <div className="blogs-list" aria-label="Blogs list">
           <article className="blogs-card">
             <header className="blog-post-header">
-              <p className="blog-post-meta">March 2026 · 12 min read</p>
+              <p className="blog-post-meta">March 2026 · 20 min read</p>
               <h3 className="blog-post-title">Byte Pair Encoding (BPE): How Tokenization Works Under the Hood</h3>
               <p className="blog-post-excerpt">
                 A practical walkthrough of BPE from scratch: word frequencies, pair merges, vocab
