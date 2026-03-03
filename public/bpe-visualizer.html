@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BPE Tokenizer Visualizer</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --border: #1e1e2e;
+    --accent: #00e5ff;
+    --accent2: #ff6b6b;
+    --accent3: #69ff47;
+    --accent4: #ffd93d;
+    --text: #e0e0f0;
+    --muted: #555570;
+    --merge-color: #00e5ff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    overflow-x: hidden;
+  }
+
+  /* Animated grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 860px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+    opacity: 0.8;
+  }
+
+  h1 {
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 800;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 15px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* CORPUS SECTION */
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.5;
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* CORPUS WORDS */
+  .corpus-display {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .word-card {
+    background: #0d0d18;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px;
+    position: relative;
+  }
+
+  .word-freq {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .word-tokens {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
+  .token {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 9px;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    border: 1px solid;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+  }
+
+  .token.char {
+    background: rgba(255,255,255,0.04);
+    border-color: #2a2a40;
+    color: #aaa;
+  }
+
+  .token.highlight {
+    background: rgba(0,229,255,0.15);
+    border-color: var(--accent);
+    color: var(--accent);
+    animation: pulse-highlight 0.6s ease;
+  }
+
+  .token.merged {
+    background: rgba(105,255,71,0.12);
+    border-color: var(--accent3);
+    color: var(--accent3);
+    animation: merge-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes pulse-highlight {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); box-shadow: 0 0 20px rgba(0,229,255,0.4); }
+    100% { transform: scale(1); }
+  }
+
+  @keyframes merge-in {
+    0% { transform: scale(0.5) rotateY(90deg); opacity: 0; }
+    60% { transform: scale(1.15) rotateY(-10deg); }
+    100% { transform: scale(1) rotateY(0deg); opacity: 1; }
+  }
+
+  /* PAIR FREQUENCY TABLE */
+  .pair-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+  }
+
+  .pair-table th {
+    text-align: left;
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .pair-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(30,30,46,0.5);
+    transition: all 0.3s ease;
+  }
+
+  .pair-table tr.top-pair td {
+    color: var(--accent);
+    background: rgba(0,229,255,0.05);
+  }
+
+  .pair-table tr.top-pair td:first-child {
+    border-left: 2px solid var(--accent);
+  }
+
+  .freq-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .freq-bar {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .freq-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .freq-val {
+    font-size: 12px;
+    color: var(--muted);
+    min-width: 20px;
+    text-align: right;
+  }
+
+  /* VOCABULARY */
+  .vocab-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .vocab-chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid;
+    transition: all 0.4s ease;
+  }
+
+  .vocab-chip.base {
+    background: rgba(255,255,255,0.03);
+    border-color: #2a2a40;
+    color: var(--muted);
+  }
+
+  .vocab-chip.learned {
+    background: rgba(105,255,71,0.08);
+    border-color: var(--accent3);
+    color: var(--accent3);
+    animation: chip-appear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes chip-appear {
+    0% { transform: scale(0) translateY(10px); opacity: 0; }
+    100% { transform: scale(1) translateY(0); opacity: 1; }
+  }
+
+  /* MERGE LOG */
+  .merge-log {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  .log-entry {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: #0d0d18;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    animation: log-slide 0.4s ease;
+  }
+
+  .log-entry.latest {
+    border-color: var(--accent3);
+    background: rgba(105,255,71,0.05);
+  }
+
+  @keyframes log-slide {
+    from { transform: translateX(-20px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  .log-step {
+    color: var(--muted);
+    min-width: 28px;
+  }
+
+  .log-pair {
+    color: var(--accent);
+  }
+
+  .log-arrow {
+    color: var(--muted);
+  }
+
+  .log-result {
+    color: var(--accent3);
+    font-weight: 700;
+  }
+
+  .log-freq {
+    margin-left: auto;
+    color: var(--muted);
+    font-size: 11px;
+  }
+
+  /* CONTROLS */
+  .controls {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin: 28px 0;
+    flex-wrap: wrap;
+  }
+
+  button {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 1px;
+    padding: 12px 28px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: #33eeff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,229,255,0.3);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .btn-auto {
+    background: var(--surface);
+    color: var(--accent4);
+    border: 1px solid var(--accent4);
+  }
+
+  .btn-auto:hover:not(:disabled) {
+    background: rgba(255,217,61,0.1);
+    transform: translateY(-2px);
+  }
+
+  .btn-auto.running {
+    animation: btn-pulse 1s infinite;
+  }
+
+  @keyframes btn-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  /* STEP INDICATOR */
+  .step-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .step-num {
+    font-size: 32px;
+    font-weight: 800;
+    font-family: 'Syne', sans-serif;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .step-of {
+    font-size: 11px;
+  }
+
+  /* MERGE ANNOUNCEMENT */
+  .merge-announce {
+    text-align: center;
+    padding: 20px;
+    background: rgba(105,255,71,0.05);
+    border: 1px solid var(--accent3);
+    border-radius: 12px;
+    margin-bottom: 20px;
+    animation: announce-in 0.5s ease;
+    display: none;
+  }
+
+  .merge-announce.visible {
+    display: block;
+  }
+
+  @keyframes announce-in {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .announce-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 8px;
+  }
+
+  .announce-merge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px;
+    color: var(--accent3);
+  }
+
+  .announce-merge span {
+    color: var(--accent);
+  }
+
+  /* COMPLETE STATE */
+  .complete-badge {
+    display: none;
+    text-align: center;
+    padding: 16px;
+    background: rgba(105,255,71,0.08);
+    border: 1px solid var(--accent3);
+    border-radius: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent3);
+    margin-top: 12px;
+    letter-spacing: 2px;
+  }
+
+  .complete-badge.visible { display: block; }
+
+  /* PROGRESS */
+  .progress-track {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-bottom: 32px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .section { padding: 18px; }
+    h1 { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="eyebrow">// interactive demo</div>
+    <h1>Byte-Pair Encoding</h1>
+    <p class="subtitle">watch a tokenizer learn from scratch</p>
+  </header>
+
+  <div class="progress-track">
+    <div class="progress-fill" id="progressFill" style="width:0%"></div>
+  </div>
+
+  <div class="step-indicator">
+    <div>
+      <div class="step-num" id="stepNum">0</div>
+      <div class="step-of">merges</div>
+    </div>
+    <div style="color: var(--border); font-size: 20px;">/</div>
+    <div>
+      <div class="step-num" id="totalNum" style="color: var(--muted)">8</div>
+      <div class="step-of">total</div>
+    </div>
+  </div>
+
+  <!-- MERGE ANNOUNCEMENT -->
+  <div class="merge-announce" id="mergeAnnounce">
+    <div class="announce-label">merging</div>
+    <div class="announce-merge" id="announceMerge"></div>
+  </div>
+
+  <!-- CORPUS -->
+  <div class="section">
+    <div class="section-label">corpus state</div>
+    <div class="corpus-display" id="corpusDisplay"></div>
+  </div>
+
+  <!-- PAIR FREQUENCIES -->
+  <div class="section">
+    <div class="section-label">pair frequencies</div>
+    <table class="pair-table">
+      <thead>
+        <tr>
+          <th>Pair</th>
+          <th>Frequency</th>
+        </tr>
+      </thead>
+      <tbody id="pairTable"></tbody>
+    </table>
+  </div>
+
+  <!-- CONTROLS -->
+  <div class="controls">
+    <button class="btn-secondary" id="btnReset" onclick="reset()">↺ Reset</button>
+    <button class="btn-primary" id="btnStep" onclick="step()">Next Merge →</button>
+    <button class="btn-auto" id="btnAuto" onclick="toggleAuto()">▶ Auto Play</button>
+  </div>
+
+  <!-- VOCABULARY -->
+  <div class="section">
+    <div class="section-label">learned vocabulary</div>
+    <div class="vocab-chips" id="vocabChips"></div>
+    <div class="complete-badge" id="completeBadge">✓ training complete — vocabulary learned</div>
+  </div>
+
+  <!-- MERGE LOG -->
+  <div class="section">
+    <div class="section-label">merge history</div>
+    <div class="merge-log" id="mergeLog">
+      <div style="font-family:'JetBrains Mono',monospace; font-size:12px; color: var(--muted); padding: 8px;">
+        No merges yet. Press "Next Merge" to begin.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ─── BPE State ─────────────────────────────────────────────────────────────
+
+const CORPUS_WORDS = [
+  { word: 'hug', freq: 3 },
+  { word: 'pug', freq: 2 },
+  { word: 'bug', freq: 1 },
+  { word: 'plug', freq: 2 },
+  { word: 'slug', freq: 1 },
+];
+
+const MAX_MERGES = 8;
+
+let splits = {};
+let mergeLog = [];
+let autoTimer = null;
+let isAuto = false;
+let currentHighlight = null;
+
+function initSplits() {
+  splits = {};
+  CORPUS_WORDS.forEach(({ word }) => {
+    splits[word] = word.split('');
+  });
+}
+
+function getWordFreq(word) {
+  return CORPUS_WORDS.find(w => w.word === word).freq;
+}
+
+function computePairFreqs() {
+  const pf = {};
+  CORPUS_WORDS.forEach(({ word, freq }) => {
+    const split = splits[word];
+    for (let i = 0; i < split.length - 1; i++) {
+      const key = split[i] + '|' + split[i+1];
+      pf[key] = (pf[key] || 0) + freq;
+    }
+  });
+  return pf;
+}
+
+function getBestPair(pf) {
+  let best = null, bestFreq = 0;
+  for (const [key, freq] of Object.entries(pf)) {
+    if (freq > bestFreq || (freq === bestFreq && best && key < best)) {
+      best = key; bestFreq = freq;
+    }
+  }
+  return best ? { pair: best, freq: bestFreq } : null;
+}
+
+function applyMerge(a, b) {
+  const ab = a + b;
+  CORPUS_WORDS.forEach(({ word }) => {
+    const split = splits[word];
+    let i = 0;
+    while (i < split.length - 1) {
+      if (split[i] === a && split[i+1] === b) {
+        split.splice(i, 2, ab);
+      } else { i++; }
+    }
+  });
+}
+
+// ─── Render ────────────────────────────────────────────────────────────────
+
+function renderCorpus(highlightPair = null) {
+  const container = document.getElementById('corpusDisplay');
+  container.innerHTML = '';
+
+  CORPUS_WORDS.forEach(({ word, freq }) => {
+    const card = document.createElement('div');
+    card.className = 'word-card';
+
+    const freqEl = document.createElement('div');
+    freqEl.className = 'word-freq';
+    freqEl.textContent = `×${freq}`;
+    card.appendChild(freqEl);
+
+    const tokensEl = document.createElement('div');
+    tokensEl.className = 'word-tokens';
+
+    const split = splits[word];
+    split.forEach((tok, i) => {
+      const el = document.createElement('span');
+      el.className = 'token char';
+
+      const isHighA = highlightPair && tok === highlightPair[0] && i < split.length - 1 && split[i+1] === highlightPair[1];
+      const isHighB = highlightPair && tok === highlightPair[1] && i > 0 && split[i-1] === highlightPair[0];
+      const isMerged = highlightPair && tok === highlightPair[0] + highlightPair[1];
+
+      if (isMerged) el.className = 'token merged';
+      else if (isHighA || isHighB) el.className = 'token highlight';
+
+      el.textContent = tok;
+      tokensEl.appendChild(el);
+    });
+
+    card.appendChild(tokensEl);
+    container.appendChild(card);
+  });
+}
+
+function renderPairTable(pairFreqs, highlightPair = null) {
+  const tbody = document.getElementById('pairTable');
+  tbody.innerHTML = '';
+
+  const sorted = Object.entries(pairFreqs).sort((a, b) => b[1] - a[1]).slice(0, 6);
+  const maxFreq = sorted[0]?.[1] || 1;
+
+  sorted.forEach(([key, freq], idx) => {
+    const [a, b] = key.split('|');
+    const tr = document.createElement('tr');
+    const isTop = highlightPair && a === highlightPair[0] && b === highlightPair[1];
+    if (isTop) tr.className = 'top-pair';
+
+    const pairTd = document.createElement('td');
+    pairTd.innerHTML = `<span style="color:${isTop ? 'var(--accent)' : 'var(--text)'}">"${a}"</span> <span style="color:var(--muted)">+</span> <span style="color:${isTop ? 'var(--accent)' : 'var(--text)'}">"${b}"</span>`;
+
+    const freqTd = document.createElement('td');
+    const pct = (freq / maxFreq) * 100;
+    const color = isTop ? 'var(--accent)' : `hsl(${220 - idx * 20}, 60%, 60%)`;
+    freqTd.innerHTML = `
+      <div class="freq-bar-wrap">
+        <div class="freq-bar"><div class="freq-bar-fill" style="width:${pct}%; background:${color}"></div></div>
+        <span class="freq-val">${freq}</span>
+      </div>`;
+
+    tr.appendChild(pairTd);
+    tr.appendChild(freqTd);
+    tbody.appendChild(tr);
+  });
+}
+
+function renderVocab() {
+  const container = document.getElementById('vocabChips');
+  container.innerHTML = '';
+
+  // Base chars
+  const baseChars = new Set();
+  CORPUS_WORDS.forEach(({ word }) => word.split('').forEach(c => baseChars.add(c)));
+  [...baseChars].sort().forEach(c => {
+    const chip = document.createElement('span');
+    chip.className = 'vocab-chip base';
+    chip.textContent = `"${c}"`;
+    container.appendChild(chip);
+  });
+
+  // Learned tokens
+  mergeLog.forEach((entry, i) => {
+    const chip = document.createElement('span');
+    chip.className = 'vocab-chip learned';
+    chip.textContent = `"${entry.result}"`;
+    if (i === mergeLog.length - 1) chip.style.boxShadow = '0 0 12px rgba(105,255,71,0.3)';
+    container.appendChild(chip);
+  });
+}
+
+function renderLog() {
+  const container = document.getElementById('mergeLog');
+  if (mergeLog.length === 0) {
+    container.innerHTML = `<div style="font-family:'JetBrains Mono',monospace; font-size:12px; color: var(--muted); padding: 8px;">No merges yet. Press "Next Merge" to begin.</div>`;
+    return;
+  }
+  container.innerHTML = '';
+  [...mergeLog].reverse().forEach((entry, i) => {
+    const el = document.createElement('div');
+    el.className = 'log-entry' + (i === 0 ? ' latest' : '');
+    el.innerHTML = `
+      <span class="log-step">#${entry.step}</span>
+      <span class="log-pair">"${entry.a}" + "${entry.b}"</span>
+      <span class="log-arrow">→</span>
+      <span class="log-result">"${entry.result}"</span>
+      <span class="log-freq">freq: ${entry.freq}</span>
+    `;
+    container.appendChild(el);
+  });
+}
+
+function updateProgress() {
+  const pct = (mergeLog.length / MAX_MERGES) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('stepNum').textContent = mergeLog.length;
+}
+
+// ─── Step Logic ────────────────────────────────────────────────────────────
+
+function step() {
+  if (mergeLog.length >= MAX_MERGES) return;
+
+  const pf = computePairFreqs();
+  if (Object.keys(pf).length === 0) return;
+
+  const best = getBestPair(pf);
+  if (!best) return;
+
+  const [a, b] = best.pair.split('|');
+  const result = a + b;
+
+  // Show highlight BEFORE merge
+  renderCorpus([a, b]);
+  renderPairTable(pf, [a, b]);
+
+  // Announce
+  const announce = document.getElementById('mergeAnnounce');
+  announce.className = 'merge-announce visible';
+  document.getElementById('announceMerge').innerHTML =
+    `<span>"${a}"</span> + <span>"${b}"</span> → "${result}"`;
+
+  setTimeout(() => {
+    // Apply merge
+    applyMerge(a, b);
+    mergeLog.push({ step: mergeLog.length + 1, a, b, result, freq: best.freq });
+
+    // Re-render after merge
+    const newPf = computePairFreqs();
+    renderCorpus([result]); // show merged token
+    renderPairTable(newPf, null);
+    renderVocab();
+    renderLog();
+    updateProgress();
+
+    // Check done
+    if (mergeLog.length >= MAX_MERGES || Object.keys(newPf).length === 0) {
+      document.getElementById('completeBadge').className = 'complete-badge visible';
+      document.getElementById('btnStep').disabled = true;
+      document.getElementById('btnAuto').disabled = true;
+      if (isAuto) stopAuto();
+    }
+  }, 700);
+}
+
+function reset() {
+  stopAuto();
+  mergeLog = [];
+  initSplits();
+
+  document.getElementById('mergeAnnounce').className = 'merge-announce';
+  document.getElementById('completeBadge').className = 'complete-badge';
+  document.getElementById('btnStep').disabled = false;
+  document.getElementById('btnAuto').disabled = false;
+
+  const pf = computePairFreqs();
+  renderCorpus(null);
+  renderPairTable(pf, null);
+  renderVocab();
+  renderLog();
+  updateProgress();
+}
+
+function toggleAuto() {
+  if (isAuto) { stopAuto(); return; }
+  isAuto = true;
+  const btn = document.getElementById('btnAuto');
+  btn.textContent = '⏸ Pause';
+  btn.className = 'btn-auto running';
+  runAuto();
+}
+
+function runAuto() {
+  if (!isAuto || mergeLog.length >= MAX_MERGES) { stopAuto(); return; }
+  step();
+  autoTimer = setTimeout(runAuto, 1800);
+}
+
+function stopAuto() {
+  isAuto = false;
+  clearTimeout(autoTimer);
+  const btn = document.getElementById('btnAuto');
+  btn.textContent = '▶ Auto Play';
+  btn.className = 'btn-auto';
+}
+
+// ─── Init ──────────────────────────────────────────────────────────────────
+document.getElementById('totalNum').textContent = MAX_MERGES;
+reset();
+</script>
+</body>
+</html>
