@@ -28,43 +28,6 @@ function Blogs() {
         <div className="blogs-list" aria-label="Blogs list">
           <article className="blogs-card">
             <header className="blog-post-header">
-              <p className="blog-post-meta">March 2026 · 20 min read</p>
-              <h3 className="blog-post-title">Byte Pair Encoding (BPE): How Tokenization Works Under the Hood</h3>
-              <p className="blog-post-excerpt">
-                A practical walkthrough of BPE from scratch: word frequencies, pair merges, vocab
-                growth, and why subword tokenization is critical for modern LLM pipelines.
-              </p>
-              <div className="blog-post-tags" aria-label="Post tags">
-                <span className="blog-tag">NLP</span>
-                <span className="blog-tag">Tokenization</span>
-                <span className="blog-tag">BPE</span>
-              </div>
-            </header>
-
-            <div className="blog-actions">
-              <a
-                href={bpeMediumUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="blog-action-link"
-                aria-label="Open BPE blog post on Medium"
-              >
-                Read on Medium
-              </a>
-              <a
-                href={bpeVisualizerUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="blog-action-link blog-action-link-secondary"
-                aria-label="Open BPE visualizer demo"
-              >
-                Open Visualizer
-              </a>
-            </div>
-          </article>
-
-          <article className="blogs-card">
-            <header className="blog-post-header">
               <p className="blog-post-meta">March 2026 · 18 min read</p>
               <h3 className="blog-post-title">From Words to Tensors: How LLMs Actually Read Text</h3>
               <p className="blog-post-excerpt">
@@ -96,6 +59,43 @@ function Blogs() {
                 aria-label="Open word to tensor interactive demo"
               >
                 Open Interactive Demo
+              </a>
+            </div>
+          </article>
+
+          <article className="blogs-card">
+            <header className="blog-post-header">
+              <p className="blog-post-meta">March 2026 · 20 min read</p>
+              <h3 className="blog-post-title">Byte Pair Encoding (BPE): How Tokenization Works Under the Hood</h3>
+              <p className="blog-post-excerpt">
+                A practical walkthrough of BPE from scratch: word frequencies, pair merges, vocab
+                growth, and why subword tokenization is critical for modern LLM pipelines.
+              </p>
+              <div className="blog-post-tags" aria-label="Post tags">
+                <span className="blog-tag">NLP</span>
+                <span className="blog-tag">Tokenization</span>
+                <span className="blog-tag">BPE</span>
+              </div>
+            </header>
+
+            <div className="blog-actions">
+              <a
+                href={bpeMediumUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="blog-action-link"
+                aria-label="Open BPE blog post on Medium"
+              >
+                Read on Medium
+              </a>
+              <a
+                href={bpeVisualizerUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="blog-action-link blog-action-link-secondary"
+                aria-label="Open BPE visualizer demo"
+              >
+                Open Visualizer
               </a>
             </div>
           </article>
