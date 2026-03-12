@@ -9,6 +9,8 @@ import './Blogs.css'
 function Blogs() {
   const bpeMediumUrl = 'https://medium.com/@ankithreddy653/how-machines-learn-to-read-byte-pair-encoding-explained-ba4bd39c60ee'
   const bpeVisualizerUrl = '/bpe-visualizer.html'
+  const wordsToTensorMediumUrl = 'https://medium.com/@ankithreddy653/from-words-to-tensors-how-llms-actually-read-text-7048eef833ae'
+  const wordsToTensorVisualizerUrl = '/word-to-tensor.html'
 
   return (
     <section className="blogs section" id="blogs">
@@ -57,6 +59,43 @@ function Blogs() {
                 aria-label="Open BPE visualizer demo"
               >
                 Open Visualizer
+              </a>
+            </div>
+          </article>
+
+          <article className="blogs-card">
+            <header className="blog-post-header">
+              <p className="blog-post-meta">March 2026 · 18 min read</p>
+              <h3 className="blog-post-title">From Words to Tensors: How LLMs Actually Read Text</h3>
+              <p className="blog-post-excerpt">
+                A hands-on walkthrough of tokenization, BPE, sliding-window dataset creation, token
+                embeddings, and positional embeddings, from raw text all the way to transformer-ready tensors.
+              </p>
+              <div className="blog-post-tags" aria-label="Post tags">
+                <span className="blog-tag">LLM</span>
+                <span className="blog-tag">Embeddings</span>
+                <span className="blog-tag">PyTorch</span>
+              </div>
+            </header>
+
+            <div className="blog-actions">
+              <a
+                href={wordsToTensorMediumUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="blog-action-link"
+                aria-label="Open From Words to Tensors blog post on Medium"
+              >
+                Read on Medium
+              </a>
+              <a
+                href={wordsToTensorVisualizerUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="blog-action-link blog-action-link-secondary"
+                aria-label="Open word to tensor interactive demo"
+              >
+                Open Interactive Demo
               </a>
             </div>
           </article>

@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tokenization Pipeline — Visual Explainer</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@400;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: #2a2a40;
+    --accent1: #7c6af7;
+    --accent2: #f76a8c;
+    --accent3: #6af7c8;
+    --accent4: #f7c46a;
+    --text: #e8e8f0;
+    --muted: #6b6b8a;
+    --glow1: rgba(124,106,247,0.3);
+    --glow2: rgba(247,106,140,0.3);
+    --glow3: rgba(106,247,200,0.3);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999; opacity: 0.4;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 4rem 2rem;
+    position: relative; overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 40%, rgba(124,106,247,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 80% 60%, rgba(247,106,140,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at 50% 90%, rgba(106,247,200,0.08) 0%, transparent 60%);
+  }
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(var(--border) 1px, transparent 1px),
+                      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.3;
+  }
+  .hero-content { position: relative; z-index: 1; max-width: 900px; }
+  .hero-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem; letter-spacing: 0.2em;
+    color: var(--accent3); text-transform: uppercase;
+    border: 1px solid var(--accent3); padding: 0.3rem 1rem;
+    border-radius: 2px; margin-bottom: 2rem;
+    animation: fadeUp 0.8s ease both;
+  }
+  .hero h1 {
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 800; line-height: 0.95;
+    animation: fadeUp 0.8s 0.15s ease both;
+  }
+  .hero h1 .line1 { display: block; color: var(--text); }
+  .hero h1 .line2 { display: block; color: var(--accent1); font-style: italic; font-family: 'Instrument Serif', serif; }
+  .hero p {
+    margin-top: 2rem; font-size: 1.1rem; color: var(--muted); max-width: 600px; margin-inline: auto;
+    line-height: 1.7; animation: fadeUp 0.8s 0.3s ease both;
+  }
+  .hero-scroll {
+    margin-top: 4rem;
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    color: var(--muted); font-size: 0.75rem; letter-spacing: 0.15em;
+    animation: fadeUp 0.8s 0.5s ease both;
+  }
+  .scroll-line { width: 1px; height: 60px; background: linear-gradient(var(--accent1), transparent); animation: scrollPulse 2s ease infinite; }
+
+  /* ── PIPELINE NAV ── */
+  .pipeline-nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,10,15,0.85); backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    gap: 0; padding: 0; overflow-x: auto;
+  }
+  .nav-step {
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 1rem 1.5rem;
+    font-size: 0.8rem; font-weight: 700; letter-spacing: 0.05em;
+    color: var(--muted); cursor: pointer; white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s;
+  }
+  .nav-step:hover { color: var(--text); }
+  .nav-step.active { color: var(--accent1); border-bottom-color: var(--accent1); }
+  .nav-step .num {
+    width: 22px; height: 22px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; background: var(--surface2); border: 1px solid var(--border);
+    transition: all 0.3s;
+  }
+  .nav-step.active .num { background: var(--accent1); border-color: var(--accent1); color: #fff; }
+
+  /* ── SECTIONS ── */
+  .section {
+    max-width: 1100px; margin: 0 auto; padding: 6rem 2rem;
+    opacity: 0; transform: translateY(40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .section.visible { opacity: 1; transform: none; }
+
+  .section-header {
+    display: flex; align-items: flex-start; gap: 2rem;
+    margin-bottom: 3rem;
+  }
+  .step-badge {
+    flex-shrink: 0;
+    width: 64px; height: 64px; border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.4rem; font-weight: 600;
+  }
+  .badge-1 { background: linear-gradient(135deg, rgba(124,106,247,0.3), rgba(124,106,247,0.1)); border: 1px solid var(--accent1); color: var(--accent1); }
+  .badge-2 { background: linear-gradient(135deg, rgba(247,106,140,0.3), rgba(247,106,140,0.1)); border: 1px solid var(--accent2); color: var(--accent2); }
+  .badge-3 { background: linear-gradient(135deg, rgba(106,247,200,0.3), rgba(106,247,200,0.1)); border: 1px solid var(--accent3); color: var(--accent3); }
+  .badge-4 { background: linear-gradient(135deg, rgba(247,196,106,0.3), rgba(247,196,106,0.1)); border: 1px solid var(--accent4); color: var(--accent4); }
+  .badge-5 { background: linear-gradient(135deg, rgba(124,106,247,0.3), rgba(247,106,140,0.2)); border: 1px solid var(--accent1); color: var(--accent1); }
+  .badge-6 { background: linear-gradient(135deg, rgba(106,247,200,0.2), rgba(247,196,106,0.2)); border: 1px solid var(--accent3); color: var(--accent3); }
+
+  .section-title { font-size: 2.2rem; font-weight: 800; line-height: 1.1; }
+  .section-subtitle { font-size: 1rem; color: var(--muted); margin-top: 0.5rem; line-height: 1.6; max-width: 600px; }
+
+  /* ── DIVIDER ── */
+  .section-divider {
+    max-width: 1100px; margin: 0 auto;
+    height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent);
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 2rem; margin-bottom: 1.5rem;
+  }
+  .card-title {
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ── INTERACTIVE TOKENIZER ── */
+  .tokenizer-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  @media(max-width:700px) { .tokenizer-wrap { grid-template-columns: 1fr; } }
+
+  .input-area {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1rem;
+  }
+  .input-area label {
+    display: block; font-size: 0.7rem; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--muted);
+    font-family: 'JetBrains Mono', monospace; margin-bottom: 0.75rem;
+  }
+  .input-area textarea, .input-area input {
+    width: 100%; background: transparent; border: none; outline: none;
+    color: var(--text); font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem; resize: none; line-height: 1.6;
+  }
+  .input-area textarea { min-height: 80px; }
+
+  .token-display {
+    display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem;
+    min-height: 60px; align-content: flex-start;
+  }
+  .token-chip {
+    display: inline-flex; align-items: center;
+    padding: 0.3rem 0.7rem; border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+    border: 1px solid; cursor: default;
+    animation: chipIn 0.25s ease both;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .token-chip:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
+
+  .chip-colors {
+    --c0: #7c6af7; --c1: #f76a8c; --c2: #6af7c8; --c3: #f7c46a;
+    --c4: #a06af7; --c5: #f76ab0; --c6: #6af7a8; --c7: #f7a06a;
+  }
+
+  /* ── VOCAB TABLE ── */
+  .vocab-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.5rem; max-height: 280px; overflow-y: auto;
+    padding-right: 0.5rem;
+  }
+  .vocab-grid::-webkit-scrollbar { width: 4px; }
+  .vocab-grid::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .vocab-item {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 0.5rem 0.75rem;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;
+    display: flex; justify-content: space-between; align-items: center;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .vocab-item:hover { background: var(--surface); border-color: var(--accent1); }
+  .vocab-item .word { color: var(--text); }
+  .vocab-item .id { color: var(--accent1); }
+
+  /* ── BPE VISUAL ── */
+  /* .bpe-demo { } */
+  .bpe-corpus-display {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.5rem;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.9rem;
+    line-height: 2.2; margin-bottom: 1.5rem; min-height: 80px;
+  }
+  .bpe-char {
+    display: inline-block; padding: 0.15rem 0.4rem;
+    border-radius: 4px; margin: 0.1rem;
+    border: 1px solid transparent;
+    transition: all 0.4s;
+  }
+  .bpe-char.highlight {
+    background: rgba(247,196,106,0.25); border-color: var(--accent4);
+    color: var(--accent4); transform: scale(1.1);
+  }
+  .bpe-char.merged {
+    background: rgba(106,247,200,0.2); border-color: var(--accent3);
+    color: var(--accent3);
+  }
+
+  .bpe-controls {
+    display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+  .btn {
+    padding: 0.65rem 1.4rem; border-radius: 8px; border: 1px solid;
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem;
+    cursor: pointer; transition: all 0.2s; letter-spacing: 0.03em;
+  }
+  .btn-primary {
+    background: var(--accent1); border-color: var(--accent1); color: #fff;
+  }
+  .btn-primary:hover { filter: brightness(1.2); transform: translateY(-1px); }
+  .btn-secondary {
+    background: transparent; border-color: var(--border); color: var(--muted);
+  }
+  .btn-secondary:hover { border-color: var(--text); color: var(--text); }
+
+  .merge-log {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.2rem;
+    max-height: 200px; overflow-y: auto;
+  }
+  .merge-log::-webkit-scrollbar { width: 4px; }
+  .merge-log::-webkit-scrollbar-thumb { background: var(--border); }
+  .merge-entry {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.4rem 0; border-bottom: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace; font-size: 0.78rem;
+    animation: fadeUp 0.3s ease both;
+  }
+  .merge-entry:last-child { border-bottom: none; }
+  .merge-step { color: var(--muted); width: 24px; }
+  .merge-pair { color: var(--accent4); }
+  .merge-arrow { color: var(--muted); }
+  .merge-result { color: var(--accent3); }
+  .merge-freq { color: var(--muted); margin-left: auto; }
+
+  /* ── SLIDING WINDOW ── */
+  .window-vis {
+    position: relative; overflow: hidden;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 2rem 1.5rem; margin-bottom: 1.5rem;
+  }
+  .token-row {
+    display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .tok {
+    padding: 0.4rem 0.7rem; border-radius: 6px;
+    background: var(--surface); border: 1px solid var(--border);
+    font-size: 0.8rem; color: var(--muted); transition: all 0.4s;
+    min-width: 40px; text-align: center;
+  }
+  .tok.in-window { background: rgba(124,106,247,0.2); border-color: var(--accent1); color: var(--text); }
+  .tok.is-target { background: rgba(247,106,140,0.2); border-color: var(--accent2); color: var(--accent2); }
+
+  .window-labels {
+    display: flex; gap: 2rem; margin-bottom: 1rem; flex-wrap: wrap;
+  }
+  .window-label {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-size: 0.8rem; color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .label-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+  .window-info {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;
+  }
+  .info-block {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 1rem;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+  }
+  .info-block .label { color: var(--muted); font-size: 0.7rem; margin-bottom: 0.4rem; }
+  .info-block .val { color: var(--text); word-break: break-all; }
+  .info-block .val span { color: var(--accent1); }
+
+  .slider-row { display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
+  .slider-row label { font-size: 0.8rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; white-space: nowrap; }
+  input[type=range] {
+    flex: 1; min-width: 100px; accent-color: var(--accent1);
+    cursor: pointer;
+  }
+  .slider-val {
+    min-width: 28px; text-align: center;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;
+    color: var(--accent1); font-weight: 600;
+  }
+
+  /* ── EMBEDDING VIS ── */
+  .embed-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  @media(max-width:700px) { .embed-grid { grid-template-columns: 1fr; } }
+
+  .embed-matrix {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.2rem; overflow-x: auto;
+  }
+  .matrix-row {
+    display: flex; gap: 3px; margin-bottom: 3px;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
+    align-items: center;
+  }
+  .matrix-label { width: 80px; color: var(--muted); font-size: 0.65rem; flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .matrix-cell {
+    width: 18px; height: 18px; border-radius: 2px; flex-shrink: 0;
+    transition: transform 0.2s;
+  }
+  .matrix-cell:hover { transform: scale(1.5); z-index: 10; }
+
+  .embed-chart {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.2rem;
+  }
+  #embedCanvas { width: 100%; border-radius: 8px; }
+
+  /* ── POSITION EMBEDDING ── */
+  .pos-vis {
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;
+  }
+  #posCanvas { width: 100%; border-radius: 8px; display: block; }
+
+  .add-animation {
+    display: flex; align-items: center; justify-content: center;
+    gap: 1.5rem; padding: 2rem; flex-wrap: wrap;
+  }
+  .add-box {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.2rem 1.5rem; text-align: center;
+  }
+  .add-box .box-title { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.1em; font-family: 'JetBrains Mono', monospace; margin-bottom: 0.5rem; }
+  .add-box .box-shape { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+  .add-op { font-size: 2rem; color: var(--accent1); font-weight: 800; }
+  .add-box.result { border-color: var(--accent3); }
+  .add-box.result .box-shape { color: var(--accent3); }
+
+  /* ── PIPELINE FLOW ── */
+  .pipeline-flow {
+    display: flex; flex-direction: column; gap: 0;
+    position: relative;
+  }
+  .flow-step {
+    display: grid; grid-template-columns: 200px 1fr;
+    gap: 2rem; position: relative; padding: 2rem 0;
+  }
+  @media(max-width:600px) { .flow-step { grid-template-columns: 1fr; } }
+
+  .flow-step::before {
+    content: '';
+    position: absolute; left: 99px; top: 0; bottom: 0;
+    width: 2px; background: linear-gradient(var(--border), var(--border));
+    z-index: 0;
+  }
+  @media(max-width:600px) { .flow-step::before { display: none; } }
+
+  .flow-step:first-child::before { top: 50%; }
+  .flow-step:last-child::before { bottom: 50%; }
+
+  .flow-label {
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center; position: relative; z-index: 1;
+  }
+  .flow-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; margin-bottom: 0.75rem;
+    border: 1px solid;
+  }
+  .flow-name { font-size: 0.75rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+  .flow-content {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.5rem;
+  }
+  .flow-content h4 { font-size: 1rem; margin-bottom: 0.5rem; }
+  .flow-content p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+  .flow-content .shape-badge {
+    display: inline-block; margin-top: 0.75rem;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 6px; padding: 0.25rem 0.75rem;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--accent3);
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    text-align: center; padding: 4rem 2rem;
+    border-top: 1px solid var(--border);
+    color: var(--muted); font-size: 0.85rem;
+  }
+  .footer a { color: var(--accent1); text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes chipIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 var(--glow1); }
+    50% { box-shadow: 0 0 20px 4px var(--glow1); }
+  }
+
+  /* ── SPECIAL TOKENS ── */
+  .special-token {
+    display: inline-block; padding: 0.2rem 0.6rem; border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+    background: rgba(247,196,106,0.15); border: 1px solid var(--accent4); color: var(--accent4);
+  }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  @media(max-width:700px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ HERO ═══════════════════════ -->
+<section class="hero" id="top">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-tag">NLP Pipeline · Interactive Explainer</div>
+    <h1>
+      <span class="line1">From Words</span>
+      <span class="line2">to Tensors</span>
+    </h1>
+    <p>A visual, hands-on journey through tokenization — from splitting raw text all the way to positional embeddings ready for a transformer.</p>
+    <div class="hero-scroll">
+      <span>SCROLL TO EXPLORE</span>
+      <div class="scroll-line"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ NAV ═══════════════════════ -->
+<nav class="pipeline-nav" id="pipelineNav">
+  <div class="nav-step active" data-target="s1"><span class="num">1</span>Regex Tokenizer</div>
+  <div class="nav-step" data-target="s2"><span class="num">2</span>Vocabulary</div>
+  <div class="nav-step" data-target="s3"><span class="num">3</span>BPE</div>
+  <div class="nav-step" data-target="s4"><span class="num">4</span>Sliding Window</div>
+  <div class="nav-step" data-target="s5"><span class="num">5</span>Embeddings</div>
+  <div class="nav-step" data-target="s6"><span class="num">6</span>Positional</div>
+</nav>
+
+<!-- ═══════════════════════ S1: REGEX ═══════════════════════ -->
+<section class="section" id="s1">
+  <div class="section-header">
+    <div class="step-badge badge-1">01</div>
+    <div>
+      <div class="section-title">Regex Tokenization</div>
+      <div class="section-subtitle">The simplest approach — split text on punctuation and whitespace using a regular expression pattern.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">// Try it — type any sentence below</div>
+    <div class="tokenizer-wrap">
+      <div class="input-area">
+        <label>Input Text</label>
+        <textarea id="regexInput" rows="3">Artificial intelligence (AI) is the capability of machines to learn, reason, and perceive.</textarea>
+      </div>
+      <div class="input-area">
+        <label>Regex Pattern</label>
+        <input id="regexPattern" type="text" value="\w+|[^\w\s]" style="margin-bottom:1rem"/>
+        <div class="card-title" style="margin-bottom:0.5rem">Tokens</div>
+        <div id="regexTokenCount" style="font-family:monospace;font-size:0.75rem;color:var(--muted);margin-bottom:0.75rem"></div>
+      </div>
+    </div>
+    <div style="margin-top:1rem">
+      <div class="card-title">Token Chips (hover for index)</div>
+      <div class="token-display chip-colors" id="regexTokens"></div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="card">
+      <div class="card-title">// What the code does</div>
+      <pre style="font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--muted);line-height:1.8;overflow-x:auto"><span style="color:var(--accent1)">import</span> re
+
+text = <span style="color:var(--accent3)">"Hello, world!"</span>
+
+<span style="color:var(--accent2)"># Pattern: word chars OR any non-whitespace</span>
+tokens = re.findall(
+  <span style="color:var(--accent3)">r'\w+|[^\w\s]'</span>, text
+)
+<span style="color:var(--accent2)"># → ['Hello', ',', 'world', '!']</span></pre>
+    </div>
+    <div class="card">
+      <div class="card-title">// Why not just split on spaces?</div>
+      <p style="font-size:0.85rem;color:var(--muted);line-height:1.7">
+        A naive <code style="color:var(--accent3);font-family:monospace">.split()</code> throws away punctuation entirely — <code style="color:var(--text);font-family:monospace">"don't"</code> becomes one token, and commas vanish. The regex pattern captures <em>both</em> words and punctuation as individual tokens, preserving all information.
+      </p>
+      <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap">
+        <span style="font-family:monospace;font-size:0.75rem;padding:0.2rem 0.6rem;border-radius:4px;background:rgba(247,106,140,0.15);border:1px solid var(--accent2);color:var(--accent2)">❌ "don't" → ["don't"]</span>
+        <span style="font-family:monospace;font-size:0.75rem;padding:0.2rem 0.6rem;border-radius:4px;background:rgba(106,247,200,0.15);border:1px solid var(--accent3);color:var(--accent3)">✓ "don't" → ["don", "'", "t"]</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ═══════════════════════ S2: VOCAB ═══════════════════════ -->
+<section class="section" id="s2">
+  <div class="section-header">
+    <div class="step-badge badge-2">02</div>
+    <div>
+      <div class="section-title">Vocabulary Building</div>
+      <div class="section-subtitle">Map every unique token to an integer. Add special tokens for unknowns and document boundaries.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">// Build vocabulary from your text</div>
+    <div class="tokenizer-wrap">
+      <div class="input-area">
+        <label>Corpus</label>
+        <textarea id="vocabInput" rows="4">The cat sat on the mat. The dog ran fast. A cat and a dog.</textarea>
+      </div>
+      <div>
+        <div style="display:flex;gap:0.75rem;margin-bottom:1rem;flex-wrap:wrap">
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.75rem 1.2rem;text-align:center">
+            <div style="font-size:1.5rem;font-weight:800;color:var(--accent2)" id="vocabSize">0</div>
+            <div style="font-size:0.7rem;color:var(--muted);font-family:monospace">vocab size</div>
+          </div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.75rem 1.2rem;text-align:center">
+            <div style="font-size:1.5rem;font-weight:800;color:var(--accent1)" id="tokenCount2">0</div>
+            <div style="font-size:0.7rem;color:var(--muted);font-family:monospace">total tokens</div>
+          </div>
+        </div>
+        <div class="card-title">Special tokens always added:</div>
+        <div style="display:flex;gap:0.5rem;margin-bottom:1rem;flex-wrap:wrap">
+          <span class="special-token">&lt;|unk|&gt;</span>
+          <span class="special-token">&lt;|endoftext|&gt;</span>
+        </div>
+        <div style="font-size:0.75rem;color:var(--muted);line-height:1.6;font-family:monospace">
+          Type a word not in corpus:<br>
+          <input id="encodeTest" type="text" placeholder="e.g. quantum" style="margin-top:0.5rem;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:0.4rem 0.7rem;color:var(--text);font-family:monospace;font-size:0.85rem;width:100%;outline:none"/>
+          <div id="encodeResult" style="margin-top:0.5rem;color:var(--accent3)"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">// Vocabulary map (token → id)</div>
+    <div class="vocab-grid" id="vocabGrid"></div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ═══════════════════════ S3: BPE ═══════════════════════ -->
+<section class="section" id="s3">
+  <div class="section-header">
+    <div class="step-badge badge-3">03</div>
+    <div>
+      <div class="section-title">Byte Pair Encoding</div>
+      <div class="section-subtitle">Learn subword tokens by iteratively merging the most frequent adjacent pairs — solving the out-of-vocabulary problem.</div>
+    </div>
+  </div>
+
+  <div class="card" style="border-color:rgba(106,247,200,0.3)">
+    <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem">
+      <span style="font-size:1.2rem">📖</span>
+      <div>
+        <div style="font-weight:700;font-size:0.9rem">Deep dive on BPE</div>
+        <div style="font-size:0.8rem;color:var(--muted)">I've covered BPE in full detail — the OOV problem, merge loop, Python implementation, and an interactive visualizer — in a dedicated post.</div>
+      </div>
+    </div>
+    <a href="https://medium.com/@ankithreddy653/how-machines-learn-to-read-byte-pair-encoding-explained-ba4bd39c60ee" target="_blank"
+       style="display:inline-flex;align-items:center;gap:0.5rem;padding:0.6rem 1.2rem;border-radius:8px;background:rgba(106,247,200,0.15);border:1px solid var(--accent3);color:var(--accent3);text-decoration:none;font-size:0.85rem;font-weight:700;transition:all 0.2s"
+       onmouseover="this.style.background='rgba(106,247,200,0.25)'" onmouseout="this.style.background='rgba(106,247,200,0.15)'">
+      Read: How Machines Learn to Read →
+    </a>
+  </div>
+
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ═══════════════════════ S4: SLIDING WINDOW ═══════════════════════ -->
+<section class="section" id="s4">
+  <div class="section-header">
+    <div class="step-badge badge-4">04</div>
+    <div>
+      <div class="section-title">Sliding Window</div>
+      <div class="section-subtitle">Create (input, target) training pairs by sliding a fixed-length context window across the token sequence.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">// Token sequence from your text</div>
+    <div class="input-area" style="margin-bottom:1.5rem">
+      <label>Text (will be tokenized to IDs)</label>
+      <input id="windowText" type="text" value="Artificial intelligence is the capability of machines to perceive their environment" style="font-size:0.85rem"/>
+    </div>
+
+    <div class="window-vis">
+      <div class="window-labels">
+        <div class="window-label"><div class="label-dot" style="background:var(--accent1);border:1px solid var(--accent1)"></div>Input window</div>
+        <div class="window-label"><div class="label-dot" style="background:var(--accent2);border:1px solid var(--accent2)"></div>Target (next token)</div>
+      </div>
+      <div id="windowTokenRow" class="token-row"></div>
+      <div class="window-info">
+        <div class="info-block">
+          <div class="label">INPUT IDs</div>
+          <div class="val" id="inputIds">—</div>
+        </div>
+        <div class="info-block">
+          <div class="label">TARGET IDs (shifted +1)</div>
+          <div class="val" id="targetIds">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="slider-row">
+      <label>Window position</label>
+      <input type="range" id="windowPos" min="0" value="0" oninput="updateWindow()"/>
+      <span class="slider-val" id="windowPosVal">0</span>
+    </div>
+    <div class="slider-row">
+      <label>Max length</label>
+      <input type="range" id="maxLen" min="2" max="8" value="4" oninput="updateWindow()"/>
+      <span class="slider-val" id="maxLenVal">4</span>
+    </div>
+    <div class="slider-row">
+      <label>Stride</label>
+      <input type="range" id="strideLen" min="1" max="6" value="2" oninput="updateWindow()"/>
+      <span class="slider-val" id="strideLenVal">2</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">// Code</div>
+    <pre style="font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--muted);line-height:1.9;overflow-x:auto"><span style="color:var(--accent1)">for</span> i <span style="color:var(--accent1)">in</span> range(<span style="color:var(--accent3)">0</span>, len(token_ids) - max_length, stride):
+    input_chunk  = token_ids[i : i + max_length]
+    target_chunk = token_ids[i<span style="color:var(--accent4)">+1</span> : i + max_length <span style="color:var(--accent4)">+ 1</span>]
+    <span style="color:var(--accent2)"># target is input shifted right by 1 position</span></pre>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ═══════════════════════ S5: EMBEDDINGS ═══════════════════════ -->
+<section class="section" id="s5">
+  <div class="section-header">
+    <div class="step-badge badge-5">05</div>
+    <div>
+      <div class="section-title">Token Embeddings</div>
+      <div class="section-subtitle">Project discrete token IDs into a continuous vector space. Each token becomes a learned dense vector.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">// Embedding lookup table — hover cells to inspect</div>
+    <div class="embed-grid">
+      <div>
+        <div class="embed-matrix" id="embedMatrix"></div>
+        <div style="font-size:0.72rem;color:var(--muted);margin-top:0.75rem;font-family:monospace">
+          Each row = one token's 16-dim vector (truncated for display). Real GPT-2 uses 768 dims.
+        </div>
+      </div>
+      <div class="embed-chart">
+        <div class="card-title">// 2D PCA projection (similarity map)</div>
+        <canvas id="embedCanvas" height="240"></canvas>
+        <div style="font-size:0.72rem;color:var(--muted);margin-top:0.75rem">
+          Similar tokens cluster together. Distances carry semantic meaning.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">// Shape walkthrough</div>
+    <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;font-family:'JetBrains Mono',monospace;font-size:0.85rem">
+      <div style="text-align:center">
+        <div style="color:var(--muted);font-size:0.7rem;margin-bottom:0.3rem">input batch</div>
+        <div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.6rem 1rem;color:var(--accent1)">[8, 4]</div>
+        <div style="color:var(--muted);font-size:0.7rem;margin-top:0.3rem">batch × seq_len</div>
+      </div>
+      <div style="color:var(--accent1);font-size:1.4rem">→</div>
+      <div style="text-align:center">
+        <div style="color:var(--muted);font-size:0.7rem;margin-bottom:0.3rem">embedding layer</div>
+        <div style="background:rgba(124,106,247,0.2);border:1px solid var(--accent1);border-radius:8px;padding:0.6rem 1rem;color:var(--accent1)">Embedding(50257, 256)</div>
+        <div style="color:var(--muted);font-size:0.7rem;margin-top:0.3rem">vocab_size × d_model</div>
+      </div>
+      <div style="color:var(--accent1);font-size:1.4rem">→</div>
+      <div style="text-align:center">
+        <div style="color:var(--muted);font-size:0.7rem;margin-bottom:0.3rem">output</div>
+        <div style="background:rgba(106,247,200,0.2);border:1px solid var(--accent3);border-radius:8px;padding:0.6rem 1rem;color:var(--accent3)">[8, 4, 256]</div>
+        <div style="color:var(--muted);font-size:0.7rem;margin-top:0.3rem">batch × seq_len × d_model</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ═══════════════════════ S6: POSITIONAL ═══════════════════════ -->
+<section class="section" id="s6">
+  <div class="section-header">
+    <div class="step-badge badge-6">06</div>
+    <div>
+      <div class="section-title">Positional Embeddings</div>
+      <div class="section-subtitle">Add a learned position signal to each token vector so the transformer knows where each token sits in the sequence.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">// Why position matters</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem">
+        <div style="font-size:0.7rem;color:var(--accent2);font-family:monospace;margin-bottom:0.5rem">❌ Without position</div>
+        <div style="font-family:monospace;font-size:0.8rem;color:var(--muted);line-height:1.8">
+          "cat sat on mat" <br/>= "mat on sat cat"<br/>
+          <span style="color:var(--accent2)">identical embeddings!</span>
+        </div>
+      </div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem">
+        <div style="font-size:0.7rem;color:var(--accent3);font-family:monospace;margin-bottom:0.5rem">✓ With position</div>
+        <div style="font-family:monospace;font-size:0.8rem;color:var(--muted);line-height:1.8">
+          "cat"<sub>pos=0</sub> ≠ "cat"<sub>pos=2</sub><br/>
+          <span style="color:var(--accent3)">order is encoded!</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">// Position embedding heatmap (context_length × d_model)</div>
+    <div class="pos-vis">
+      <canvas id="posCanvas" height="120"></canvas>
+    </div>
+    <div style="font-size:0.72rem;color:var(--muted);font-family:monospace">
+      Each row = position 0, 1, 2... Each column = one embedding dimension. Patterns emerge during training.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">// The final addition</div>
+    <div class="add-animation">
+      <div class="add-box">
+        <div class="box-title">Token Embeddings</div>
+        <div class="box-shape">[8, 4, 256]</div>
+        <div style="font-size:0.7rem;color:var(--muted);margin-top:0.4rem;font-family:monospace">what the token IS</div>
+      </div>
+      <div class="add-op">+</div>
+      <div class="add-box">
+        <div class="box-title">Positional Embeddings</div>
+        <div class="box-shape">[4, 256]</div>
+        <div style="font-size:0.7rem;color:var(--muted);margin-top:0.4rem;font-family:monospace">where the token IS</div>
+      </div>
+      <div class="add-op" style="color:var(--accent3)">=</div>
+      <div class="add-box result">
+        <div class="box-title">Input Embeddings</div>
+        <div class="box-shape">[8, 4, 256]</div>
+        <div style="font-size:0.7rem;color:var(--accent3);margin-top:0.4rem;font-family:monospace">→ feed to transformer</div>
+      </div>
+    </div>
+    <pre style="font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--muted);line-height:1.8;margin-top:1rem;overflow-x:auto">input_embeddings = token_embeddings + positional_embeddings
+<span style="color:var(--accent2)"># Broadcasting: [8,4,256] + [4,256] → [8,4,256]</span>
+print(input_embeddings.shape)  <span style="color:var(--accent3)"># torch.Size([8, 4, 256])</span></pre>
+  </div>
+
+  <!-- FULL PIPELINE -->
+  <div class="card" style="margin-top:3rem">
+    <div class="card-title" style="font-size:0.9rem;color:var(--text);margin-bottom:2rem">// The Complete Pipeline</div>
+    <div class="pipeline-flow">
+      <div class="flow-step">
+        <div class="flow-label">
+          <div class="flow-icon badge-1">📝</div>
+          <div class="flow-name">Raw Text</div>
+        </div>
+        <div class="flow-content">
+          <h4>Input String</h4>
+          <p>Any raw text from your corpus. Could be Wikipedia, code, books — anything.</p>
+          <span class="shape-badge">str</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-label">
+          <div class="flow-icon badge-2">✂️</div>
+          <div class="flow-name">Tokenizer</div>
+        </div>
+        <div class="flow-content">
+          <h4>Regex / BPE → Token IDs</h4>
+          <p>Split text into subword pieces, map each to an integer using the vocabulary.</p>
+          <span class="shape-badge">List[int]</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-label">
+          <div class="flow-icon badge-3">🪟</div>
+          <div class="flow-name">Windowing</div>
+        </div>
+        <div class="flow-content">
+          <h4>Sliding Window → Batches</h4>
+          <p>Create overlapping (input, target) pairs with fixed context length. Wrap in a DataLoader.</p>
+          <span class="shape-badge">[batch, seq_len]</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-label">
+          <div class="flow-icon badge-4">🔢</div>
+          <div class="flow-name">Token Embed</div>
+        </div>
+        <div class="flow-content">
+          <h4>nn.Embedding → Dense Vectors</h4>
+          <p>Look up each token ID in a learned embedding table. Integers become floating-point vectors.</p>
+          <span class="shape-badge">[batch, seq_len, d_model]</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-label">
+          <div class="flow-icon badge-5">📍</div>
+          <div class="flow-name">Pos Embed</div>
+        </div>
+        <div class="flow-content">
+          <h4>+ Positional Embeddings</h4>
+          <p>Add learned position vectors so each token carries both identity and position information.</p>
+          <span class="shape-badge">[batch, seq_len, d_model]</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-label">
+          <div class="flow-icon badge-6">⚡</div>
+          <div class="flow-name">Transformer</div>
+        </div>
+        <div class="flow-content">
+          <h4>Input Embeddings → Attention</h4>
+          <p>The final tensor is fed into the first transformer layer. Self-attention and beyond.</p>
+          <span class="shape-badge">[batch, seq_len, d_model]</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+<footer class="footer">
+  <div style="font-size:1.1rem;font-weight:800;margin-bottom:0.5rem">Tokenization Pipeline</div>
+  <div style="margin-bottom:1rem">Based on code from <em>Build a Large Language Model From Scratch</em></div>
+  <div>Wikipedia AI corpus · tiktoken (GPT-2 BPE) · PyTorch nn.Embedding</div>
+  <div style="margin-top:1rem">
+    More from the author:
+    <a href="https://medium.com/@ankithreddy653/how-machines-learn-to-read-byte-pair-encoding-explained-ba4bd39c60ee" target="_blank">BPE Deep Dive →</a>
+  </div>
+</footer>
+
+<script>
+// ══════════════════════════════════════════════
+// UTILITIES
+// ══════════════════════════════════════════════
+const COLORS = ['#7c6af7','#f76a8c','#6af7c8','#f7c46a','#a06af7','#f76ab0','#6af7a8','#f7a06a','#c46af7','#6ab0f7'];
+
+function simpleTokenize(text) {
+  return (text.match(/\w+|[^\w\s]/g) || []);
+}
+
+function makeChip(token, idx, tooltip) {
+  const c = COLORS[idx % COLORS.length];
+  const el = document.createElement('span');
+  el.className = 'token-chip';
+  el.style.cssText = `background:${c}18;border-color:${c}55;color:${c}`;
+  el.textContent = token === '' ? '∅' : token;
+  if (tooltip) el.title = tooltip;
+  el.style.animationDelay = (idx * 0.03) + 's';
+  return el;
+}
+
+// ══════════════════════════════════════════════
+// SECTION 1: REGEX
+// ══════════════════════════════════════════════
+function updateRegex() {
+  const text = document.getElementById('regexInput').value;
+  const pat = document.getElementById('regexPattern').value;
+  const container = document.getElementById('regexTokens');
+  container.innerHTML = '';
+  let tokens = [];
+  try {
+    tokens = text.match(new RegExp(pat, 'g')) || [];
+  } catch(e) {
+    tokens = simpleTokenize(text);
+  }
+  document.getElementById('regexTokenCount').textContent = `${tokens.length} tokens`;
+  tokens.forEach((t, i) => container.appendChild(makeChip(t, i, `index: ${i}`)));
+}
+
+document.getElementById('regexInput').addEventListener('input', updateRegex);
+document.getElementById('regexPattern').addEventListener('input', updateRegex);
+updateRegex();
+
+// ══════════════════════════════════════════════
+// SECTION 2: VOCABULARY
+// ══════════════════════════════════════════════
+let currentVocab = {};
+
+function updateVocab() {
+  const text = document.getElementById('vocabInput').value;
+  const tokens = simpleTokenize(text);
+  const words = [...new Set(tokens)].sort();
+  words.push('<|unk|>', '<|endoftext|>');
+  const vocab = {};
+  words.forEach((w, i) => vocab[w] = i);
+  currentVocab = vocab;
+
+  document.getElementById('vocabSize').textContent = words.length;
+  document.getElementById('tokenCount2').textContent = tokens.length;
+
+  const grid = document.getElementById('vocabGrid');
+  grid.innerHTML = '';
+  words.forEach(w => {
+    const el = document.createElement('div');
+    el.className = 'vocab-item';
+    el.innerHTML = `<span class="word">${w}</span><span class="id">${vocab[w]}</span>`;
+    grid.appendChild(el);
+  });
+}
+
+document.getElementById('vocabInput').addEventListener('input', updateVocab);
+
+document.getElementById('encodeTest').addEventListener('input', function() {
+  const word = this.value.trim();
+  const result = document.getElementById('encodeResult');
+  if (!word) { result.textContent = ''; return; }
+  const id = currentVocab[word] !== undefined
+    ? `"${word}" → ID ${currentVocab[word]}`
+    : `"${word}" → unknown → <|unk|> (ID ${currentVocab['<|unk|>'] ?? '?'})`;
+  result.textContent = id;
+  result.style.color = currentVocab[word] !== undefined ? 'var(--accent3)' : 'var(--accent4)';
+});
+
+updateVocab();
+
+// SECTION 3: BPE — interactive removed, see dedicated post
+
+// ══════════════════════════════════════════════
+// SECTION 4: SLIDING WINDOW
+// ══════════════════════════════════════════════
+// Simple fake token IDs based on char codes
+function fakeTokenize(text) {
+  const words = (text.match(/\w+|[^\w\s]/g) || []);
+  const vocab = {};
+  let idx = 0;
+  words.forEach(w => { if(!(w in vocab)) vocab[w] = idx++; });
+  return words.map(w => vocab[w]);
+}
+
+let windowTokenIds = [];
+
+function buildWindowData() {
+  const text = document.getElementById('windowText').value;
+  windowTokenIds = fakeTokenize(text);
+  updateWindow();
+}
+
+function updateWindow() {
+  const maxLen = parseInt(document.getElementById('maxLen').value);
+  const stride = parseInt(document.getElementById('strideLen').value);
+  document.getElementById('maxLenVal').textContent = maxLen;
+  document.getElementById('strideLenVal').textContent = stride;
+
+  const ids = windowTokenIds;
+  const numWindows = Math.max(0, Math.floor((ids.length - maxLen) / stride));
+  const posSlider = document.getElementById('windowPos');
+  posSlider.max = numWindows;
+  const pos = Math.min(parseInt(posSlider.value), numWindows);
+  document.getElementById('windowPosVal').textContent = pos;
+
+  const start = pos * stride;
+  const inputChunk = ids.slice(start, start + maxLen);
+  const targetChunk = ids.slice(start + 1, start + maxLen + 1);
+
+  const row = document.getElementById('windowTokenRow');
+  row.innerHTML = '';
+  ids.forEach((id, i) => {
+    const tok = document.createElement('div');
+    tok.className = 'tok';
+    tok.textContent = id;
+    if (i >= start && i < start + maxLen) tok.classList.add('in-window');
+    if (i === start + maxLen) tok.classList.add('is-target');
+    row.appendChild(tok);
+  });
+
+  document.getElementById('inputIds').innerHTML = inputChunk.map(x => `<span>${x}</span>`).join(', ');
+  document.getElementById('targetIds').innerHTML = targetChunk.map(x => `<span>${x}</span>`).join(', ');
+}
+
+document.getElementById('windowText').addEventListener('input', buildWindowData);
+document.getElementById('windowPos').addEventListener('input', updateWindow);
+document.getElementById('maxLen').addEventListener('input', updateWindow);
+document.getElementById('strideLen').addEventListener('input', updateWindow);
+buildWindowData();
+
+// ══════════════════════════════════════════════
+// SECTION 5: EMBEDDINGS
+// ══════════════════════════════════════════════
+function drawEmbedMatrix() {
+  const sampleTokens = ['Artificial','intelligence','AI','is','the','capability','of','machines','to','learn','reasoning','perception'];
+  const dims = 16;
+
+  // Random but seeded embeddings
+  function pseudoRand(seed) {
+    let x = Math.sin(seed * 9301 + 49297) * 233280;
+    return x - Math.floor(x);
+  }
+
+  const matrix = document.getElementById('embedMatrix');
+  matrix.innerHTML = '<div class="card-title" style="margin-bottom:1rem">Embedding table (vocab × dims)</div>';
+
+  sampleTokens.forEach((token, ti) => {
+    const row = document.createElement('div');
+    row.className = 'matrix-row';
+    const lbl = document.createElement('span');
+    lbl.className = 'matrix-label';
+    lbl.textContent = token;
+    row.appendChild(lbl);
+
+    for (let d = 0; d < dims; d++) {
+      const val = pseudoRand(ti * 100 + d) * 2 - 1;
+      const cell = document.createElement('div');
+      cell.className = 'matrix-cell';
+      const intensity = Math.abs(val);
+      const hue = val > 0 ? 260 : 340;
+      cell.style.background = `hsla(${hue}, 70%, 60%, ${intensity * 0.9 + 0.1})`;
+      cell.title = `${token}[${d}] = ${val.toFixed(3)}`;
+      row.appendChild(cell);
+    }
+    matrix.appendChild(row);
+  });
+}
+
+function drawEmbedChart() {
+  const canvas = document.getElementById('embedCanvas');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = 240 * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  const W = rect.width, H = 240;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Fake 2D PCA positions for tokens
+  const tokens = [
+    {name:'the', x:0.1, y:0.2, group:0},
+    {name:'a', x:0.15, y:0.15, group:0},
+    {name:'is', x:0.05, y:0.3, group:0},
+    {name:'of', x:0.2, y:0.1, group:0},
+    {name:'AI', x:0.7, y:0.3, group:1},
+    {name:'machine', x:0.75, y:0.4, group:1},
+    {name:'neural', x:0.8, y:0.25, group:1},
+    {name:'model', x:0.65, y:0.35, group:1},
+    {name:'learn', x:0.5, y:0.7, group:2},
+    {name:'train', x:0.55, y:0.65, group:2},
+    {name:'data', x:0.45, y:0.75, group:2},
+    {name:'perceive', x:0.35, y:0.6, group:2},
+  ];
+  const groupColors = ['#7c6af7','#f76a8c','#6af7c8','#f7c46a'];
+
+  // Grid
+  ctx.strokeStyle = 'rgba(42,42,64,0.5)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x <= W; x += 40) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+  for (let y = 0; y <= H; y += 40) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+  tokens.forEach(t => {
+    const px = t.x * W * 0.85 + W * 0.05;
+    const py = t.y * H * 0.8 + H * 0.1;
+    const c = groupColors[t.group];
+
+    // Glow
+    const grad = ctx.createRadialGradient(px, py, 0, px, py, 20);
+    grad.addColorStop(0, c + '44');
+    grad.addColorStop(1, 'transparent');
+    ctx.beginPath(); ctx.arc(px, py, 20, 0, Math.PI*2);
+    ctx.fillStyle = grad; ctx.fill();
+
+    // Dot
+    ctx.beginPath(); ctx.arc(px, py, 5, 0, Math.PI*2);
+    ctx.fillStyle = c; ctx.fill();
+
+    // Label
+    ctx.fillStyle = c;
+    ctx.font = `600 11px JetBrains Mono, monospace`;
+    ctx.fillText(t.name, px + 8, py + 4);
+  });
+}
+
+// ══════════════════════════════════════════════
+// SECTION 6: POSITIONAL EMBEDDINGS
+// ══════════════════════════════════════════════
+function drawPosCanvas() {
+  const canvas = document.getElementById('posCanvas');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.parentElement.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = 120 * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  const W = rect.width, H = 120;
+
+  const positions = 8, dims = Math.floor(W / 4);
+  const cellW = W / dims, cellH = H / positions;
+
+  for (let p = 0; p < positions; p++) {
+    for (let d = 0; d < dims; d++) {
+      // Sinusoidal-ish pattern
+      const val = Math.sin(p / Math.pow(10000, 2*d/dims));
+      const norm = (val + 1) / 2;
+      const r = Math.round(norm * 124 + (1-norm)*106);
+      const g = Math.round(norm * 106 + (1-norm)*247);
+      const b = Math.round(norm * 247 + (1-norm)*200);
+      ctx.fillStyle = `rgb(${r},${g},${b})`;
+      ctx.fillRect(d * cellW, p * cellH, cellW - 1, cellH - 1);
+    }
+    // Position label
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.font = `${Math.min(10, cellH*0.6)}px JetBrains Mono, monospace`;
+    ctx.fillText(`pos ${p}`, 4, p * cellH + cellH * 0.65);
+  }
+}
+
+// ══════════════════════════════════════════════
+// INTERSECTION OBSERVER + NAV
+// ══════════════════════════════════════════════
+const sections = ['s1','s2','s3','s4','s5','s6'];
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      const id = e.target.id;
+      document.querySelectorAll('.nav-step').forEach(n => {
+        n.classList.toggle('active', n.dataset.target === id);
+      });
+    }
+  });
+}, { threshold: 0.15 });
+
+sections.forEach(id => {
+  const el = document.getElementById(id);
+  if (el) observer.observe(el);
+});
+
+document.querySelectorAll('.nav-step').forEach(step => {
+  step.addEventListener('click', () => {
+    const target = document.getElementById(step.dataset.target);
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+
+// Init canvases after layout
+window.addEventListener('load', () => {
+  drawEmbedMatrix();
+  setTimeout(drawEmbedChart, 100);
+  setTimeout(drawPosCanvas, 100);
+});
+window.addEventListener('resize', () => {
+  drawEmbedChart();
+  drawPosCanvas();
+});
+</script>
+</body>
+</html>
