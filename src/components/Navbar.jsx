@@ -66,7 +66,7 @@ function Navbar({ theme, onToggleTheme }) {
     { name: 'Skills', href: '/#skills' },
     { name: 'Leadership', href: '/#leadership' },
     { name: 'Contact', href: '/#contact' },
-    { name: 'Resume', href: '/RESUME.pdf' },
+    { name: 'Resume', href: '/ANKITH%20SUBHANPURAM.pdf' },
   ]
 
   return (

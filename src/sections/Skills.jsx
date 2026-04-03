@@ -16,32 +16,37 @@ function Skills() {
     {
       title: 'Languages',
       icon: '💻',
-      skills: ['Python', 'C', 'SQL', 'Linux', 'Bash']
+      skills: ['Python', 'SQL']
     },
     {
-      title: 'ML/DL Frameworks',
+      title: 'AI / ML',
       icon: '🧠',
-      skills: ['PyTorch', 'TensorFlow', 'Keras', 'scikit-learn', 'HuggingFace', 'JAX']
+      skills: ['LLM Fine-tuning (LoRA, QLoRA, PEFT)', 'RAG Systems', 'Hybrid Retrieval (BM25 + Dense)', 'Reranking', 'Prompt Engineering (CoT, Few-Shot)', 'Conformer', 'Mamba (SSM)', 'Mixture-of-Experts (MoE)', 'Computer Vision', 'Speech Recognition', 'CTC']
     },
     {
-      title: 'LLMs & NLP',
-      icon: '📝',
-      skills: ['LLM Fine-tuning', 'RAG Systems', 'LangChain', 'LangGraph', 'NLTK', 'spaCy', 'Transformers']
+      title: 'Frameworks & Libraries',
+      icon: '📦',
+      skills: ['PyTorch', 'TensorFlow', 'HuggingFace Transformers', 'LangChain', 'LangGraph', 'FastAPI', 'Gradio', 'scikit-learn', 'Axolotl', 'DeepEval', 'FAISS', 'DiskANN', 'Pandas', 'NumPy', 'Librosa', 'NLTK', 'spaCy']
     },
     {
-      title: 'Data & Analytics',
-      icon: '📊',
-      skills: ['Pandas', 'NumPy', 'FAISS', 'Librosa', 'Jupyter', 'Data Visualization']
-    },
-    {
-      title: 'MLOps & Infrastructure',
+      title: 'AWS',
       icon: '☁️',
-      skills: ['MLflow', 'Docker', 'Git', 'Apache Airflow', 'NVIDIA DGX', 'DDP', 'FSDP']
+      skills: ['ECS / Fargate', 'ECR', 'ElastiCache (Redis)', 'OpenSearch Service', 'Bedrock', 'Secrets Manager', 'CloudWatch', 'ALB', 'WAF', 'VPC', 'IAM']
     },
     {
-      title: 'Specialized Domains',
-      icon: '🔬',
-      skills: ['Speech Recognition', 'Audio Processing', 'Computer Vision', 'Clinical AI', 'Web Scraping']
+      title: 'Azure',
+      icon: '🔷',
+      skills: ['Azure OpenAI', 'Azure AD', 'Microsoft Graph API', 'Cosmos DB', 'Key Vault', 'Container Apps Jobs', 'App Services', 'Azure File Share']
+    },
+    {
+      title: 'MLOps & HPC',
+      icon: '⚡',
+      skills: ['MLflow', 'FSDP2', 'DDP', 'NVIDIA DGX / B200', 'HiPerGator', 'Apache Airflow', 'Docker', 'Terraform', 'Git']
+    },
+    {
+      title: 'Data & Web',
+      icon: '📊',
+      skills: ['HDF5', 'Data Analytics', 'Web Scraping', 'Scrapy', 'Selenium']
     }
   ]
 
@@ -86,9 +91,9 @@ function Skills() {
         <div className="skills-tagline">
           <p>
             <span className="tagline-icon">⚡</span>
-            Currently exploring{' '}
-            <strong>multimodal clinical AI</strong> and{' '}
-            <strong>efficient LLM architectures</strong> at UF.
+            Currently fine-tuning{' '}
+            <strong>clinical LLMs on NVIDIA B200 clusters</strong> and building{' '}
+            <strong>enterprise RAG on AWS & Azure</strong> at UF.
           </p>
         </div>
       </div>

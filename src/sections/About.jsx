@@ -16,32 +16,38 @@ function About() {
   const highlights = [
     {
       icon: '🧠',
-      title: 'LLMs & NLP',
-      description: 'Fine-tuning large language models, RAG systems, and clinical AI applications'
+      title: 'LLMs & Fine-tuning',
+      description: 'Fine-tuning 120B+ models with Axolotl/LoRA on NVIDIA B200 clusters, LLM-as-Judge evaluation with DeepEval'
+    },
+    {
+      icon: '☁️',
+      title: 'Enterprise RAG',
+      description: 'Production RAG on AWS (ECS, Bedrock, OpenSearch) and Azure (Cosmos DB, DiskANN, RBAC-scoped retrieval)'
     },
     {
       icon: '🔬',
-      title: 'Research',
-      description: 'Building synthetic EHR datasets and LLM evaluation frameworks at UF'
-    },
-    {
-      icon: '🎤',
-      title: 'Speech & Audio',
-      description: 'ASR models, wav2vec2, multilingual speech recognition systems'
+      title: 'Clinical & Research AI',
+      description: 'Synthetic EHR generation, Transformer/Mamba/MoE modeling on ICU data, pathology report extraction'
     },
     {
       icon: '⚡',
-      title: 'MLOps',
-      description: 'Distributed training on DGX systems, MLflow, Docker, and scalable pipelines'
+      title: 'MLOps & HPC',
+      description: 'FSDP2 distributed training on DGX/HiPerGator, Docker, Airflow, MLflow, Terraform'
     }
   ]
 
   const experience = [
     {
       role: 'Research Assistant',
-      company: 'University of Florida - Biomedical AI Collaborative',
+      company: 'University of Florida - IC3 / PRISMAp',
       period: 'Aug 2025 - Present',
       type: 'Research'
+    },
+    {
+      role: 'AI Engineer Co-op',
+      company: 'University of Florida - IPPD | Oelrich Construction',
+      period: 'Aug 2025 - Present',
+      type: 'Industry'
     },
     {
       role: 'AI Engineer Intern',
@@ -72,26 +78,27 @@ function About() {
           {/* Left Column - Text */}
           <div className="about-text">
             <p className="about-intro">
-              I'm a <strong>Master's student in AI Systems</strong> at the University of Florida, 
-              working as a Research Assistant at the Intelligent Clinical Care Center (IC3).
+              I'm an <strong>ML Engineer and AI Researcher</strong> at the University of Florida,
+              splitting time between the Intelligent Clinical Care Center (IC3) and an enterprise
+              AI Co-op building Azure-native RAG systems.
             </p>
             
             <p>
-              My research focuses on engineering synthetic clinical datasets with frontier models, 
-              fine-tuning open-source LLMs on NVIDIA DGX systems, and building evaluation frameworks 
-              for clinical AI. I've worked on everything from speech recognition at DRDO to 
-              RAG-based chatbots and computer vision systems.
+              At IC3, I fine-tune 120B+ clinical LLMs on NVIDIA B200 clusters, evaluate synthetic
+              EHR datasets with LLM-as-Judge frameworks, and model ICU trajectories with Transformer,
+              Mamba, and MoE architectures. On the enterprise side, I architect permissions-aware
+              RAG pipelines on Azure with DiskANN, Cosmos DB, and RBAC-scoped retrieval.
             </p>
 
             <p>
-              Previously, I interned at Scholarship Auditions where I built RAG pipelines and 
-              deep learning models for music education. At DRDO's Centre for AI and Robotics, 
-              I engineered ASR models achieving 8.3 WER for low-resource languages.
+              Before UF, I shipped a production RAG chatbot on AWS (ECS/Fargate, Bedrock, OpenSearch)
+              at Scholarship Auditions and designed a Conformer-Wav2Vec2 ASR system at DRDO,
+              achieving 8.3% WER for low-resource languages on DGX hardware.
             </p>
 
             <div className="about-stats">
               <div className="stat">
-                <span className="stat-number">3.83</span>
+                <span className="stat-number">3.89</span>
                 <span className="stat-label">GPA at UF</span>
               </div>
               <div className="stat">
@@ -141,7 +148,7 @@ function About() {
             <div className="education-content">
               <h4>University of Florida</h4>
               <p className="education-degree">M.S. in Artificial Intelligence Systems</p>
-              <p className="education-details">Aug 2024 - May 2026 • GPA: 3.83/4.00</p>
+              <p className="education-details">Aug 2024 - May 2026 • GPA: 3.89/4.00</p>
             </div>
           </div>
           <div className="education-card">

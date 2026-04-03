@@ -68,22 +68,43 @@ function Projects() {
   // Project data - your actual projects from the resume!
   const projects = [
     {
-      title: 'Clinical EHR Dataset Engineering',
-      description: 'Engineered synthetic clinical datasets with frontier models at UF\'s Biomedical AI Collaborative. Built embedding-based deduplication pipeline with FAISS and Jaccard similarity, reducing dataset size by 36% and improving model accuracy by 4%.',
-      tags: ['LLMs', 'FAISS', 'HuggingFace', 'Clinical AI'],
+      title: 'Clinical Digital Twin — Synthetic EHR & LLM Fine-tuning',
+      description: 'Multi-stage prompting pipeline generating clinical Q&A from EHR data, validated with 14 LLM-as-Judge metrics (DeepEval) across 110K+ samples. Semantic dedup via ClinicalBERT/FAISS reduced redundancy 36%. Fine-tuned 120B and 70B models with Axolotl + FSDP2 on NVIDIA B200 clusters.',
+      tags: ['LLMs', 'DeepEval', 'FAISS', 'Axolotl', 'FSDP2'],
       emoji: '🏥',
       gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
     },
     {
-      title: 'LLM-as-Judge Evaluation Framework',
-      description: 'Developed an evaluation framework with 14 LLM judges to validate 110K EHR samples, assessing clinical reasoning, diagnostic accuracy, and treatment quality for fine-tuned healthcare AI systems.',
-      tags: ['LLM Evaluation', 'PyTorch', 'MLflow', 'FSDP2'],
-      emoji: '⚖️',
+      title: 'ICU EHR Deep Learning — Transformer, Mamba & MoE',
+      description: 'Engineered multimodal ICU EHR datasets by preprocessing preoperative, intraoperative, and postoperative static/temporal time-series data with unstructured clinical notes into HDF5 files. Trained and benchmarked Transformer, Mamba (state space model), and Mixture-of-Experts architectures on longitudinal ICU patient data to model complex clinical trajectories.',
+      tags: ['Mamba', 'MoE', 'Transformer', 'HDF5', 'ICU'],
+      emoji: '🧬',
+      gradient: 'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)'
+    },
+    {
+      title: 'Pathology Report Analysis',
+      description: 'Developing advanced prompting techniques — chain-of-thought, few-shot, and structured extraction — with frontier LLMs for automated analysis and structured information extraction from unstructured pathology reports.',
+      tags: ['Prompt Engineering', 'CoT', 'Few-Shot', 'Clinical NLP'],
+      emoji: '🔬',
+      gradient: 'linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%)'
+    },
+    {
+      title: 'Enterprise RBAC RAG System (Azure)',
+      description: 'Permissions-aware RAG pipeline enforcing document-level RBAC via Azure AD + Microsoft Graph API. Hybrid retrieval fusing BM25 with DiskANN-indexed dense search and cross-encoder reranking, persisted in Cosmos DB. Deployed on Azure Container Apps with nightly ingestion jobs.',
+      tags: ['Azure', 'LangGraph', 'DiskANN', 'Cosmos DB', 'RBAC'],
+      emoji: '🔐',
       gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
     },
     {
+      title: 'Production RAG Chatbot (AWS)',
+      description: 'Shipped a production RAG chatbot on AWS ECS/Fargate with Amazon Bedrock for LLM inference and OpenSearch as vector store across 20K+ documents. Hybrid retrieval + cross-encoder reranking improved relevance 25% and cut latency 35%. Session memory via ElastiCache Redis with distributed rate limiting.',
+      tags: ['AWS', 'Bedrock', 'OpenSearch', 'FastAPI', 'LangGraph'],
+      emoji: '💬',
+      gradient: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
+    },
+    {
       title: 'MSAIS Program Assistant',
-      description: 'Built a conversational AI assistant for UF\'s MSAIS program using RAG with LangChain, FAISS, and HuggingFace. Deployed on HuggingFace Spaces with Gradio interface, powered by Llama-3.3-70B.',
+      description: 'Conversational AI assistant for UF\'s MSAIS program using RAG with LangChain, FAISS, and HuggingFace. Deployed on HuggingFace Spaces with Gradio, powered by Llama-3.3-70B.',
       tags: ['RAG', 'LangChain', 'FAISS', 'Gradio'],
       emoji: '🎓',
       gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
@@ -92,24 +113,24 @@ function Projects() {
     },
     {
       title: 'OrchestrAI',
-      description: 'Autonomous assistant powered by LangGraph agents and OpenAI. Executes tasks from natural-language prompts: drafting emails, creating calendar events, posting on X. End-to-end task automation with real-time API execution.',
-      tags: ['LangGraph', 'OpenAI', 'Agents', 'Automation'],
+      description: 'Stateful multi-agent orchestration framework (LangGraph, LangChain) coordinating 7 specialized LLM agents via DAG-based conditional routing. Built autonomous email/calendar execution with OAuth 2.0, fuzzy contact resolution, and LangSmith distributed tracing.',
+      tags: ['LangGraph', 'LangSmith', 'Agents', 'OAuth 2.0'],
       emoji: '🤖',
       gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
       github: 'https://github.com/ankithreddys/OrchestrAI'
     },
     {
-      title: 'Multilingual ASR System (Wav2Vec2)',
-      description: 'Low-resource ASR system for Assamese and multilingual settings using Wav2Vec2. Focused on dataset prep, training, and WER evaluation with optimized preprocessing.',
-      tags: ['Wav2Vec2', 'ASR', 'Low-Resource', 'PyTorch'],
+      title: 'Conformer-Wav2Vec2 ASR (DRDO)',
+      description: 'Pre-trained a Conformer with self-supervised contrastive learning on defense speech corpora, coupled with Wav2Vec2 feature extraction. Multi-GPU DDP training on NVIDIA DGX cut training time 40%. BPE tokenization + CTC fine-tuning achieved 8.3% WER for low-resource languages.',
+      tags: ['Conformer', 'Wav2Vec2', 'DDP', 'CTC', 'PyTorch'],
       emoji: '🎤',
       gradient: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
       github: 'https://github.com/ankithreddys/wav2_vec2_low_resource'
     },
     {
       title: 'Virtual Surya Namaskar Coach',
-      description: 'Advanced tracking system with OpenCV and TensorFlow to analyze participant movements during online yoga classes. Identified common practitioner errors to enhance instructional support materials.',
-      tags: ['OpenCV', 'TensorFlow', 'Pose Estimation', 'Computer Vision'],
+      description: 'Real-time yoga posture analysis using OpenCV, TensorFlow, and MediaPipe for full-body landmark tracking and joint-angle extraction. Classifies 12 poses with sub-100ms inference; pose-correction pipeline detects per-joint deviations in real time.',
+      tags: ['MediaPipe', 'TensorFlow', 'OpenCV', 'Pose Estimation'],
       emoji: '🧘',
       gradient: 'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)',
       github: 'https://github.com/ankithreddys/Suryanamaskar'
@@ -126,7 +147,7 @@ function Projects() {
             Featured <span className="gradient-text">Projects</span>
           </h2>
           <p className="section-subtitle">
-            Research and engineering projects spanning clinical AI, NLP, speech recognition, and computer vision.
+            Research and engineering projects spanning clinical AI, enterprise RAG, cloud-native ML, speech recognition, and computer vision.
           </p>
         </div>
 
