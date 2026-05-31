@@ -235,10 +235,29 @@ def _llm_rerank_candidates(question: str, candidates: list[Document], settings: 
 def _hybrid_rerank_retrieve(question: str, vectorstore: Any, settings: Any) -> list[Document]:
   query_tokens = set(_tokenize(question))
 
-  dense_results = vectorstore.similarity_search_with_relevance_scores(
+  dense_raw_results = vectorstore.similarity_search_with_score(
     question,
     k=_DENSE_TOP_K,
   )
+
+  # Chroma/LangChain can return backend-specific score ranges. Normalize explicitly
+  # to [0, 1] where 1 means best match, so fusion stays stable across providers.
+  distances = [float(score) for _, score in dense_raw_results]
+  if distances:
+    min_distance = min(distances)
+    max_distance = max(distances)
+  else:
+    min_distance = 0.0
+    max_distance = 1.0
+
+  dense_results: list[tuple[Document, float]] = []
+  for doc, distance in dense_raw_results:
+    distance_value = float(distance)
+    if max_distance == min_distance:
+      normalized_relevance = 1.0
+    else:
+      normalized_relevance = (max_distance - distance_value) / (max_distance - min_distance)
+    dense_results.append((doc, max(0.0, min(1.0, normalized_relevance))))
 
   candidate_map: dict[str, dict[str, Any]] = {}
   max_dense = max((score for _, score in dense_results), default=0.0)
