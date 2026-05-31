@@ -1,11 +1,13 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import logging
+import re
 from typing import Any, TypedDict
 
+from langchain_core.documents import Document
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
-from langgraph.graph import StateGraph, END
+from langgraph.graph import END, StateGraph
 
 from app.config import get_settings
 from app.services.vectorstore import get_vectorstore
@@ -106,6 +108,14 @@ SYSTEM_PROMPT = (
 )
 
 
+_TOKEN_RE = re.compile(r"[a-z0-9]+")
+_DENSE_TOP_K = 10
+_LEXICAL_TOP_K = 10
+_DEFAULT_FINAL_TOP_K = 4
+_DEFAULT_RERANK_TOP_K = 6
+_RERANK_SCORE_RE = re.compile(r"^\s*(\d+)\s*[:|-]\s*([0-9]{1,3}(?:\.\d+)?)\s*$")
+
+
 def _build_messages(user_message: str, history: list[dict], context: str) -> list:
   messages: list[Any] = [SystemMessage(content=SYSTEM_PROMPT)]
 
@@ -126,10 +136,190 @@ def _build_messages(user_message: str, history: list[dict], context: str) -> lis
   return messages
 
 
+def _tokenize(text: str) -> list[str]:
+  return _TOKEN_RE.findall((text or "").lower())
+
+
+def _doc_key(doc: Document) -> str:
+  source = doc.metadata.get("source", "") if doc.metadata else ""
+  return f"{source}::{hash(doc.page_content)}"
+
+
+def _lexical_score(query_tokens: set[str], content: str) -> float:
+  if not query_tokens or not content:
+    return 0.0
+
+  doc_tokens = _tokenize(content)
+  if not doc_tokens:
+    return 0.0
+
+  doc_token_set = set(doc_tokens)
+  overlap_ratio = len(query_tokens & doc_token_set) / len(query_tokens)
+  density = sum(1 for token in doc_tokens if token in query_tokens) / len(doc_tokens)
+  return (0.7 * overlap_ratio) + (0.3 * density)
+
+
+def _all_docs_from_collection(vectorstore: Any) -> list[Document]:
+  raw = vectorstore._collection.get(include=["documents", "metadatas"])
+  documents = raw.get("documents", [])
+  metadatas = raw.get("metadatas", [])
+
+  docs: list[Document] = []
+  for idx, content in enumerate(documents):
+    if not content:
+      continue
+    metadata = metadatas[idx] if idx < len(metadatas) else {}
+    docs.append(Document(page_content=content, metadata=metadata or {}))
+  return docs
+
+
+def _llm_rerank_candidates(question: str, candidates: list[Document], settings: Any) -> list[Document]:
+  if not candidates:
+    return candidates
+
+  reranker_model = settings.rag_llm_reranker_model or settings.openai_model
+  llm = ChatOpenAI(
+    model=reranker_model,
+    temperature=0,
+    openai_api_key=settings.chat_api_key,
+    openai_api_base=settings.chat_base_url,
+  )
+
+  candidate_lines = []
+  for idx, doc in enumerate(candidates):
+    source = doc.metadata.get("source", "") if doc.metadata else ""
+    snippet = re.sub(r"\s+", " ", doc.page_content.strip())[:1200]
+    candidate_lines.append(f"[{idx}] source={source} text={snippet}")
+
+  prompt = (
+    "You are a retrieval reranker. Rank each candidate chunk for answering the user question.\n"
+    "Question:\n"
+    f"{question}\n\n"
+    "Candidates:\n"
+    f"{chr(10).join(candidate_lines)}\n\n"
+    "Return exactly one line per candidate in this format only:\n"
+    "<id>:<score>\n"
+    "Where id is the candidate id and score is relevance 0-100.\n"
+    "No extra text."
+  )
+
+  try:
+    response = llm.invoke([HumanMessage(content=prompt)])
+    content = (response.content or "").strip()
+  except Exception:
+    logger.exception("LLM reranker invocation failed; falling back to hybrid ranking")
+    return candidates
+
+  score_map: dict[int, float] = {}
+  for line in content.splitlines():
+    match = _RERANK_SCORE_RE.match(line)
+    if not match:
+      continue
+    idx = int(match.group(1))
+    score = max(0.0, min(100.0, float(match.group(2))))
+    if 0 <= idx < len(candidates):
+      score_map[idx] = score
+
+  if not score_map:
+    logger.warning("LLM reranker returned unparsable output; using hybrid ranking")
+    return candidates
+
+  ranked_indexes = sorted(
+    range(len(candidates)),
+    key=lambda idx: score_map.get(idx, -1.0),
+    reverse=True,
+  )
+  return [candidates[idx] for idx in ranked_indexes]
+
+
+def _hybrid_rerank_retrieve(question: str, vectorstore: Any, settings: Any) -> list[Document]:
+  query_tokens = set(_tokenize(question))
+
+  dense_results = vectorstore.similarity_search_with_relevance_scores(
+    question,
+    k=_DENSE_TOP_K,
+  )
+
+  candidate_map: dict[str, dict[str, Any]] = {}
+  max_dense = max((score for _, score in dense_results), default=0.0)
+  dense_ranks: dict[str, int] = {}
+
+  for rank, (doc, score) in enumerate(dense_results, start=1):
+    key = _doc_key(doc)
+    dense_ranks[key] = rank
+    candidate_map[key] = {
+      "doc": doc,
+      "dense": max(score, 0.0),
+      "lexical": 0.0,
+    }
+
+  lexical_scores: list[tuple[Document, float]] = []
+  for doc in _all_docs_from_collection(vectorstore):
+    score = _lexical_score(query_tokens, doc.page_content)
+    if score > 0:
+      lexical_scores.append((doc, score))
+
+  lexical_scores.sort(key=lambda item: item[1], reverse=True)
+  lexical_top = lexical_scores[:_LEXICAL_TOP_K]
+  max_lexical = max((score for _, score in lexical_top), default=0.0)
+  lexical_ranks: dict[str, int] = {}
+
+  for rank, (doc, score) in enumerate(lexical_top, start=1):
+    key = _doc_key(doc)
+    lexical_ranks[key] = rank
+    if key not in candidate_map:
+      candidate_map[key] = {
+        "doc": doc,
+        "dense": 0.0,
+        "lexical": score,
+      }
+    else:
+      candidate_map[key]["lexical"] = score
+
+  ranked: list[tuple[Document, float]] = []
+  for key, item in candidate_map.items():
+    dense_norm = item["dense"] / max_dense if max_dense > 0 else 0.0
+    lexical_norm = item["lexical"] / max_lexical if max_lexical > 0 else 0.0
+
+    # Reciprocal rank fusion keeps ranking stable across dense + lexical retrieval.
+    dense_rrf = 1 / (60 + dense_ranks.get(key, 999))
+    lexical_rrf = 1 / (60 + lexical_ranks.get(key, 999))
+
+    hybrid_score = (0.5 * dense_norm) + (0.35 * lexical_norm) + (0.15 * (dense_rrf + lexical_rrf))
+
+    snippet_tokens = set(_tokenize(item["doc"].page_content[:1200]))
+    coverage = len(query_tokens & snippet_tokens) / max(len(query_tokens), 1)
+    rerank_score = (0.8 * hybrid_score) + (0.2 * coverage)
+    ranked.append((item["doc"], rerank_score))
+
+  ranked.sort(key=lambda item: item[1], reverse=True)
+  base_ranked_docs = [doc for doc, _ in ranked]
+
+  final_top_k = max(1, settings.rag_final_top_k or _DEFAULT_FINAL_TOP_K)
+  llm_candidate_top_k = max(
+    final_top_k,
+    settings.rag_llm_reranker_top_k or _DEFAULT_RERANK_TOP_K,
+  )
+
+  if settings.rag_enable_llm_reranker and base_ranked_docs:
+    rerank_candidates = base_ranked_docs[:llm_candidate_top_k]
+    reranked = _llm_rerank_candidates(question, rerank_candidates, settings)
+    reranked_keys = {_doc_key(doc) for doc in reranked}
+    remaining = [doc for doc in base_ranked_docs if _doc_key(doc) not in reranked_keys]
+    final_ranked_docs = reranked + remaining
+    logger.info("LLM reranker enabled; reranked %s candidates", len(rerank_candidates))
+  else:
+    final_ranked_docs = base_ranked_docs
+
+  return final_ranked_docs[:final_top_k]
+
+
 def _retrieve(state: RagState) -> RagState:
-  retriever = get_vectorstore().as_retriever(search_kwargs={"k": 4})
-  docs = retriever.invoke(state["question"])
-  context = "\n\n".join([doc.page_content for doc in docs])
+  settings = get_settings()
+  vectorstore = get_vectorstore()
+  docs = _hybrid_rerank_retrieve(state["question"], vectorstore, settings)
+  logger.info("Hybrid retrieval selected %s chunks", len(docs))
+  context = "\n\n".join(doc.page_content for doc in docs)
   return {**state, "context": context}
 
 
