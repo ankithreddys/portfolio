@@ -71,12 +71,12 @@ SYSTEM_PROMPT = (
   "When the visitor sends a greeting (\"hi\", \"hey\", \"hello\", \"yo\", "
   "\"what's up\", etc.):\n"
   "- Open with a warm one-liner welcome.\n"
-  "- Follow with ONE or TWO specific, impressive highlights pulled from the "
-  "retrieved context (a metric, a project name, a technology). Pick a "
-  "DIFFERENT highlight each time so greetings never feel copy-pasted.\n"
+  "- Follow with a HIGH-LEVEL intro: role, focus areas, and one broad credibility signal.\n"
+  "- Do NOT deep-dive into a single project during greetings unless the visitor asks.\n"
+  "- Keep greetings varied so they do not feel copy-pasted.\n"
   "- Close by inviting them to ask about something specific — his research, "
   "a project, his skills, etc.\n"
-  "- Total length: 3-4 sentences. No more.\n\n"
+  "- Total length: 2-3 sentences. No more.\n\n"
 
   "============================================================\n"
   "RULE 5 — SECURITY & ANTI-JAILBREAK\n"
@@ -114,6 +114,10 @@ _LEXICAL_TOP_K = 10
 _DEFAULT_FINAL_TOP_K = 4
 _DEFAULT_RERANK_TOP_K = 6
 _RERANK_SCORE_RE = re.compile(r"^\s*(\d+)\s*[:|-]\s*([0-9]{1,3}(?:\.\d+)?)\s*$")
+_GREETING_RE = re.compile(
+  r"^\s*(hi|hello|hey|yo|sup|what'?s up|good (morning|afternoon|evening)|hola)\s*[!.?]*\s*$",
+  re.IGNORECASE,
+)
 
 
 def _build_messages(user_message: str, history: list[dict], context: str) -> list:
@@ -138,6 +142,21 @@ def _build_messages(user_message: str, history: list[dict], context: str) -> lis
 
 def _tokenize(text: str) -> list[str]:
   return _TOKEN_RE.findall((text or "").lower())
+
+
+def _is_short_or_greeting_query(question: str) -> bool:
+  if _GREETING_RE.match(question or ""):
+    return True
+  return len(_tokenize(question)) <= 2
+
+
+def _build_retrieval_query(question: str) -> str:
+  if _is_short_or_greeting_query(question):
+    return (
+      "Ankith profile summary experience skills research focus "
+      "education impact projects overview"
+    )
+  return question
 
 
 def _doc_key(doc: Document) -> str:
@@ -336,8 +355,14 @@ def _hybrid_rerank_retrieve(question: str, vectorstore: Any, settings: Any) -> l
 def _retrieve(state: RagState) -> RagState:
   settings = get_settings()
   vectorstore = get_vectorstore()
-  docs = _hybrid_rerank_retrieve(state["question"], vectorstore, settings)
-  logger.info("Hybrid retrieval selected %s chunks", len(docs))
+  question = state["question"]
+  retrieval_query = _build_retrieval_query(question)
+  docs = _hybrid_rerank_retrieve(retrieval_query, vectorstore, settings)
+  logger.info(
+    "Hybrid retrieval selected %s chunks (query_mode=%s)",
+    len(docs),
+    "broad_intro" if retrieval_query != question else "direct",
+  )
   context = "\n\n".join(doc.page_content for doc in docs)
   return {**state, "context": context}
 
