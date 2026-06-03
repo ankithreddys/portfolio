@@ -1,4 +1,5 @@
 from functools import lru_cache
+import re
 from pathlib import Path
 
 from pydantic import Field
@@ -82,6 +83,12 @@ class Settings(BaseSettings):
   @property
   def resolved_contact_recipient(self) -> str:
     return self.contact_recipient or self.smtp_user
+
+  @property
+  def vectorstore_collection_name(self) -> str:
+    model = self.openai_embedding_model or "default"
+    slug = re.sub(r"[^a-zA-Z0-9]+", "_", model).strip("_").lower()
+    return f"portfolio_docs_{slug or 'default'}"
 
   class Config:
     env_file = ".env"

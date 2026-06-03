@@ -18,7 +18,7 @@ def get_vectorstore() -> Chroma:
     check_embedding_ctx_length=False,
   )
   return Chroma(
-    collection_name="portfolio_docs",
+    collection_name=settings.vectorstore_collection_name,
     persist_directory=settings.resolved_chroma_dir,
     embedding_function=embeddings,
   )

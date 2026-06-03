@@ -119,6 +119,17 @@ python scripts/ingest.py
 
 This builds the Chroma index used by the chatbot.
 
+### Railway deployment
+
+The backend includes `backend/railway.toml` so Railway can run the indexing step and then start the API in one container process:
+
+```toml
+[deploy]
+startCommand = "python scripts/ingest.py && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+```
+
+When deploying the backend as a Railway monorepo service, set the service root directory to `/backend`.
+
 ## Build
 
 ```bash
