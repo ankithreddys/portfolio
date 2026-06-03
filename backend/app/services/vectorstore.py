@@ -15,6 +15,7 @@ def get_vectorstore() -> Chroma:
     model=settings.openai_embedding_model,
     openai_api_key=settings.embedding_api_key,
     openai_api_base=settings.embedding_base_url,
+    check_embedding_ctx_length=False,
   )
   return Chroma(
     collection_name="portfolio_docs",
