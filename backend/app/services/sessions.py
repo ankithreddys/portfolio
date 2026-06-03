@@ -24,9 +24,20 @@ def _prune_expired() -> None:
     _SESSIONS.pop(sid, None)
 
 
+def _enforce_session_capacity() -> None:
+  settings = get_settings()
+  max_entries = max(1, settings.session_max_entries)
+  if len(_SESSIONS) < max_entries:
+    return
+
+  oldest_session_id = min(_SESSIONS, key=lambda sid: _SESSIONS[sid]["expires_at"])
+  _SESSIONS.pop(oldest_session_id, None)
+
+
 def get_history(session_id: str) -> list[dict]:
   _prune_expired()
   if session_id not in _SESSIONS:
+    _enforce_session_capacity()
     _SESSIONS[session_id] = {
       "messages": [],
       "expires_at": _now() + _ttl_delta(),

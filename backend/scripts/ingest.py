@@ -49,6 +49,12 @@ def _split_documents(docs: list[tuple[str, str]]) -> list[Document]:
   return chunks
 
 
+def _collection_get(vectorstore, **kwargs):
+  if hasattr(vectorstore, "get"):
+    return vectorstore.get(**kwargs)
+  return vectorstore._collection.get(**kwargs)
+
+
 def main() -> None:
   settings = get_settings()
   docs_dir = Path(settings.resolved_docs_dir)
@@ -60,7 +66,6 @@ def main() -> None:
     return
 
   vectorstore = get_vectorstore()
-  collection = vectorstore._collection
 
   chunks = _split_documents(docs)
   chunks_by_source: dict[str, list[Document]] = {}
@@ -73,7 +78,7 @@ def main() -> None:
 
   for source, source_chunks in chunks_by_source.items():
     file_hash = source_chunks[0].metadata["file_hash"]
-    existing = collection.get(where={"source": source})
+    existing = _collection_get(vectorstore, where={"source": source})
     existing_ids = existing.get("ids", [])
     existing_hashes = {
       meta.get("file_hash")
@@ -86,7 +91,7 @@ def main() -> None:
       continue
 
     if existing_ids:
-      collection.delete(ids=existing_ids)
+      vectorstore.delete(ids=existing_ids)
       deleted += len(existing_ids)
 
     to_add.extend(source_chunks)

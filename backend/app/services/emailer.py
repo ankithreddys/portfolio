@@ -6,19 +6,14 @@ import socket
 from email.message import EmailMessage
 
 from app.config import get_settings
+from app.services.security import mask_email
 
 logger = logging.getLogger(__name__)
 
 
-def _mask_email(value: str) -> str:
-  if "@" not in value:
-    return value
-  local, domain = value.split("@", 1)
-  if len(local) <= 2:
-    masked_local = "*" * len(local)
-  else:
-    masked_local = f"{local[0]}***{local[-1]}"
-  return f"{masked_local}@{domain}"
+def _sanitize_header_value(value: str, fallback: str = "") -> str:
+  sanitized = (value or "").replace("\r", " ").replace("\n", " ").strip()
+  return sanitized or fallback
 
 
 def send_contact_email(name: str, email: str, message: str) -> None:
@@ -30,10 +25,12 @@ def send_contact_email(name: str, email: str, message: str) -> None:
   if not recipient:
     raise RuntimeError("CONTACT_RECIPIENT is not configured.")
 
-  subject = f"Portfolio contact from {name}"
+  safe_name = _sanitize_header_value(name, "anonymous")
+  safe_email = _sanitize_header_value(email, "unknown")
+  subject = f"Portfolio contact from {safe_name}"
   body = (
-    f"Name: {name}\n"
-    f"Email: {email}\n\n"
+    f"Name: {safe_name}\n"
+    f"Email: {safe_email}\n\n"
     f"Message:\n{message}\n"
   )
 
@@ -47,9 +44,9 @@ def send_contact_email(name: str, email: str, message: str) -> None:
     "SMTP send start: host=%s port=%s smtp_user=%s recipient=%s sender_email=%s",
     settings.smtp_host,
     settings.smtp_port,
-    _mask_email(settings.smtp_user),
-    _mask_email(recipient),
-    _mask_email(email),
+    mask_email(settings.smtp_user),
+    mask_email(recipient),
+    mask_email(safe_email),
   )
 
   try:
@@ -73,15 +70,15 @@ def send_contact_email(name: str, email: str, message: str) -> None:
         server.send_message(msg)
   except smtplib.SMTPAuthenticationError as exc:
     logger.exception("SMTP authentication failed")
-    raise RuntimeError(f"SMTP authentication failed: {exc}") from exc
+    raise RuntimeError("SMTP authentication failed.") from exc
   except smtplib.SMTPConnectError as exc:
     logger.exception("SMTP connect error")
-    raise RuntimeError(f"SMTP connect error: {exc}") from exc
+    raise RuntimeError("SMTP connect error.") from exc
   except (smtplib.SMTPServerDisconnected, socket.timeout, TimeoutError, OSError) as exc:
     logger.exception("SMTP connection/timing failure")
-    raise RuntimeError(f"SMTP connection/timing failure: {exc}") from exc
+    raise RuntimeError("SMTP connection/timing failure.") from exc
   except smtplib.SMTPException as exc:
     logger.exception("SMTP protocol failure")
-    raise RuntimeError(f"SMTP protocol failure: {exc}") from exc
+    raise RuntimeError("SMTP protocol failure.") from exc
 
   logger.info("SMTP send completed successfully")

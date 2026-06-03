@@ -23,12 +23,20 @@ class Settings(BaseSettings):
     env="CORS_ORIGINS",
   )
   session_ttl_minutes: int = Field(default=120, env="SESSION_TTL_MINUTES")
+  session_max_entries: int = Field(default=1000, env="SESSION_MAX_ENTRIES")
   chroma_persist_dir: str = Field(default="", env="CHROMA_PERSIST_DIR")
   docs_dir: str = Field(default="", env="DOCS_DIR")
   rag_enable_llm_reranker: bool = Field(default=False, env="RAG_ENABLE_LLM_RERANKER")
   rag_llm_reranker_model: str = Field(default="", env="RAG_LLM_RERANKER_MODEL")
   rag_llm_reranker_top_k: int = Field(default=6, env="RAG_LLM_RERANKER_TOP_K")
   rag_final_top_k: int = Field(default=4, env="RAG_FINAL_TOP_K")
+  chat_rate_limit_max: int = Field(default=12, env="CHAT_RATE_LIMIT_MAX")
+  chat_rate_limit_window_seconds: int = Field(default=60, env="CHAT_RATE_LIMIT_WINDOW_SECONDS")
+  contact_rate_limit_max: int = Field(default=3, env="CONTACT_RATE_LIMIT_MAX")
+  contact_rate_limit_window_seconds: int = Field(
+    default=3600,
+    env="CONTACT_RATE_LIMIT_WINDOW_SECONDS",
+  )
   smtp_host: str = Field(default="smtp.gmail.com", env="SMTP_HOST")
   smtp_port: int = Field(default=465, env="SMTP_PORT")
   smtp_user: str = Field(default="", env="SMTP_USER")
