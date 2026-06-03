@@ -19,6 +19,17 @@ class Settings(BaseSettings):
     default="text-embedding-3-small",
     env="OPENAI_EMBEDDING_MODEL",
   )
+  navigator_base_url: str = Field(default="", env="NAVIGATOR_BASE_URL")
+  navigator_api_key: str = Field(default="", env="NAVIGATOR_API_KEY")
+  navigator_stt_model: str = Field(default="whisper-large-v3", env="NAVIGATOR_STT_MODEL")
+  navigator_llm_model: str = Field(default="gpt-oss-120b", env="NAVIGATOR_LLM_MODEL")
+  navigator_tts_model: str = Field(default="kokoro", env="NAVIGATOR_TTS_MODEL")
+  navigator_tts_voice: str = Field(default="af_heart", env="NAVIGATOR_TTS_VOICE")
+  navigator_tts_sample_rate: int = Field(default=24000, env="NAVIGATOR_TTS_SAMPLE_RATE")
+  livekit_url: str = Field(default="", env="LIVEKIT_URL")
+  livekit_api_key: str = Field(default="", env="LIVEKIT_API_KEY")
+  livekit_api_secret: str = Field(default="", env="LIVEKIT_API_SECRET")
+  livekit_agent_name: str = Field(default="portfolio-agent", env="LIVEKIT_AGENT_NAME")
   cors_origins: str = Field(
     default="http://localhost:5173,http://127.0.0.1:5173",
     env="CORS_ORIGINS",
@@ -66,19 +77,19 @@ class Settings(BaseSettings):
 
   @property
   def chat_api_key(self) -> str:
-    return self.openai_chat_api_key or self.openai_api_key
+    return self.openai_chat_api_key or self.navigator_api_key or self.openai_api_key
 
   @property
   def embedding_api_key(self) -> str:
-    return self.openai_embedding_api_key or self.openai_api_key
+    return self.openai_embedding_api_key or self.navigator_api_key or self.openai_api_key
 
   @property
   def chat_base_url(self) -> str:
-    return self.openai_chat_base_url or self.openai_base_url
+    return self.openai_chat_base_url or self.navigator_base_url or self.openai_base_url
 
   @property
   def embedding_base_url(self) -> str:
-    return self.openai_embedding_base_url or self.openai_base_url
+    return self.openai_embedding_base_url or self.navigator_base_url or self.openai_base_url
 
   @property
   def resolved_contact_recipient(self) -> str:

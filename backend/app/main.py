@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
 from app.routes.chat import router as chat_router
+from app.routes.livekit import router as livekit_router
 
 
 def create_app() -> FastAPI:
@@ -30,6 +31,7 @@ def create_app() -> FastAPI:
     return response
 
   app.include_router(chat_router, prefix="/api")
+  app.include_router(livekit_router, prefix="/api")
 
   @app.get("/api/health")
   def health() -> dict:

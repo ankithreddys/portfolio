@@ -9,5 +9,8 @@ langchain-openai
 langchain-text-splitters
 langgraph
 langchain-chroma
+livekit-api
+livekit-agents[openai,silero]
+python-dotenv
 uvicorn[standard]
 gunicorn

@@ -6,6 +6,7 @@ A personal portfolio website with a built-in RAG chatbot and contact form. The f
 
 - Portfolio sections: hero, about, projects, skills, leadership, blogs, and contact
 - RAG chatbot widget ("Prompt-to-Ankith") with session memory
+- LiveKit voice mode that shares the same RAG brain as text chat
 - Contact form that delivers emails via SMTP
 - Local document ingestion for the chatbot knowledge base
 - Resume file served from `frontend/public/ANKITH SUBHANPURAM.pdf`
@@ -13,8 +14,8 @@ A personal portfolio website with a built-in RAG chatbot and contact form. The f
 ## Tech Stack
 
 - Frontend: React, Vite, React Router
-- Backend: FastAPI, LangChain, LangGraph, ChromaDB
-- AI: OpenAI-compatible chat + embeddings
+- Backend: FastAPI, LangChain, LangGraph, ChromaDB, LiveKit Agents
+- AI: OpenAI-compatible chat, embeddings, STT, and TTS
 
 ## Project Structure
 
@@ -43,7 +44,7 @@ npm run dev
 
 The app runs at `http://localhost:5173`.
 
-### 2) Backend (RAG + contact API)
+### 2) Backend (RAG + contact API + LiveKit agent)
 
 Create and activate a virtual environment (Windows PowerShell):
 
@@ -64,6 +65,12 @@ uvicorn app.main:app --reload --port 8000
 ```
 
 The API runs at `http://localhost:8000` with a health check at `/api/health`.
+
+If you also want the voice agent locally, run the LiveKit worker in a second terminal:
+
+```bash
+python scripts/livekit_agent.py
+```
 
 ### 3) Frontend API Base URL (optional)
 
@@ -88,6 +95,17 @@ OPENAI_CHAT_BASE_URL=https://api.ai.it.ufl.edu
 OPENAI_EMBEDDING_BASE_URL=https://api.ai.it.ufl.edu
 OPENAI_MODEL=gpt-oss-20b
 OPENAI_EMBEDDING_MODEL=sfr-embedding-mistral
+NAVIGATOR_BASE_URL=https://api.ai.it.ufl.edu
+NAVIGATOR_API_KEY=your-navigator-api-key
+NAVIGATOR_STT_MODEL=whisper-large-v3
+NAVIGATOR_LLM_MODEL=gpt-oss-120b
+NAVIGATOR_TTS_MODEL=kokoro
+NAVIGATOR_TTS_VOICE=af_heart
+NAVIGATOR_TTS_SAMPLE_RATE=24000
+LIVEKIT_URL=wss://your-project.livekit.cloud
+LIVEKIT_API_KEY=your-livekit-api-key
+LIVEKIT_API_SECRET=your-livekit-api-secret
+LIVEKIT_AGENT_NAME=portfolio-agent
 RAG_ENABLE_LLM_RERANKER=false
 RAG_LLM_RERANKER_MODEL=
 RAG_LLM_RERANKER_TOP_K=6
@@ -107,6 +125,7 @@ CONTACT_RECIPIENT=you@example.com
 
 Notes:
 - `OPENAI_CHAT_API_KEY` and `OPENAI_EMBEDDING_API_KEY` can be omitted if `OPENAI_API_KEY` is set.
+- `NAVIGATOR_API_KEY` is used by the LiveKit agent and can also serve as the shared API key for the OpenAI-compatible backend calls.
 - `CONTACT_RECIPIENT` defaults to `SMTP_USER` if not set.
 
 ## Chatbot Data
@@ -118,6 +137,10 @@ python scripts/ingest.py
 ```
 
 This builds the Chroma index used by the chatbot.
+
+### Voice mode
+
+The frontend can request a LiveKit room token from the backend and connect to the voice assistant using the same session ID as the text chat. The LiveKit worker transcribes speech with UF Navigator STT, reuses the shared RAG pipeline for answers, and speaks back with the custom Kokoro TTS adapter.
 
 ### Railway deployment
 

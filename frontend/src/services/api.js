@@ -29,3 +29,22 @@ export const sendContactMessage = async ({ name, email, message }) => {
 
   return response.json()
 }
+
+export const fetchLiveKitToken = async ({ sessionId, identity, name }) => {
+  const response = await fetch(`${API_BASE_URL}/api/livekit/token`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      session_id: sessionId,
+      identity,
+      name,
+    }),
+  })
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}))
+    throw new Error(error.detail || 'LiveKit token request failed')
+  }
+
+  return response.json()
+}

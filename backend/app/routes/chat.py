@@ -4,8 +4,7 @@ from fastapi import APIRouter, HTTPException, Request, status
 from pydantic import BaseModel, Field
 
 from app.services.emailer import send_contact_email
-from app.services.rag import generate_reply
-from app.services.sessions import append_message, get_history
+from app.services.conversation import generate_and_store_reply
 from app.config import get_settings
 from app.services.security import enforce_rate_limit, mask_email
 
@@ -51,17 +50,13 @@ def chat(request: ChatRequest, http_request: Request) -> ChatResponse:
   except PermissionError as exc:
     raise HTTPException(status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail=str(exc)) from exc
 
-  history = get_history(request.session_id)
-  response = generate_reply(request.message, history)
+  response = generate_and_store_reply(request.session_id, request.message)
 
   if response is None:
     raise HTTPException(
       status_code=500,
       detail="Unable to generate a response right now.",
     )
-
-  append_message(request.session_id, "user", request.message)
-  append_message(request.session_id, "assistant", response["reply"])
 
   return ChatResponse(reply=response["reply"])
 

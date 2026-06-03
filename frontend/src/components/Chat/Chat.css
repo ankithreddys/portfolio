@@ -14,6 +14,78 @@
   z-index: 1;
 }
 
+.chat-voice-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--bg-tertiary);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.chat-voice-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.chat-voice-title {
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.chat-voice-subtitle {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.chat-voice-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.chat-voice-button {
+  background: var(--accent-gradient);
+  border: none;
+  color: var(--text-primary);
+  border-radius: 999px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.chat-voice-button.secondary {
+  background: transparent;
+  border: 1px solid var(--bg-tertiary);
+}
+
+.chat-voice-button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.chat-voice-room {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.chat-voice-status {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.chat-voice-status.active {
+  color: var(--accent-primary);
+}
+
 .chat-window {
   min-height: 280px;
   max-height: 420px;
