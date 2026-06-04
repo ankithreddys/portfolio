@@ -34,7 +34,7 @@ def _start_livekit_worker() -> None:
   env = os.environ.copy()
   env.setdefault("PYTHONUNBUFFERED", "1")
   _livekit_worker_process = subprocess.Popen(
-    [sys.executable, str(script_path)],
+    [sys.executable, str(script_path), "start"],
     cwd=str(script_path.parent.parent),
     env=env,
   )

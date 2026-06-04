@@ -22,7 +22,6 @@ load_dotenv(str(BACKEND_ROOT / ".env"))
 load_dotenv(str(BACKEND_ROOT / ".env.local"))
 
 settings = get_settings()
-AGENT_NAME = settings.livekit_agent_name
 
 
 def _build_tts() -> UFKokoroTTS:
@@ -69,7 +68,7 @@ def _queue_response(session: AgentSession, room_name: str, message: str) -> None
 server = AgentServer()
 
 
-@server.rtc_session(agent_name=AGENT_NAME)
+@server.rtc_session()
 async def entrypoint(ctx: agents.JobContext):
   if not settings.livekit_url:
     raise RuntimeError("LIVEKIT_URL is not configured.")
@@ -120,8 +119,6 @@ async def entrypoint(ctx: agents.JobContext):
     room=ctx.room,
     agent=agent,
   )
-
-  await ctx.connect()
 
   await session.say(
     "Hey, I'm Ankith. Continue talking with me in voice mode.",
