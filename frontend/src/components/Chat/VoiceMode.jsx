@@ -4,8 +4,9 @@ import {
   RoomAudioRenderer,
   StartAudio,
   TrackToggle,
+  useRoomContext,
 } from '@livekit/components-react'
-import { Track } from 'livekit-client'
+import { RoomEvent, Track } from 'livekit-client'
 import { fetchLiveKitToken } from '../../services/api'
 
 const createSessionId = () => {
@@ -22,11 +23,42 @@ const microphoneIcon = (
   </svg>
 )
 
+function GreetingPlaybackListener({ onGreetingComplete }) {
+  const room = useRoomContext()
+  const heardAgentRef = useRef(false)
+  const finishTimerRef = useRef(null)
+
+  useEffect(() => {
+    const handleActiveSpeakers = (speakers) => {
+      const agentIsSpeaking = speakers.some((participant) => !participant.isLocal)
+
+      if (agentIsSpeaking) {
+        heardAgentRef.current = true
+        window.clearTimeout(finishTimerRef.current)
+        return
+      }
+
+      if (heardAgentRef.current) {
+        finishTimerRef.current = window.setTimeout(onGreetingComplete, 450)
+      }
+    }
+
+    room.on(RoomEvent.ActiveSpeakersChanged, handleActiveSpeakers)
+    return () => {
+      room.off(RoomEvent.ActiveSpeakersChanged, handleActiveSpeakers)
+      window.clearTimeout(finishTimerRef.current)
+    }
+  }, [onGreetingComplete, room])
+
+  return null
+}
+
 function VoiceMode({ sessionId, mode, onChooseVoice, onChooseChat, onBack }) {
   const [voiceError, setVoiceError] = useState('')
   const [voiceToken, setVoiceToken] = useState('')
   const [voiceUrl, setVoiceUrl] = useState('')
   const [roomConnected, setRoomConnected] = useState(false)
+  const [greetingComplete, setGreetingComplete] = useState(false)
   const [voiceIdentity] = useState(() => createSessionId())
   const mountedRef = useRef(true)
 
@@ -66,6 +98,16 @@ function VoiceMode({ sessionId, mode, onChooseVoice, onChooseChat, onBack }) {
       cancelled = true
     }
   }, [sessionId, voiceIdentity])
+
+  useEffect(() => {
+    if (mode !== 'menu' || greetingComplete || voiceError) return undefined
+
+    const fallbackTimer = window.setTimeout(() => {
+      setGreetingComplete(true)
+    }, 20000)
+
+    return () => window.clearTimeout(fallbackTimer)
+  }, [greetingComplete, mode, voiceError])
 
   const handleBack = () => {
     onBack()
@@ -126,20 +168,31 @@ function VoiceMode({ sessionId, mode, onChooseVoice, onChooseChat, onBack }) {
     </div>
   )
 
+  const showModeChoices = greetingComplete || Boolean(voiceError)
   const menuContent = (
     <div className="chat-mode-picker">
-      <p className="chat-mode-picker-title">Hey, I'm Ankith's AI assistant.</p>
-      <p className="chat-mode-picker-copy">
-        Talk with me in voice mode, or switch to chat if you prefer typing.
-      </p>
-      <div className="chat-mode-actions">
-        <button type="button" className="chat-mode-button" onClick={onChooseVoice}>
-          Voice mode
-        </button>
-        <button type="button" className="chat-mode-button secondary" onClick={onChooseChat}>
-          Chat mode
-        </button>
-      </div>
+      {showModeChoices ? (
+        <>
+          <p className="chat-mode-picker-title">How would you like to continue?</p>
+          <div className="chat-mode-actions">
+            <button type="button" className="chat-mode-button" onClick={onChooseVoice}>
+              Voice mode
+            </button>
+            <button type="button" className="chat-mode-button secondary" onClick={onChooseChat}>
+              Chat mode
+            </button>
+          </div>
+        </>
+      ) : (
+        <div className="chat-greeting-wait" aria-live="polite">
+          <span className="chat-greeting-pulse" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </span>
+          <p className="chat-mode-picker-copy">Ankith's AI assistant is welcoming you...</p>
+        </div>
+      )}
       {voiceError ? <p className="chat-error">{voiceError}</p> : null}
     </div>
   )
@@ -173,6 +226,7 @@ function VoiceMode({ sessionId, mode, onChooseVoice, onChooseChat, onBack }) {
         setVoiceError(err?.message || 'LiveKit connection failed.')
       }}
     >
+      <GreetingPlaybackListener onGreetingComplete={() => setGreetingComplete(true)} />
       <StartAudio
         label=""
         className="chat-voice-audio-unlock"

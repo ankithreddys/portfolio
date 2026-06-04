@@ -50,7 +50,7 @@ function ChatWidget() {
               <p className="chat-widget-title">Prompt-to-Ankith</p>
               <p className="chat-widget-subtitle">
                 {mode === 'menu'
-                  ? 'Choose voice or chat'
+                  ? 'AI assistant'
                   : mode === 'voice'
                     ? 'Voice mode'
                     : 'Chat mode'}
