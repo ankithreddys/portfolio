@@ -30,6 +30,7 @@ class Settings(BaseSettings):
   livekit_api_key: str = Field(default="", env="LIVEKIT_API_KEY")
   livekit_api_secret: str = Field(default="", env="LIVEKIT_API_SECRET")
   livekit_agent_name: str = Field(default="portfolio-agent", env="LIVEKIT_AGENT_NAME")
+  livekit_enable_agent: bool = Field(default=True, env="LIVEKIT_ENABLE_AGENT")
   cors_origins: str = Field(
     default="http://localhost:5173,http://127.0.0.1:5173",
     env="CORS_ORIGINS",

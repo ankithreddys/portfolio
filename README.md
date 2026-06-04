@@ -106,6 +106,7 @@ LIVEKIT_URL=wss://your-project.livekit.cloud
 LIVEKIT_API_KEY=your-livekit-api-key
 LIVEKIT_API_SECRET=your-livekit-api-secret
 LIVEKIT_AGENT_NAME=portfolio-agent
+LIVEKIT_ENABLE_AGENT=true
 RAG_ENABLE_LLM_RERANKER=false
 RAG_LLM_RERANKER_MODEL=
 RAG_LLM_RERANKER_TOP_K=6
@@ -126,6 +127,7 @@ CONTACT_RECIPIENT=you@example.com
 Notes:
 - `OPENAI_CHAT_API_KEY` and `OPENAI_EMBEDDING_API_KEY` can be omitted if `OPENAI_API_KEY` is set.
 - `NAVIGATOR_API_KEY` is used by the LiveKit agent and can also serve as the shared API key for the OpenAI-compatible backend calls.
+- The backend autostarts the LiveKit voice worker when LiveKit credentials are present and `LIVEKIT_ENABLE_AGENT=true`.
 - `CONTACT_RECIPIENT` defaults to `SMTP_USER` if not set.
 
 ## Chatbot Data

@@ -5,7 +5,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 from livekit import agents
-from livekit.agents import Agent, AgentServer, AgentSession, TurnHandlingOptions, room_io
+from livekit.agents import Agent, AgentServer, AgentSession, TurnHandlingOptions
 from livekit.plugins import openai, silero
 
 from app.config import get_settings
@@ -33,11 +33,17 @@ def _build_tts() -> UFKokoroTTS:
 
 
 async def _speak_reply(session: AgentSession, room_name: str, message: str) -> None:
+  try:
+    await session.interrupt()
+  except RuntimeError:
+    pass
+
   response = await asyncio.to_thread(generate_and_store_reply, room_name, message)
   if not response:
     await session.say(
       "I'm having trouble answering that right now. Please try again.",
       allow_interruptions=True,
+      add_to_chat_ctx=False,
     )
     return
 
@@ -48,12 +54,11 @@ async def _speak_reply(session: AgentSession, room_name: str, message: str) -> N
   )
 
 
-def _handle_text_input(session: AgentSession, room_name: str, event: room_io.TextInputEvent) -> None:
-  message = (event.text or "").strip()
+def _queue_response(session: AgentSession, room_name: str, message: str) -> None:
+  message = message.strip()
   if not message:
     return
 
-  session.interrupt()
   asyncio.get_running_loop().create_task(_speak_reply(session, room_name, message))
 
 
@@ -100,19 +105,24 @@ async def entrypoint(ctx: agents.JobContext):
     )
   )
 
+  @session.on("user_input_transcribed")
+  def on_user_input_transcribed(event):
+    if not getattr(event, "is_final", False):
+      return
+    transcript = getattr(event, "transcript", "") or ""
+    _queue_response(session, room_name, transcript)
+
   await session.start(
     room=ctx.room,
     agent=agent,
-    room_options=room_io.RoomOptions(
-      text_input=room_io.TextInputOptions(
-        text_input_cb=lambda sess, event: _handle_text_input(sess, room_name, event)
-      )
-    ),
   )
 
+  await ctx.connect()
+
   await session.say(
-    "Hi, I'm connected and ready. You can speak now, and interrupt me anytime.",
+    "Hey, I'm Ankith. Continue talking with me in voice mode.",
     allow_interruptions=True,
+    add_to_chat_ctx=False,
   )
 
 

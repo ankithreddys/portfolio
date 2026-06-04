@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { LiveKitRoom, RoomAudioRenderer, TrackToggle } from '@livekit/components-react'
+import { LiveKitRoom, RoomAudioRenderer, StartAudio, TrackToggle } from '@livekit/components-react'
 import { Track } from 'livekit-client'
 import { fetchLiveKitToken } from '../../services/api'
 
@@ -107,6 +107,7 @@ function VoiceMode({ sessionId, onBack }) {
             setVoiceError(err?.message || 'LiveKit connection failed.')
           }}
         >
+          <StartAudio label="Click to allow audio playback" />
           <RoomAudioRenderer />
           <div className="chat-voice-room">
             <span className={`chat-voice-status ${voiceRoom ? 'active' : ''}`}>
