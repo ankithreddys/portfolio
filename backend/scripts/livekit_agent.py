@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import sys
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -8,14 +9,17 @@ from livekit import agents
 from livekit.agents import Agent, AgentServer, AgentSession, TurnHandlingOptions
 from livekit.plugins import openai, silero
 
+BACKEND_ROOT = Path(__file__).resolve().parents[1]
+if str(BACKEND_ROOT) not in sys.path:
+  sys.path.insert(0, str(BACKEND_ROOT))
+
 from app.config import get_settings
 from app.services.conversation import generate_and_store_reply
 from app.services.uf_kokoro_tts import UFKokoroTTS
 
 
-BASE_DIR = Path(__file__).resolve().parents[1]
-load_dotenv(str(BASE_DIR / ".env"))
-load_dotenv(str(BASE_DIR / ".env.local"))
+load_dotenv(str(BACKEND_ROOT / ".env"))
+load_dotenv(str(BACKEND_ROOT / ".env.local"))
 
 settings = get_settings()
 AGENT_NAME = settings.livekit_agent_name
