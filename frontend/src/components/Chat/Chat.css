@@ -97,6 +97,13 @@
   font-size: 0.8rem;
 }
 
+.chat-voice-session {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 16px 16px;
+}
+
 .chat-window {
   min-height: 280px;
   max-height: 420px;

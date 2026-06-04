@@ -27,6 +27,16 @@ function ChatWidget() {
     setMode('menu')
   }
 
+  const toggleWidget = () => {
+    if (isOpen) {
+      closeWidget()
+      return
+    }
+
+    setMode('menu')
+    setIsOpen(true)
+  }
+
   return (
     <div className={`chat-widget ${isOpen ? 'open' : ''}`}>
       {isOpen ? (
@@ -52,40 +62,23 @@ function ChatWidget() {
             </button>
           </div>
 
-          {mode === 'menu' ? (
-            <div className="chat-mode-picker">
-              <p className="chat-mode-picker-title">Hey, I'm Ankith.</p>
-              <p className="chat-mode-picker-copy">
-                Talk with me in voice mode, or switch to chat if you prefer typing.
-              </p>
-              <div className="chat-mode-actions">
-                <button
-                  type="button"
-                  className="chat-mode-button"
-                  onClick={() => setMode('voice')}
-                >
-                  Voice mode
-                </button>
-                <button
-                  type="button"
-                  className="chat-mode-button secondary"
-                  onClick={() => setMode('chat')}
-                >
-                  Chat mode
-                </button>
-              </div>
-            </div>
-          ) : null}
-
-          {mode === 'voice' ? <VoiceMode sessionId={sessionId} onBack={() => setMode('menu')} /> : null}
           {mode === 'chat' ? <Chat sessionId={sessionId} /> : null}
+          {mode !== 'chat' ? (
+            <VoiceMode
+              sessionId={sessionId}
+              mode={mode}
+              onChooseVoice={() => setMode('voice')}
+              onChooseChat={() => setMode('chat')}
+              onBack={() => setMode('menu')}
+            />
+          ) : null}
         </div>
       ) : null}
 
       <button
         type="button"
         className="chat-widget-toggle"
-        onClick={() => setIsOpen((prev) => !prev)}
+        onClick={toggleWidget}
         aria-label={isOpen ? 'Close chatbot' : 'Open chatbot'}
       >
         <span className="chat-widget-logo" aria-hidden="true">
