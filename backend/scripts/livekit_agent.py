@@ -2,12 +2,19 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 import sys
+import time
 from pathlib import Path
 
 from dotenv import load_dotenv
 from livekit import agents
-from livekit.agents import Agent, AgentServer, AgentSession, TurnHandlingOptions
+from livekit.agents import (
+  Agent,
+  AgentServer,
+  AgentSession,
+  TurnHandlingOptions,
+)
 from livekit.plugins import openai, silero
 
 BACKEND_ROOT = Path(__file__).resolve().parents[1]
@@ -23,6 +30,7 @@ load_dotenv(str(BACKEND_ROOT / ".env"))
 load_dotenv(str(BACKEND_ROOT / ".env.local"))
 
 settings = get_settings()
+logger = logging.getLogger(__name__)
 
 
 def _build_tts() -> UFKokoroTTS:
@@ -37,12 +45,14 @@ def _build_tts() -> UFKokoroTTS:
 
 
 async def _speak_reply(session: AgentSession, room_name: str, message: str) -> None:
+  started_at = time.perf_counter()
   try:
     await session.interrupt()
   except RuntimeError:
     pass
 
   response = await asyncio.to_thread(generate_and_store_reply, room_name, message)
+  rag_ms = (time.perf_counter() - started_at) * 1000
   if not response:
     await session.say(
       "I'm having trouble answering that right now. Please try again.",
@@ -51,10 +61,16 @@ async def _speak_reply(session: AgentSession, room_name: str, message: str) -> N
     )
     return
 
+  logger.info("Voice reply ready rag_ms=%.1f", rag_ms)
   await session.say(
     response["reply"],
     allow_interruptions=True,
     add_to_chat_ctx=False,
+  )
+  logger.info(
+    "Voice reply playback completed rag_ms=%.1f total_ms=%.1f",
+    rag_ms,
+    (time.perf_counter() - started_at) * 1000,
   )
 
 
@@ -71,6 +87,7 @@ server = AgentServer()
 
 @server.rtc_session(agent_name=settings.livekit_agent_name)
 async def entrypoint(ctx: agents.JobContext):
+  started_at = time.perf_counter()
   if not settings.livekit_url:
     raise RuntimeError("LIVEKIT_URL is not configured.")
   if not settings.livekit_api_key or not settings.livekit_api_secret:
@@ -127,12 +144,14 @@ async def entrypoint(ctx: agents.JobContext):
     room=ctx.room,
     agent=agent,
   )
+  logger.info("LiveKit voice session ready in %.1fms", (time.perf_counter() - started_at) * 1000)
 
   await session.say(
     "Hey, I'm Ankith. Continue talking with me in voice mode.",
     allow_interruptions=True,
     add_to_chat_ctx=False,
   )
+  logger.info("Initial greeting completed in %.1fms", (time.perf_counter() - started_at) * 1000)
 
 
 if __name__ == "__main__":

@@ -2,6 +2,9 @@
 
 import logging
 import re
+import time
+from functools import lru_cache
+from threading import Lock
 from typing import Any, TypedDict
 
 from langchain_core.documents import Document
@@ -122,6 +125,18 @@ _CONTEXT_BLOCK_START = "<retrieved_context>"
 _CONTEXT_BLOCK_END = "</retrieved_context>"
 _CANDIDATE_BLOCK_START = "<candidate>"
 _CANDIDATE_BLOCK_END = "</candidate>"
+_RERANKER_STATE_LOCK = Lock()
+_reranker_disabled_until = 0.0
+
+
+@lru_cache(maxsize=8)
+def _get_chat_llm(model: str, api_key: str, base_url: str, temperature: float) -> ChatOpenAI:
+  return ChatOpenAI(
+    model=model,
+    temperature=temperature,
+    openai_api_key=api_key,
+    openai_api_base=base_url,
+  )
 
 
 def _build_messages(user_message: str, history: list[dict], context: str) -> list:
@@ -203,16 +218,42 @@ def _all_docs_from_collection(vectorstore: Any) -> list[Document]:
   return docs
 
 
-def _llm_rerank_candidates(question: str, candidates: list[Document], settings: Any) -> list[Document]:
+@lru_cache(maxsize=1)
+def _get_lexical_documents() -> tuple[Document, ...]:
+  return tuple(_all_docs_from_collection(get_vectorstore()))
+
+
+def _reranker_is_available() -> bool:
+  with _RERANKER_STATE_LOCK:
+    return time.monotonic() >= _reranker_disabled_until
+
+
+def _mark_reranker_failure(cooldown_seconds: int) -> None:
+  global _reranker_disabled_until
+  with _RERANKER_STATE_LOCK:
+    _reranker_disabled_until = time.monotonic() + max(0, cooldown_seconds)
+
+
+def _mark_reranker_success() -> None:
+  global _reranker_disabled_until
+  with _RERANKER_STATE_LOCK:
+    _reranker_disabled_until = 0.0
+
+
+def _llm_rerank_candidates(
+  question: str,
+  candidates: list[Document],
+  settings: Any,
+) -> tuple[list[Document], bool]:
   if not candidates:
-    return candidates
+    return candidates, False
 
   reranker_model = settings.rag_llm_reranker_model or settings.openai_model
-  llm = ChatOpenAI(
-    model=reranker_model,
-    temperature=0,
-    openai_api_key=settings.chat_api_key,
-    openai_api_base=settings.chat_base_url,
+  llm = _get_chat_llm(
+    reranker_model,
+    settings.chat_api_key,
+    settings.chat_base_url,
+    0,
   )
 
   candidate_lines = []
@@ -236,12 +277,16 @@ def _llm_rerank_candidates(question: str, candidates: list[Document], settings: 
     "No extra text."
   )
 
+  started_at = time.perf_counter()
   try:
     response = llm.invoke([HumanMessage(content=prompt)])
     content = (response.content or "").strip()
   except Exception:
+    _mark_reranker_failure(settings.rag_llm_reranker_cooldown_seconds)
     logger.exception("LLM reranker invocation failed; falling back to hybrid ranking")
-    return candidates
+    return candidates, False
+
+  reranker_ms = (time.perf_counter() - started_at) * 1000
 
   score_map: dict[int, float] = {}
   for line in content.splitlines():
@@ -254,24 +299,35 @@ def _llm_rerank_candidates(question: str, candidates: list[Document], settings: 
       score_map[idx] = score
 
   if not score_map:
-    logger.warning("LLM reranker returned unparsable output; using hybrid ranking")
-    return candidates
+    _mark_reranker_failure(settings.rag_llm_reranker_cooldown_seconds)
+    logger.warning(
+      "LLM reranker returned unparsable output after %.1fms; using hybrid ranking "
+      "and pausing reranker for %ss",
+      reranker_ms,
+      settings.rag_llm_reranker_cooldown_seconds,
+    )
+    return candidates, False
 
   ranked_indexes = sorted(
     range(len(candidates)),
     key=lambda idx: score_map.get(idx, -1.0),
     reverse=True,
   )
-  return [candidates[idx] for idx in ranked_indexes]
+  _mark_reranker_success()
+  logger.info("LLM reranker latency_ms=%.1f candidates=%s", reranker_ms, len(candidates))
+  return [candidates[idx] for idx in ranked_indexes], True
 
 
 def _hybrid_rerank_retrieve(question: str, vectorstore: Any, settings: Any) -> list[Document]:
+  started_at = time.perf_counter()
   query_tokens = set(_tokenize(question))
 
+  dense_started_at = time.perf_counter()
   dense_raw_results = vectorstore.similarity_search_with_score(
     question,
     k=_DENSE_TOP_K,
   )
+  dense_ms = (time.perf_counter() - dense_started_at) * 1000
 
   # Chroma/LangChain can return backend-specific score ranges. Normalize explicitly
   # to [0, 1] where 1 means best match, so fusion stays stable across providers.
@@ -306,10 +362,12 @@ def _hybrid_rerank_retrieve(question: str, vectorstore: Any, settings: Any) -> l
     }
 
   lexical_scores: list[tuple[Document, float]] = []
-  for doc in _all_docs_from_collection(vectorstore):
+  lexical_started_at = time.perf_counter()
+  for doc in _get_lexical_documents():
     score = _lexical_score(query_tokens, doc.page_content)
     if score > 0:
       lexical_scores.append((doc, score))
+  lexical_ms = (time.perf_counter() - lexical_started_at) * 1000
 
   lexical_scores.sort(key=lambda item: item[1], reverse=True)
   lexical_top = lexical_scores[:_LEXICAL_TOP_K]
@@ -353,16 +411,29 @@ def _hybrid_rerank_retrieve(question: str, vectorstore: Any, settings: Any) -> l
     settings.rag_llm_reranker_top_k or _DEFAULT_RERANK_TOP_K,
   )
 
-  if settings.rag_enable_llm_reranker and base_ranked_docs:
+  reranker_applied = False
+  if settings.rag_enable_llm_reranker and base_ranked_docs and _reranker_is_available():
     rerank_candidates = base_ranked_docs[:llm_candidate_top_k]
-    reranked = _llm_rerank_candidates(question, rerank_candidates, settings)
-    reranked_keys = {_doc_key(doc) for doc in reranked}
-    remaining = [doc for doc in base_ranked_docs if _doc_key(doc) not in reranked_keys]
-    final_ranked_docs = reranked + remaining
-    logger.info("LLM reranker enabled; reranked %s candidates", len(rerank_candidates))
+    reranked, reranker_applied = _llm_rerank_candidates(question, rerank_candidates, settings)
+    if reranker_applied:
+      reranked_keys = {_doc_key(doc) for doc in reranked}
+      remaining = [doc for doc in base_ranked_docs if _doc_key(doc) not in reranked_keys]
+      final_ranked_docs = reranked + remaining
+    else:
+      final_ranked_docs = base_ranked_docs
+  elif settings.rag_enable_llm_reranker and base_ranked_docs:
+    final_ranked_docs = base_ranked_docs
+    logger.info("Skipping LLM reranker during failure cooldown")
   else:
     final_ranked_docs = base_ranked_docs
 
+  logger.info(
+    "Retrieval latency dense_ms=%.1f lexical_ms=%.1f total_ms=%.1f reranker_applied=%s",
+    dense_ms,
+    lexical_ms,
+    (time.perf_counter() - started_at) * 1000,
+    reranker_applied,
+  )
   return final_ranked_docs[:final_top_k]
 
 
@@ -383,14 +454,16 @@ def _retrieve(state: RagState) -> RagState:
 
 def _generate(state: RagState) -> RagState:
   settings = get_settings()
-  llm = ChatOpenAI(
-    model=settings.openai_model,
-    temperature=0.2,
-    openai_api_key=settings.chat_api_key,
-    openai_api_base=settings.chat_base_url,
+  llm = _get_chat_llm(
+    settings.openai_model,
+    settings.chat_api_key,
+    settings.chat_base_url,
+    0.2,
   )
   messages = _build_messages(state["question"], state["chat_history"], state["context"])
+  started_at = time.perf_counter()
   response = llm.invoke(messages)
+  logger.info("Answer generation latency_ms=%.1f", (time.perf_counter() - started_at) * 1000)
   return {**state, "answer": response.content or ""}
 
 
@@ -408,6 +481,7 @@ _GRAPH = _build_graph()
 
 
 def generate_reply(user_message: str, history: list[dict]) -> dict | None:
+  started_at = time.perf_counter()
   settings = get_settings()
   if not settings.chat_api_key:
     return {
@@ -431,4 +505,5 @@ def generate_reply(user_message: str, history: list[dict]) -> dict | None:
     logger.exception("RAG graph invocation failed")
     return None
 
+  logger.info("RAG total latency_ms=%.1f", (time.perf_counter() - started_at) * 1000)
   return {"reply": result.get("answer", "")}

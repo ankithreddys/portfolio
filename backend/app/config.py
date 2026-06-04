@@ -30,7 +30,6 @@ class Settings(BaseSettings):
   livekit_api_key: str = Field(default="", env="LIVEKIT_API_KEY")
   livekit_api_secret: str = Field(default="", env="LIVEKIT_API_SECRET")
   livekit_agent_name: str = Field(default="portfolio-agent", env="LIVEKIT_AGENT_NAME")
-  livekit_enable_agent: bool = Field(default=True, env="LIVEKIT_ENABLE_AGENT")
   cors_origins: str = Field(
     default="http://localhost:5173,http://127.0.0.1:5173",
     env="CORS_ORIGINS",
@@ -42,6 +41,10 @@ class Settings(BaseSettings):
   rag_enable_llm_reranker: bool = Field(default=False, env="RAG_ENABLE_LLM_RERANKER")
   rag_llm_reranker_model: str = Field(default="", env="RAG_LLM_RERANKER_MODEL")
   rag_llm_reranker_top_k: int = Field(default=6, env="RAG_LLM_RERANKER_TOP_K")
+  rag_llm_reranker_cooldown_seconds: int = Field(
+    default=300,
+    env="RAG_LLM_RERANKER_COOLDOWN_SECONDS",
+  )
   rag_final_top_k: int = Field(default=4, env="RAG_FINAL_TOP_K")
   chat_rate_limit_max: int = Field(default=12, env="CHAT_RATE_LIMIT_MAX")
   chat_rate_limit_window_seconds: int = Field(default=60, env="CHAT_RATE_LIMIT_WINDOW_SECONDS")

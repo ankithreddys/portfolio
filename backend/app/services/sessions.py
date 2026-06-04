@@ -10,6 +10,7 @@ from app.config import get_settings
 
 _DB_LOCK = Lock()
 _DB_PATH = Path(__file__).resolve().parents[2] / "data" / "sessions.sqlite3"
+_DB_READY = False
 
 
 def _now_ts() -> float:
@@ -24,6 +25,10 @@ def _ttl_seconds() -> int:
 
 
 def _ensure_db() -> None:
+  global _DB_READY
+  if _DB_READY:
+    return
+
   _DB_PATH.parent.mkdir(parents=True, exist_ok=True)
   with sqlite3.connect(_DB_PATH, timeout=30) as conn:
     conn.execute("PRAGMA journal_mode=WAL;")
@@ -40,6 +45,7 @@ def _ensure_db() -> None:
     )
     conn.execute("CREATE INDEX IF NOT EXISTS idx_sessions_expires_at ON sessions(expires_at)")
     conn.commit()
+  _DB_READY = True
 
 
 def _connect() -> sqlite3.Connection:
@@ -133,12 +139,19 @@ def get_history(session_id: str) -> list[dict]:
 
 
 def append_message(session_id: str, role: str, content: str) -> None:
+  append_messages(session_id, [{"role": role, "content": content}])
+
+
+def append_messages(session_id: str, messages: list[dict]) -> None:
+  if not messages:
+    return
+
   with _DB_LOCK:
     with _connect() as conn:
       _prune_expired(conn)
       _enforce_capacity(conn)
       history = _load_session(conn, session_id)
-      history.append({"role": role, "content": content})
+      history.extend(messages)
       history = history[-20:]
       conn.execute(
         """

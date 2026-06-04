@@ -9,6 +9,7 @@ from pydantic import BaseModel, Field
 from livekit.api import AccessToken, RoomAgentDispatch, RoomConfiguration, VideoGrants
 
 from app.config import get_settings
+from app.services.livekit_worker import livekit_worker_status
 
 
 router = APIRouter()
@@ -34,6 +35,15 @@ def create_token(request: LiveKitTokenRequest) -> LiveKitTokenResponse:
     raise HTTPException(status_code=500, detail="LIVEKIT_URL is not configured.")
   if not settings.livekit_api_key or not settings.livekit_api_secret:
     raise HTTPException(status_code=500, detail="LiveKit credentials are not configured.")
+  if not settings.chat_api_key or not settings.chat_base_url:
+    raise HTTPException(status_code=500, detail="Navigator/OpenAI chat credentials are not configured.")
+
+  worker_status = livekit_worker_status()
+  if worker_status != "running":
+    raise HTTPException(
+      status_code=503,
+      detail=f"Voice mode is unavailable because the LiveKit agent is {worker_status}.",
+    )
 
   identity = request.identity or f"voice-{uuid.uuid4().hex[:12]}"
   room = f"voice-{uuid.uuid4().hex}"

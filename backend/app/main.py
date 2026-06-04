@@ -1,59 +1,16 @@
 from __future__ import annotations
 
-import logging
-import os
-import subprocess
-import sys
-from pathlib import Path
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
 from app.routes.chat import router as chat_router
 from app.routes.livekit import router as livekit_router
-
-
-logger = logging.getLogger(__name__)
-_livekit_worker_process: subprocess.Popen | None = None
-
-
-def _start_livekit_worker() -> None:
-  global _livekit_worker_process
-  settings = get_settings()
-  if not settings.livekit_enable_agent:
-    logger.info("LiveKit worker autostart is disabled.")
-    return
-  if not (settings.livekit_url and settings.livekit_api_key and settings.livekit_api_secret):
-    logger.info("Skipping LiveKit worker autostart because credentials are incomplete.")
-    return
-  if _livekit_worker_process and _livekit_worker_process.poll() is None:
-    return
-
-  script_path = Path(__file__).resolve().parents[1] / "scripts" / "livekit_agent.py"
-  env = os.environ.copy()
-  env.setdefault("PYTHONUNBUFFERED", "1")
-  _livekit_worker_process = subprocess.Popen(
-    [sys.executable, str(script_path), "start"],
-    cwd=str(script_path.parent.parent),
-    env=env,
-  )
-  logger.info("Started LiveKit worker process pid=%s", _livekit_worker_process.pid)
-
-
-def _stop_livekit_worker() -> None:
-  global _livekit_worker_process
-  if not _livekit_worker_process or _livekit_worker_process.poll() is not None:
-    _livekit_worker_process = None
-    return
-
-  _livekit_worker_process.terminate()
-  try:
-    _livekit_worker_process.wait(timeout=10)
-  except subprocess.TimeoutExpired:
-    _livekit_worker_process.kill()
-  finally:
-    _livekit_worker_process = None
+from app.services.livekit_worker import (
+  livekit_worker_status,
+  start_livekit_worker as start_livekit_worker_process,
+  stop_livekit_worker as stop_livekit_worker_process,
+)
 
 
 def create_app() -> FastAPI:
@@ -84,16 +41,19 @@ def create_app() -> FastAPI:
   app.include_router(livekit_router, prefix="/api")
 
   @app.on_event("startup")
-  def start_livekit_worker() -> None:
-    _start_livekit_worker()
+  def start_livekit_worker_on_startup() -> None:
+    start_livekit_worker_process()
 
   @app.on_event("shutdown")
-  def stop_livekit_worker() -> None:
-    _stop_livekit_worker()
+  def stop_livekit_worker_on_shutdown() -> None:
+    stop_livekit_worker_process()
 
   @app.get("/api/health")
   def health() -> dict:
-    return {"status": "ok"}
+    return {
+      "status": "ok",
+      "livekit_worker": livekit_worker_status(),
+    }
 
   return app
 

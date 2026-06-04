@@ -1,11 +1,16 @@
 from __future__ import annotations
 
+import logging
+import time
 import uuid
 
 import httpx
 
 from livekit.agents import tts
 from livekit.agents.types import APIConnectOptions, DEFAULT_API_CONNECT_OPTIONS
+
+
+logger = logging.getLogger(__name__)
 
 
 class UFKokoroTTS(tts.TTS):
@@ -70,6 +75,7 @@ class _UFKokoroChunkedStream(tts.ChunkedStream):
     self._tts: UFKokoroTTS = tts
 
   async def _run(self, output_emitter: tts.AudioEmitter) -> None:
+    started_at = time.perf_counter()
     request_id = str(uuid.uuid4())
     output_emitter.initialize(
       request_id=request_id,
@@ -111,3 +117,9 @@ class _UFKokoroChunkedStream(tts.ChunkedStream):
 
     output_emitter.push(audio_bytes)
     output_emitter.flush()
+    finished_at = time.perf_counter()
+    logger.info(
+      "Kokoro TTS latency total_ms=%.1f bytes=%s",
+      (finished_at - started_at) * 1000,
+      len(audio_bytes),
+    )

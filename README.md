@@ -106,10 +106,10 @@ LIVEKIT_URL=wss://your-project.livekit.cloud
 LIVEKIT_API_KEY=your-livekit-api-key
 LIVEKIT_API_SECRET=your-livekit-api-secret
 LIVEKIT_AGENT_NAME=portfolio-agent
-LIVEKIT_ENABLE_AGENT=true
 RAG_ENABLE_LLM_RERANKER=false
 RAG_LLM_RERANKER_MODEL=
 RAG_LLM_RERANKER_TOP_K=6
+RAG_LLM_RERANKER_COOLDOWN_SECONDS=300
 RAG_FINAL_TOP_K=4
 SESSION_MAX_ENTRIES=1000
 CHAT_RATE_LIMIT_MAX=12
@@ -127,7 +127,8 @@ CONTACT_RECIPIENT=you@example.com
 Notes:
 - `OPENAI_CHAT_API_KEY` and `OPENAI_EMBEDDING_API_KEY` can be omitted if `OPENAI_API_KEY` is set.
 - `NAVIGATOR_API_KEY` is used by the LiveKit agent and can also serve as the shared API key for the OpenAI-compatible backend calls.
-- The backend autostarts the LiveKit voice worker when LiveKit credentials are present and `LIVEKIT_ENABLE_AGENT=true`.
+- The backend autostarts the LiveKit voice worker whenever all LiveKit credentials are present.
+- Keep `RAG_ENABLE_LLM_RERANKER=false` for the lowest response latency. When enabled, failed or unparsable reranker calls are bypassed for `RAG_LLM_RERANKER_COOLDOWN_SECONDS`.
 - `CONTACT_RECIPIENT` defaults to `SMTP_USER` if not set.
 
 ## Chatbot Data
@@ -143,6 +144,8 @@ This builds the Chroma index used by the chatbot.
 ### Voice mode
 
 The frontend can request a LiveKit room token from the backend and connect to the voice assistant using the same session ID as the text chat. The LiveKit worker transcribes speech with UF Navigator STT, reuses the shared RAG pipeline for answers, and speaks back with the custom Kokoro TTS adapter.
+
+Railway logs include retrieval, generation, persistence, voice-session startup, and Kokoro TTS latency timings.
 
 ### Railway deployment
 
