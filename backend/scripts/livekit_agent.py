@@ -147,7 +147,7 @@ async def entrypoint(ctx: agents.JobContext):
   logger.info("LiveKit voice session ready in %.1fms", (time.perf_counter() - started_at) * 1000)
 
   await session.say(
-    "Hey, I'm Ankith. Continue talking with me in voice mode.",
+    "Hey, I'm Ankith's AI assistant. Continue talking with me in voice mode.",
     allow_interruptions=True,
     add_to_chat_ctx=False,
   )

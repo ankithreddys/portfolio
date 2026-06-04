@@ -1,11 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import {
-  ConnectionState,
   LiveKitRoom,
   RoomAudioRenderer,
   StartAudio,
   TrackToggle,
-  useRemoteParticipants,
 } from '@livekit/components-react'
 import { Track } from 'livekit-client'
 import { fetchLiveKitToken } from '../../services/api'
@@ -17,26 +15,17 @@ const createSessionId = () => {
   return `voice-${Date.now()}-${Math.random().toString(16).slice(2)}`
 }
 
-function VoiceConnectionStatus() {
-  const remoteParticipants = useRemoteParticipants()
-  const agentConnected = remoteParticipants.length > 0
-
-  return (
-    <div className="chat-voice-diagnostics" aria-live="polite">
-      <span>
-        Room: <ConnectionState />
-      </span>
-      <span>{agentConnected ? 'Agent connected' : 'Waiting for voice agent...'}</span>
-    </div>
-  )
-}
+const microphoneIcon = (
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M12 15.5a3.5 3.5 0 0 0 3.5-3.5V6a3.5 3.5 0 1 0-7 0v6a3.5 3.5 0 0 0 3.5 3.5Z" />
+    <path d="M5.5 11.5v.5a6.5 6.5 0 0 0 13 0v-.5M12 18.5V22M8.5 22h7" />
+  </svg>
+)
 
 function VoiceMode({ sessionId, mode, onChooseVoice, onChooseChat, onBack }) {
   const [voiceError, setVoiceError] = useState('')
-  const [voiceLoading, setVoiceLoading] = useState(true)
   const [voiceToken, setVoiceToken] = useState('')
   const [voiceUrl, setVoiceUrl] = useState('')
-  const [voiceRoom, setVoiceRoom] = useState('')
   const [roomConnected, setRoomConnected] = useState(false)
   const [voiceIdentity] = useState(() => createSessionId())
   const mountedRef = useRef(true)
@@ -52,7 +41,6 @@ function VoiceMode({ sessionId, mode, onChooseVoice, onChooseChat, onBack }) {
     let cancelled = false
 
     const startVoice = async () => {
-      setVoiceLoading(true)
       setVoiceError('')
 
       try {
@@ -66,14 +54,9 @@ function VoiceMode({ sessionId, mode, onChooseVoice, onChooseChat, onBack }) {
 
         setVoiceToken(response.token)
         setVoiceUrl(response.url)
-        setVoiceRoom(response.room)
       } catch (err) {
         if (cancelled || !mountedRef.current) return
         setVoiceError(err.message || 'Unable to start voice mode.')
-      } finally {
-        if (!cancelled && mountedRef.current) {
-          setVoiceLoading(false)
-        }
       }
     }
 
@@ -88,21 +71,35 @@ function VoiceMode({ sessionId, mode, onChooseVoice, onChooseChat, onBack }) {
     onBack()
   }
 
-  const statusText = voiceLoading
-    ? 'Getting secure room access...'
-    : roomConnected
-      ? 'Voice room connected'
-      : voiceRoom
-        ? 'Joining voice room...'
-        : 'Ready'
+  const renderVoiceStage = (microphoneControl = null) => (
+    <div
+      className={`chat-voice-stage ${roomConnected ? 'connected' : ''}`}
+      aria-label={
+        voiceError || (roomConnected ? 'Voice assistant connected' : 'Connecting voice assistant')
+      }
+    >
+      <div className="chat-voice-orb">
+        <span className="chat-voice-ring ring-one" aria-hidden="true" />
+        <span className="chat-voice-ring ring-two" aria-hidden="true" />
+        <span className="chat-voice-ring ring-three" aria-hidden="true" />
+        {microphoneControl || (
+          <span className="chat-voice-microphone chat-voice-microphone-placeholder">
+            {microphoneIcon}
+          </span>
+        )}
+      </div>
+      <button type="button" className="chat-voice-link" onClick={handleBack}>
+        Back to menu
+      </button>
+    </div>
+  )
 
-  const content = mode === 'menu' ? (
+  const menuContent = (
     <div className="chat-mode-picker">
-      <p className="chat-mode-picker-title">Hey, I'm Ankith.</p>
+      <p className="chat-mode-picker-title">Hey, I'm Ankith's AI assistant.</p>
       <p className="chat-mode-picker-copy">
         Talk with me in voice mode, or switch to chat if you prefer typing.
       </p>
-      <span className={`chat-voice-status ${roomConnected ? 'active' : ''}`}>{statusText}</span>
       <div className="chat-mode-actions">
         <button type="button" className="chat-mode-button" onClick={onChooseVoice}>
           Voice mode
@@ -113,27 +110,10 @@ function VoiceMode({ sessionId, mode, onChooseVoice, onChooseChat, onBack }) {
       </div>
       {voiceError ? <p className="chat-error">{voiceError}</p> : null}
     </div>
-  ) : (
-    <div className="chat-voice-panel">
-      <div className="chat-voice-copy">
-        <p className="chat-voice-title">Voice mode</p>
-        <p className="chat-voice-subtitle">
-          Keep talking naturally. The microphone is active and responses use the shared portfolio
-          context.
-        </p>
-      </div>
-      <div className="chat-voice-room">
-        <span className={`chat-voice-status ${roomConnected ? 'active' : ''}`}>{statusText}</span>
-        <button type="button" className="chat-voice-link" onClick={handleBack}>
-          Back to menu
-        </button>
-      </div>
-      {voiceError ? <p className="chat-error">{voiceError}</p> : null}
-    </div>
   )
 
   if (!voiceToken || !voiceUrl) {
-    return content
+    return mode === 'menu' ? menuContent : renderVoiceStage()
   }
 
   return (
@@ -161,25 +141,28 @@ function VoiceMode({ sessionId, mode, onChooseVoice, onChooseChat, onBack }) {
         setVoiceError(err?.message || 'LiveKit connection failed.')
       }}
     >
-      <StartAudio label="Click to allow audio playback" />
+      <StartAudio
+        label=""
+        className="chat-voice-audio-unlock"
+        aria-label="Enable voice playback"
+      />
       <RoomAudioRenderer />
-      {content}
-      {mode === 'voice' ? (
-        <div className="chat-voice-session">
-          <VoiceConnectionStatus />
-          <div className="chat-voice-room">
+      {mode === 'menu'
+        ? menuContent
+        : renderVoiceStage(
             <TrackToggle
               source={Track.Source.Microphone}
               initialState
+              showIcon={false}
+              className="chat-voice-microphone"
+              aria-label="Toggle microphone"
               onDeviceError={(err) => {
                 setVoiceError(err?.message || 'Microphone access failed.')
               }}
             >
-              Microphone
-            </TrackToggle>
-          </div>
-        </div>
-      ) : null}
+              {microphoneIcon}
+            </TrackToggle>,
+          )}
     </LiveKitRoom>
   )
 }
