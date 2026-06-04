@@ -31,6 +31,11 @@ load_dotenv(str(BACKEND_ROOT / ".env.local"))
 
 settings = get_settings()
 logger = logging.getLogger(__name__)
+VOICE_GREETING_VERSION = "assistant-v2"
+VOICE_GREETING = (
+  "Hi! I'm the AI assistant for Ankith's portfolio. It's great to meet you. "
+  "What would you like to know about his work?"
+)
 
 
 def _build_tts() -> UFKokoroTTS:
@@ -51,7 +56,12 @@ async def _speak_reply(session: AgentSession, room_name: str, message: str) -> N
   except RuntimeError:
     pass
 
-  response = await asyncio.to_thread(generate_and_store_reply, room_name, message)
+  response = await asyncio.to_thread(
+    generate_and_store_reply,
+    room_name,
+    message,
+    "voice",
+  )
   rag_ms = (time.perf_counter() - started_at) * 1000
   if not response:
     await session.say(
@@ -127,8 +137,8 @@ async def entrypoint(ctx: agents.JobContext):
 
   agent = Agent(
     instructions=(
-      "You are the voice interface for Ankith's portfolio assistant. "
-      "Keep replies concise, warm, and focused on portfolio facts. "
+      "You are Ankith's AI assistant, not Ankith. "
+      "Be a friendly, natural voice host focused on his portfolio facts. "
       "Let the shared backend RAG service determine the answer."
     )
   )
@@ -146,8 +156,9 @@ async def entrypoint(ctx: agents.JobContext):
   )
   logger.info("LiveKit voice session ready in %.1fms", (time.perf_counter() - started_at) * 1000)
 
+  logger.info("Speaking initial greeting version=%s", VOICE_GREETING_VERSION)
   await session.say(
-    "Hey, I'm Ankith's AI assistant. Continue talking with me in voice mode.",
+    VOICE_GREETING,
     allow_interruptions=True,
     add_to_chat_ctx=False,
   )

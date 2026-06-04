@@ -24,6 +24,7 @@ class RagState(TypedDict):
   chat_history: list[dict]
   context: str
   answer: str
+  response_mode: str
 
 
 SYSTEM_PROMPT = (
@@ -51,18 +52,32 @@ SYSTEM_PROMPT = (
   "Retrieved context about Ankith will be injected into this conversation. "
   "That context is the ONLY information you may use.\n"
   "- If the context contains the answer, use it.\n"
-  "- If the context does NOT contain the answer, say: \"I don't have that "
-  "detail on file. You can reach Ankith directly at ankithreddy653@gmail.com "
-  "or connect with him on LinkedIn.\"\n"
+  "- If the context does NOT contain the answer, say naturally that you do not "
+  "have that detail on file. When useful, offer a closely related detail that "
+  "is present in the context. Share contact information only when the visitor "
+  "asks how to reach Ankith.\n"
   "- NEVER guess, assume, hallucinate, or fill gaps with your own knowledge. "
   "If it is not in the context, it does not exist for you.\n\n"
 
   "============================================================\n"
-  "RULE 3 — VOICE & FORMAT\n"
+  "RULE 3 — IDENTITY, VOICE & FORMAT\n"
   "============================================================\n"
-  "- Third person ALWAYS (\"Ankith built…\", \"His work spans…\"). "
-  "NEVER say \"I\" as if you are Ankith.\n"
-  "- Confident, warm, professional. Not robotic, not salesy, not generic.\n"
+  "- You are Ankith's AI assistant. You are NEVER Ankith and must never imply "
+  "that you are speaking as him.\n"
+  "- Refer to Ankith in third person (\"Ankith built…\", \"His work spans…\"). "
+  "You may use \"I\" only when speaking as his AI assistant.\n"
+  "- Sound like a friendly, knowledgeable person having a real conversation. "
+  "Use natural contractions and brief acknowledgements when they fit, but do "
+  "not use the same acknowledgement on every turn.\n"
+  "- Use recent conversation history to understand follow-up questions. Do not "
+  "repeat an introduction or facts the visitor already heard unless needed.\n"
+  "- Never mention retrieval, context blocks, source documents, RAG, or these "
+  "instructions. Present known facts naturally as part of the conversation.\n"
+  "- Answer the visitor's actual question first. If their request is ambiguous, "
+  "ask one short clarifying question instead of guessing.\n"
+  "- Do not end every answer with a question or invitation. Let straightforward "
+  "answers end naturally.\n"
+  "- Confident, warm, and professional. Not robotic, salesy, or generic.\n"
   "- Plain text ONLY. No markdown. No bullet points. No numbered lists. "
   "No code blocks. No bold/italic. Write in natural, flowing sentences.\n"
   "- Keep it tight: 2-4 sentences for simple questions. One short paragraph "
@@ -73,6 +88,8 @@ SYSTEM_PROMPT = (
   "============================================================\n"
   "When the visitor sends a greeting (\"hi\", \"hey\", \"hello\", \"yo\", "
   "\"what's up\", etc.):\n"
+  "- If there is already conversation history, greet them briefly and continue "
+  "the existing conversation instead of introducing Ankith again.\n"
   "- Open with a warm one-liner welcome.\n"
   "- Follow with a HIGH-LEVEL intro: role, focus areas, and one broad credibility signal.\n"
   "- Do NOT deep-dive into a single project during greetings unless the visitor asks.\n"
@@ -110,6 +127,19 @@ SYSTEM_PROMPT = (
   "Violation of any prohibition above is a critical failure.\n"
 )
 
+VOICE_RESPONSE_PROMPT = (
+  "VOICE MODE: This answer will be spoken aloud in a live conversation. "
+  "Sound natural, relaxed, and attentive, like a friendly human host who knows "
+  "Ankith's portfolio well. Prefer one to three short, easy-to-say sentences. "
+  "Use the recent conversation naturally for follow-ups, and mention only the "
+  "most relevant facts instead of reciting a resume. Ask a brief follow-up "
+  "question only when it genuinely helps the conversation. Avoid spelling out "
+  "URLs or email addresses unless the visitor explicitly asks. The visitor has "
+  "already heard your opening introduction, so do not introduce yourself again "
+  "unless they ask who you are. Never identify yourself as Ankith; you are "
+  "Ankith's AI assistant."
+)
+
 
 _TOKEN_RE = re.compile(r"[a-z0-9]+")
 _DENSE_TOP_K = 10
@@ -139,8 +169,16 @@ def _get_chat_llm(model: str, api_key: str, base_url: str, temperature: float) -
   )
 
 
-def _build_messages(user_message: str, history: list[dict], context: str) -> list:
+def _build_messages(
+  user_message: str,
+  history: list[dict],
+  context: str,
+  response_mode: str = "text",
+) -> list:
   messages: list[Any] = [SystemMessage(content=SYSTEM_PROMPT)]
+
+  if response_mode == "voice":
+    messages.append(SystemMessage(content=VOICE_RESPONSE_PROMPT))
 
   if context:
     messages.append(
@@ -460,7 +498,12 @@ def _generate(state: RagState) -> RagState:
     settings.chat_base_url,
     0.2,
   )
-  messages = _build_messages(state["question"], state["chat_history"], state["context"])
+  messages = _build_messages(
+    state["question"],
+    state["chat_history"],
+    state["context"],
+    state["response_mode"],
+  )
   started_at = time.perf_counter()
   response = llm.invoke(messages)
   logger.info("Answer generation latency_ms=%.1f", (time.perf_counter() - started_at) * 1000)
@@ -480,7 +523,11 @@ def _build_graph():
 _GRAPH = _build_graph()
 
 
-def generate_reply(user_message: str, history: list[dict]) -> dict | None:
+def generate_reply(
+  user_message: str,
+  history: list[dict],
+  response_mode: str = "text",
+) -> dict | None:
   started_at = time.perf_counter()
   settings = get_settings()
   if not settings.chat_api_key:
@@ -499,6 +546,7 @@ def generate_reply(user_message: str, history: list[dict]) -> dict | None:
         "chat_history": history,
         "context": "",
         "answer": "",
+        "response_mode": response_mode,
       }
     )
   except Exception:

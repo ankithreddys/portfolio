@@ -10,13 +10,17 @@ from app.services.sessions import append_messages, get_history
 logger = logging.getLogger(__name__)
 
 
-def generate_and_store_reply(session_id: str, user_message: str) -> dict | None:
+def generate_and_store_reply(
+  session_id: str,
+  user_message: str,
+  response_mode: str = "text",
+) -> dict | None:
   started_at = time.perf_counter()
   history = get_history(session_id)
   history_ms = (time.perf_counter() - started_at) * 1000
 
   generation_started_at = time.perf_counter()
-  response = generate_reply(user_message, history)
+  response = generate_reply(user_message, history, response_mode=response_mode)
   generation_ms = (time.perf_counter() - generation_started_at) * 1000
   if response is None:
     return None
