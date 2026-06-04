@@ -79,9 +79,41 @@ function VoiceMode({ sessionId, mode, onChooseVoice, onChooseChat, onBack }) {
       }
     >
       <div className="chat-voice-orb">
-        <span className="chat-voice-ring ring-one" aria-hidden="true" />
-        <span className="chat-voice-ring ring-two" aria-hidden="true" />
-        <span className="chat-voice-ring ring-three" aria-hidden="true" />
+        <span className="chat-voice-halo" aria-hidden="true" />
+        <svg className="chat-voice-wavefield" viewBox="0 0 260 260" aria-hidden="true">
+          <defs>
+            <linearGradient id="voice-wave-gradient" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#7b5cff" />
+              <stop offset="48%" stopColor="#00d4ff" />
+              <stop offset="100%" stopColor="#63f5c8" />
+            </linearGradient>
+            <filter id="voice-wave-glow" x="-80%" y="-80%" width="260%" height="260%">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+
+          <g className="chat-voice-wave-pair wave-pair-inner">
+            <path d="M88 98 C72 112 72 148 88 162" />
+            <path d="M172 98 C188 112 188 148 172 162" />
+          </g>
+          <g className="chat-voice-wave-pair wave-pair-middle">
+            <path d="M69 80 C39 105 39 155 69 180" />
+            <path d="M191 80 C221 105 221 155 191 180" />
+          </g>
+          <g className="chat-voice-wave-pair wave-pair-outer">
+            <path d="M49 61 C5 97 5 163 49 199" />
+            <path d="M211 61 C255 97 255 163 211 199" />
+          </g>
+
+          <path className="chat-voice-orbit orbit-top" d="M71 66 C103 34 157 34 189 66" />
+          <path className="chat-voice-orbit orbit-bottom" d="M71 194 C103 226 157 226 189 194" />
+          <circle className="chat-voice-signal signal-one" cx="49" cy="61" r="3" />
+          <circle className="chat-voice-signal signal-two" cx="211" cy="199" r="3" />
+        </svg>
         {microphoneControl || (
           <span className="chat-voice-microphone chat-voice-microphone-placeholder">
             {microphoneIcon}

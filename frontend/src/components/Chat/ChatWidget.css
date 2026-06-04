@@ -177,38 +177,119 @@
 }
 
 .chat-voice-orb {
-  width: 210px;
-  height: 210px;
+  width: 260px;
+  height: 260px;
   position: relative;
   display: grid;
   place-items: center;
   isolation: isolate;
 }
 
-.chat-voice-ring {
+.chat-voice-halo {
   position: absolute;
-  inset: 50%;
-  width: 84px;
-  height: 84px;
-  border: 1px solid rgba(0, 212, 255, 0.42);
+  width: 124px;
+  height: 124px;
   border-radius: 50%;
-  transform: translate(-50%, -50%);
-  opacity: 0;
-  animation: voice-ring-pulse 2.8s ease-out infinite;
+  background:
+    radial-gradient(circle, rgba(0, 212, 255, 0.18) 0%, rgba(0, 212, 255, 0.04) 48%, transparent 70%),
+    conic-gradient(
+      from 45deg,
+      rgba(123, 92, 255, 0.2),
+      rgba(0, 212, 255, 0.5),
+      rgba(99, 245, 200, 0.2),
+      rgba(123, 92, 255, 0.2)
+    );
+  filter: blur(1px);
+  opacity: 0.7;
+  animation: voice-halo-breathe 2.8s ease-in-out infinite;
   pointer-events: none;
 }
 
-.chat-voice-ring.ring-two {
-  animation-delay: 0.85s;
+.chat-voice-wavefield {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
 }
 
-.chat-voice-ring.ring-three {
-  animation-delay: 1.7s;
+.chat-voice-wave-pair,
+.chat-voice-orbit {
+  fill: none;
+  stroke: url('#voice-wave-gradient');
+  stroke-linecap: round;
+  filter: url('#voice-wave-glow');
 }
 
-.chat-voice-stage.connected .chat-voice-ring {
-  animation-duration: 2.2s;
-  border-color: rgba(0, 212, 255, 0.62);
+.chat-voice-wave-pair {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: voice-wave-breathe 2.4s ease-in-out infinite;
+}
+
+.chat-voice-wave-pair path {
+  stroke-dasharray: 9 7;
+  animation: voice-wave-travel 2.2s linear infinite;
+}
+
+.wave-pair-inner {
+  opacity: 0.95;
+  stroke-width: 3.6;
+}
+
+.wave-pair-middle {
+  opacity: 0.67;
+  stroke-width: 2.8;
+  animation-delay: -0.65s;
+}
+
+.wave-pair-middle path {
+  animation-delay: -0.45s;
+}
+
+.wave-pair-outer {
+  opacity: 0.38;
+  stroke-width: 2;
+  animation-delay: -1.3s;
+}
+
+.wave-pair-outer path {
+  animation-delay: -0.9s;
+}
+
+.chat-voice-orbit {
+  opacity: 0.38;
+  stroke-width: 2;
+  stroke-dasharray: 14 10;
+  animation: voice-orbit-travel 3.6s linear infinite;
+}
+
+.orbit-bottom {
+  animation-direction: reverse;
+}
+
+.chat-voice-signal {
+  fill: #63f5c8;
+  filter: url('#voice-wave-glow');
+  animation: voice-signal-pulse 1.8s ease-in-out infinite;
+}
+
+.signal-two {
+  animation-delay: -0.9s;
+}
+
+.chat-voice-stage.connected .chat-voice-wave-pair {
+  animation-duration: 1.9s;
+}
+
+.chat-voice-stage.connected .chat-voice-wave-pair path {
+  animation-duration: 1.7s;
+}
+
+.chat-voice-stage.connected .chat-voice-halo {
+  opacity: 0.9;
+  animation-duration: 2.1s;
 }
 
 .chat-voice-microphone,
@@ -262,7 +343,7 @@ button.chat-voice-microphone[data-lk-enabled='false'] {
 
 .chat-voice-audio-unlock {
   position: absolute;
-  top: 105px;
+  top: 200px;
   left: 50%;
   z-index: 5;
   width: 76px;
@@ -277,19 +358,56 @@ button.chat-voice-microphone[data-lk-enabled='false'] {
   opacity: 0;
 }
 
-@keyframes voice-ring-pulse {
-  0% {
-    opacity: 0.7;
-    transform: translate(-50%, -50%) scale(0.7);
-  }
-
-  75% {
-    opacity: 0.08;
-  }
-
+@keyframes voice-wave-breathe {
+  0%,
   100% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(2.2);
+    transform: scale(0.94);
+    opacity: 0.42;
+  }
+
+  50% {
+    transform: scale(1.04);
+    opacity: 1;
+  }
+}
+
+@keyframes voice-wave-travel {
+  to {
+    stroke-dashoffset: -32;
+  }
+}
+
+@keyframes voice-orbit-travel {
+  to {
+    stroke-dashoffset: -96;
+  }
+}
+
+@keyframes voice-halo-breathe {
+  0%,
+  100% {
+    transform: scale(0.88) rotate(0deg);
+    opacity: 0.48;
+  }
+
+  50% {
+    transform: scale(1.1) rotate(18deg);
+    opacity: 0.86;
+  }
+}
+
+@keyframes voice-signal-pulse {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.7);
+    transform-origin: center;
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.35);
+    transform-origin: center;
   }
 }
 
@@ -313,7 +431,11 @@ button.chat-voice-microphone[data-lk-enabled='false'] {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .chat-voice-ring {
-    animation-duration: 6s;
+  .chat-voice-wave-pair,
+  .chat-voice-wave-pair path,
+  .chat-voice-orbit,
+  .chat-voice-halo,
+  .chat-voice-signal {
+    animation-duration: 8s;
   }
 }
