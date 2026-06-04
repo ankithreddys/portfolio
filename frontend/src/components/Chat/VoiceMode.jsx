@@ -1,5 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
-import { LiveKitRoom, RoomAudioRenderer, StartAudio, TrackToggle } from '@livekit/components-react'
+import {
+  ConnectionState,
+  LiveKitRoom,
+  RoomAudioRenderer,
+  StartAudio,
+  TrackToggle,
+  useRemoteParticipants,
+} from '@livekit/components-react'
 import { Track } from 'livekit-client'
 import { fetchLiveKitToken } from '../../services/api'
 
@@ -10,12 +17,27 @@ const createSessionId = () => {
   return `voice-${Date.now()}-${Math.random().toString(16).slice(2)}`
 }
 
+function VoiceConnectionStatus() {
+  const remoteParticipants = useRemoteParticipants()
+  const agentConnected = remoteParticipants.length > 0
+
+  return (
+    <div className="chat-voice-diagnostics" aria-live="polite">
+      <span>
+        Room: <ConnectionState />
+      </span>
+      <span>{agentConnected ? 'Agent connected' : 'Waiting for voice agent...'}</span>
+    </div>
+  )
+}
+
 function VoiceMode({ sessionId, onBack }) {
   const [voiceError, setVoiceError] = useState('')
   const [voiceLoading, setVoiceLoading] = useState(true)
   const [voiceToken, setVoiceToken] = useState('')
   const [voiceUrl, setVoiceUrl] = useState('')
   const [voiceRoom, setVoiceRoom] = useState('')
+  const [roomConnected, setRoomConnected] = useState(false)
   const [voiceIdentity, setVoiceIdentity] = useState(() => createSessionId())
   const mountedRef = useRef(true)
 
@@ -67,6 +89,7 @@ function VoiceMode({ sessionId, onBack }) {
     setVoiceToken('')
     setVoiceUrl('')
     setVoiceRoom('')
+    setRoomConnected(false)
     setVoiceError('')
   }
 
@@ -85,8 +108,14 @@ function VoiceMode({ sessionId, onBack }) {
       </div>
 
       <div className="chat-voice-room">
-        <span className={`chat-voice-status ${voiceRoom ? 'active' : ''}`}>
-          {voiceLoading ? 'Connecting...' : voiceRoom ? `Connected to ${voiceRoom}` : 'Ready'}
+        <span className={`chat-voice-status ${roomConnected ? 'active' : ''}`}>
+          {voiceLoading
+            ? 'Getting secure room access...'
+            : roomConnected
+              ? 'Voice room connected'
+              : voiceRoom
+                ? 'Joining voice room...'
+                : 'Ready'}
         </span>
         <button type="button" className="chat-voice-link" onClick={handleDisconnected}>
           Back to menu
@@ -102,18 +131,35 @@ function VoiceMode({ sessionId, onBack }) {
           connect
           audio
           video={false}
+          onConnected={() => {
+            setRoomConnected(true)
+            setVoiceError('')
+          }}
           onDisconnected={handleDisconnected}
+          onMediaDeviceFailure={(_, kind) => {
+            setVoiceError(
+              kind === 'audioinput'
+                ? 'Microphone access failed. Allow microphone permission and try again.'
+                : 'A media device could not be started.',
+            )
+          }}
           onError={(err) => {
             setVoiceError(err?.message || 'LiveKit connection failed.')
           }}
         >
           <StartAudio label="Click to allow audio playback" />
           <RoomAudioRenderer />
+          <VoiceConnectionStatus />
           <div className="chat-voice-room">
-            <span className={`chat-voice-status ${voiceRoom ? 'active' : ''}`}>
-              {voiceRoom ? `Connected to ${voiceRoom}` : 'Connecting...'}
-            </span>
-            <TrackToggle source={Track.Source.Microphone} />
+            <TrackToggle
+              source={Track.Source.Microphone}
+              initialState
+              onDeviceError={(err) => {
+                setVoiceError(err?.message || 'Microphone access failed.')
+              }}
+            >
+              Microphone
+            </TrackToggle>
           </div>
         </LiveKitRoom>
       ) : null}

@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+import json
 import uuid
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from livekit.api import AccessToken, VideoGrants
+from livekit.api import AccessToken, RoomAgentDispatch, RoomConfiguration, VideoGrants
 
 from app.config import get_settings
 
@@ -35,6 +36,7 @@ def create_token(request: LiveKitTokenRequest) -> LiveKitTokenResponse:
     raise HTTPException(status_code=500, detail="LiveKit credentials are not configured.")
 
   identity = request.identity or f"voice-{uuid.uuid4().hex[:12]}"
+  room = f"voice-{uuid.uuid4().hex}"
   token = (
     AccessToken(settings.livekit_api_key, settings.livekit_api_secret)
     .with_identity(identity)
@@ -42,10 +44,20 @@ def create_token(request: LiveKitTokenRequest) -> LiveKitTokenResponse:
     .with_grants(
       VideoGrants(
         room_join=True,
-        room=request.session_id,
+        room=room,
         can_publish=True,
         can_subscribe=True,
         can_publish_data=True,
+      )
+    )
+    .with_room_config(
+      RoomConfiguration(
+        agents=[
+          RoomAgentDispatch(
+            agent_name=settings.livekit_agent_name,
+            metadata=json.dumps({"session_id": request.session_id}),
+          )
+        ]
       )
     )
     .to_jwt()
@@ -54,6 +66,6 @@ def create_token(request: LiveKitTokenRequest) -> LiveKitTokenResponse:
   return LiveKitTokenResponse(
     url=settings.livekit_url,
     token=token,
-    room=request.session_id,
+    room=room,
     identity=identity,
   )

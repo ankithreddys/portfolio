@@ -86,6 +86,17 @@
   color: var(--accent-primary);
 }
 
+.chat-voice-diagnostics {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 10px 12px;
+  border: 1px solid var(--bg-tertiary);
+  border-radius: 10px;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
 .chat-window {
   min-height: 280px;
   max-height: 420px;

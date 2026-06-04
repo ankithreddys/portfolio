@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import sys
 from pathlib import Path
 
@@ -68,7 +69,7 @@ def _queue_response(session: AgentSession, room_name: str, message: str) -> None
 server = AgentServer()
 
 
-@server.rtc_session()
+@server.rtc_session(agent_name=settings.livekit_agent_name)
 async def entrypoint(ctx: agents.JobContext):
   if not settings.livekit_url:
     raise RuntimeError("LIVEKIT_URL is not configured.")
@@ -100,6 +101,13 @@ async def entrypoint(ctx: agents.JobContext):
   )
 
   room_name = getattr(ctx.room, "name", "") or "portfolio-voice"
+  session_id = room_name
+  try:
+    metadata = json.loads(getattr(ctx.job, "metadata", "") or "{}")
+    session_id = metadata.get("session_id") or room_name
+  except json.JSONDecodeError:
+    pass
+
   agent = Agent(
     instructions=(
       "You are the voice interface for Ankith's portfolio assistant. "
@@ -113,7 +121,7 @@ async def entrypoint(ctx: agents.JobContext):
     if not getattr(event, "is_final", False):
       return
     transcript = getattr(event, "transcript", "") or ""
-    _queue_response(session, room_name, transcript)
+    _queue_response(session, session_id, transcript)
 
   await session.start(
     room=ctx.room,
