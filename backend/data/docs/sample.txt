@@ -1,7 +1,7 @@
 ================================================================
 ANKITH REDDY SUBHANPURAM – PERSONAL KNOWLEDGE BASE (RAG DATABASE)
 ================================================================
-Last Updated: April 2026
+Last Updated: May 2026
 Purpose: Raw knowledge base file for Retrieval-Augmented Generation (RAG) over personal portfolio.
 
 Branding note: The logo uses a sigma with "A·R" and a superscript "S" which represents my name. The sigma references the attention mechanism (Q * K^T), reflecting deep learning roots.
@@ -14,16 +14,22 @@ Full Name: Ankith Reddy Subhanpuram
 Email: ankithreddy653@gmail.com
 Phone: +1 (352) 642-5515
 Location: Gainesville, Florida, USA
-LinkedIn: Available on resume/portfolio
-GitHub: Available on resume/portfolio
-Portfolio: Available on resume/portfolio
+LinkedIn: Available on portfolio
+GitHub: Available on portfolio
+Portfolio: Available on portfolio
+
+Portfolio Structure:
+- Resume Section: Ankith's resume/CV is located in the Resume section of his portfolio.
+- Blogs Section: Ankith writes and publishes blogs in the Blogs section of his portfolio.
+- All professional writing, technical articles, and thought pieces by Ankith can be found in the Blogs section of his portfolio.
+- The most up-to-date version of Ankith's resume is always available in the Resume section of his portfolio.
 
 ----------------------------------------------------------------
 SECTION 2: PROFESSIONAL SUMMARY
 ----------------------------------------------------------------
 Ankith Reddy Subhanpuram is an ML Engineer and AI Researcher with hands-on experience building production-grade systems involving Large Language Models (LLMs), Retrieval-Augmented Generation (RAG) pipelines, and fine-tuned foundation models. His work spans clinical healthcare, cloud infrastructure, and national defense domains.
 
-He is proficient in end-to-end MLOps across AWS, Azure, and High-Performance Computing (HPC) clusters. He is currently pursuing a Master of Science in Artificial Intelligence Systems at the University of Florida with a GPA of 3.89 out of 4.00.
+He is proficient in end-to-end MLOps across AWS, Azure, and High-Performance Computing (HPC) clusters. He holds a Master of Science in Artificial Intelligence Systems from the University of Florida (GPA: 3.89/4.00, graduated May 2026).
 
 Ankith is someone who bridges research and engineering — he doesn't just experiment in notebooks but takes AI systems to production with containerization, access control, observability, and scalable cloud infrastructure.
 
@@ -35,8 +41,9 @@ Degree 1:
 - Institution: University of Florida (UF)
 - Location: Gainesville, FL, USA
 - Degree: Master of Science (M.S.) in Artificial Intelligence Systems
-- Duration: August 2024 – May 2026 (Expected)
+- Duration: August 2024 – May 2026
 - GPA: 3.89 / 4.00
+- Status: Graduated May 2026
 - Notable: One of the strongest AI-focused graduate programs in the southeastern United States.
 
 Degree 2:
@@ -59,31 +66,34 @@ Duration: August 2025 – Present
 Domain: Clinical AI / Healthcare AI / Deep Learning
 
 Sub-Project 1: Clinical Digital Twin – Synthetic Q&A Generation & LLM Fine-tuning
-- Designed and iterated multi-stage prompting strategies using frontier LLMs to synthesize high-fidelity clinical question-answer pairs from Electronic Health Record (EHR) data.
-- Generated large-scale training corpora of 110,000+ EHR samples for downstream fine-tuning of clinical LLMs.
-- Used DeepEval framework with 14 LLM-as-judge metrics to evaluate prompt quality covering clinical reasoning, factual accuracy, and diagnostic validity.
-- Applied semantic deduplication on the Q&A corpus using ClinicalBERT and PubMedBERT embeddings combined with FAISS + Jaccard pipelines.
-- Semantic deduplication reduced dataset redundancy by 36% and improved downstream model accuracy by 4%.
-- Fine-tuned large open-source models: GPT-based 120B and 20B models, and LLaMA-3.3 70B.
-- Used Axolotl with PEFT/LoRA training on HiPerGator's NVIDIA B200 GPU cluster with FSDP2 (Fully Sharded Data Parallel) for parallelized training.
-- Benchmarked fine-tuned models against clinical OSS baselines including AlpaCare and ChatDoctor.
-- Evaluated on public clinical NLP benchmarks: MedQA, HeadQA, and PubMedQA.
-- Used 3 frontier LLM judges for multi-judge response quality assessment.
+[Organization: University of Florida – IC3 / PRISMAp | Role: Research Assistant]
+- At UF IC3/PRISMAp, designed and iterated multi-stage prompting strategies using frontier LLMs to synthesize high-fidelity clinical question-answer pairs from Electronic Health Record (EHR) data.
+- At UF IC3/PRISMAp, generated large-scale training corpora of 110,000+ EHR samples for downstream fine-tuning of clinical LLMs.
+- At UF IC3/PRISMAp, used DeepEval framework with 14 LLM-as-judge metrics to evaluate prompt quality covering clinical reasoning, factual accuracy, and diagnostic validity.
+- At UF IC3/PRISMAp, applied semantic deduplication on the Q&A corpus using ClinicalBERT and PubMedBERT embeddings combined with FAISS + Jaccard pipelines.
+- At UF IC3/PRISMAp, semantic deduplication reduced dataset redundancy by 36% and improved downstream model accuracy by 4%.
+- At UF IC3/PRISMAp, fine-tuned large open-source models: GPT-based 120B and 20B models, and LLaMA-3.3 70B.
+- At UF IC3/PRISMAp, used Axolotl with PEFT/LoRA training on HiPerGator's NVIDIA B200 GPU cluster with FSDP2 (Fully Sharded Data Parallel) for parallelized training.
+- At UF IC3/PRISMAp, benchmarked fine-tuned models against clinical OSS baselines including AlpaCare and ChatDoctor.
+- At UF IC3/PRISMAp, evaluated on public clinical NLP benchmarks: MedQA, HeadQA, and PubMedQA.
+- At UF IC3/PRISMAp, used 3 frontier LLM judges for multi-judge response quality assessment.
 
 Sub-Project 2: ICU EHR Deep Learning – Transformer, Mamba & Mixture-of-Experts Modeling
-- Engineered multimodal ICU EHR datasets by preprocessing preoperative, intraoperative, and postoperative data.
-- Handled both static and temporal time-series data alongside unstructured clinical notes.
-- Converted and stored all data into structured HDF5 (.h5) files optimized for deep learning ingestion.
-- Trained and benchmarked three architecture families on longitudinal ICU patient data:
+[Organization: University of Florida – IC3 / PRISMAp | Role: Research Assistant]
+- At UF IC3/PRISMAp, engineered multimodal ICU EHR datasets by preprocessing preoperative, intraoperative, and postoperative data.
+- At UF IC3/PRISMAp, handled both static and temporal time-series data alongside unstructured clinical notes.
+- At UF IC3/PRISMAp, converted and stored all data into structured HDF5 (.h5) files optimized for deep learning ingestion.
+- At UF IC3/PRISMAp, trained and benchmarked three architecture families on longitudinal ICU patient data:
   * Transformers (attention-based)
   * Mamba (state space models / SSMs)
   * Mixture-of-Experts (MoE)
-- Research is currently in the grant evaluation phase.
+- At UF IC3/PRISMAp, this research is currently in the grant evaluation phase.
 
 Sub-Project 3: Pathology Report Analysis
-- Developing advanced prompting techniques for automated analysis of unstructured pathology reports.
-- Techniques used: Chain-of-Thought (CoT), Few-Shot prompting, and structured extraction.
-- Goal: Structured information extraction from free-text pathology reports using frontier LLMs.
+[Organization: University of Florida – IC3 / PRISMAp | Role: Research Assistant]
+- At UF IC3/PRISMAp, developing advanced prompting techniques for automated analysis of unstructured pathology reports.
+- At UF IC3/PRISMAp, techniques used: Chain-of-Thought (CoT), Few-Shot prompting, and structured extraction.
+- At UF IC3/PRISMAp, goal: structured information extraction from free-text pathology reports using frontier LLMs.
 
 --- EXPERIENCE 2 ---
 Organization: University of Florida – IPPD | Oelrich Construction
@@ -93,21 +103,22 @@ Duration: August 2025 – Present
 Domain: Enterprise AI / Construction Industry / RAG / Cloud (Azure)
 
 Key Contributions:
-- Architected a permissions-aware enterprise RAG system with Role-Based Access Control (RBAC) at the document level.
-- Integrated Azure Active Directory (Azure AD) with Microsoft Graph API to extract per-file access permissions from Azure File Shares.
-- Built a document ingestion pipeline using SuryaOCR and PyMuPDF for multi-format document extraction.
-- Generated vector embeddings using Azure OpenAI embedding models.
-- Implemented SHA-based content hashing on chunks and RBAC metadata for idempotent ingestion, eliminating redundant nightly reprocessing.
-- Engineered a hybrid retrieval system combining:
+[Organization: University of Florida – IPPD / Oelrich Construction | Role: AI Engineer Co-op]
+- At UF IPPD / Oelrich Construction, architected a permissions-aware enterprise RAG system with Role-Based Access Control (RBAC) at the document level.
+- At UF IPPD / Oelrich Construction, integrated Azure Active Directory (Azure AD) with Microsoft Graph API to extract per-file access permissions from Azure File Shares.
+- At UF IPPD / Oelrich Construction, built a document ingestion pipeline using SuryaOCR and PyMuPDF for multi-format document extraction.
+- At UF IPPD / Oelrich Construction, generated vector embeddings using Azure OpenAI embedding models.
+- At UF IPPD / Oelrich Construction, implemented SHA-based content hashing on chunks and RBAC metadata for idempotent ingestion, eliminating redundant nightly reprocessing.
+- At UF IPPD / Oelrich Construction, engineered a hybrid retrieval system combining:
   * BM25 sparse keyword search
   * DiskANN-indexed dense vector similarity search
   * Cross-encoder reranking for precision-optimized results
-- Designed a LangGraph and LangChain chunking and indexing workflow.
-- Persisted chunk embeddings alongside RBAC access policies into Azure Cosmos DB (NoSQL).
-- Secured all runtime credentials using Azure Key Vault.
-- Containerized the ingestion pipeline as an Azure Container Apps Job with scheduled nightly execution (zero-touch data refresh).
-- Deployed a FastAPI backend on Azure App Services with server-side session management.
-- Powered conversational retrieval with Azure OpenAI models.
+- At UF IPPD / Oelrich Construction, designed a LangGraph and LangChain chunking and indexing workflow.
+- At UF IPPD / Oelrich Construction, persisted chunk embeddings alongside RBAC access policies into Azure Cosmos DB (NoSQL).
+- At UF IPPD / Oelrich Construction, secured all runtime credentials using Azure Key Vault.
+- At UF IPPD / Oelrich Construction, containerized the ingestion pipeline as an Azure Container Apps Job with scheduled nightly execution (zero-touch data refresh).
+- At UF IPPD / Oelrich Construction, deployed a FastAPI backend on Azure App Services with server-side session management.
+- At UF IPPD / Oelrich Construction, powered conversational retrieval with Azure OpenAI models.
 
 --- EXPERIENCE 3 ---
 Organization: Scholarship Auditions
@@ -117,19 +128,20 @@ Duration: May 2025 – August 2025
 Domain: EdTech / Music Education / AWS / RAG / Computer Vision
 
 Key Contributions:
-- Architected a production-grade RAG chatbot on AWS ECS/Fargate using FastAPI and LangGraph orchestration.
-- Used Amazon OpenSearch Service as the vector store and Amazon Bedrock for LLM inference across 20,000+ documents.
-- Implemented hybrid retrieval combining dense embedding search and cross-encoder reranking:
+[Organization: Scholarship Auditions | Role: AI Engineer Intern]
+- At Scholarship Auditions, architected a production-grade RAG chatbot on AWS ECS/Fargate using FastAPI and LangGraph orchestration.
+- At Scholarship Auditions, used Amazon OpenSearch Service as the vector store and Amazon Bedrock for LLM inference across 20,000+ documents.
+- At Scholarship Auditions, implemented hybrid retrieval combining dense embedding search and cross-encoder reranking:
   * Improved retrieval relevance by 25%
   * Reduced end-to-end response latency by 35%
-- Deployed session memory via Amazon ElastiCache (Redis) with distributed rate limiting across ECS replicas.
-- Built access-control middleware with JWT authentication and tenant isolation.
-- Secured credentials via AWS Secrets Manager with ALB + WAF ingress controls.
-- Set up structured CloudWatch Logs observability.
-- Fine-tuned ResNet-50 for music transcription image classification using transfer learning.
+- At Scholarship Auditions, deployed session memory via Amazon ElastiCache (Redis) with distributed rate limiting across ECS replicas.
+- At Scholarship Auditions, built access-control middleware with JWT authentication and tenant isolation.
+- At Scholarship Auditions, secured credentials via AWS Secrets Manager with ALB + WAF ingress controls.
+- At Scholarship Auditions, set up structured CloudWatch Logs observability.
+- At Scholarship Auditions, fine-tuned ResNet-50 for music transcription image classification using transfer learning:
   * Achieved 90%+ accuracy on 10,000+ annotated images.
-- Containerized services with Docker and Amazon ECR for zero-downtime rolling deployments on Fargate.
-- Built automated web scraping pipelines using Scrapy and Selenium to collect data from 50+ sources.
+- At Scholarship Auditions, containerized services with Docker and Amazon ECR for zero-downtime rolling deployments on Fargate.
+- At Scholarship Auditions, built automated web scraping pipelines using Scrapy and Selenium to collect data from 50+ sources:
   * Generated 100,000+ records.
   * Orchestrated workflows via Apache Airflow for scheduling and fault-tolerant execution.
 
@@ -141,19 +153,20 @@ Duration: October 2023 – March 2024
 Domain: Defense / Speech Recognition / NLP / HPC
 
 Key Contributions:
-- Designed and pre-trained a Conformer model on restricted defense speech corpora.
-- Used self-supervised contrastive learning objectives for pre-training.
-- Coupled Conformer model with Wav2Vec2 as a feature extractor.
-- Executed multi-GPU data-parallel training (DDP) in PyTorch on NVIDIA DGX hardware.
-- Reduced overall training time by 40% on 1,000+ hours of speech data.
-- Fine-tuned the Conformer-Wav2Vec2 architecture end-to-end using Connectionist Temporal Classification (CTC) as training objective.
-- Used Byte Pair Encoding (BPE) tokenization for subword vocabulary construction.
-- Improved recognition for low-resource Indian languages: Assamese and Bengali.
-- Achieved 8.3% Word Error Rate (WER) on low-resource language benchmarks.
-- Reduced vocabulary size by 30%.
-- Deployed Voice Activity Detection (VAD) and noise-reduction pipelines in production.
-- Increased transcription accuracy by 15% in real-world noisy environments.
-- Worked with classified/restricted defense datasets in a high-security environment.
+[Organization: CAIR – DRDO | Role: AI Research Intern]
+- At CAIR-DRDO, designed and pre-trained a Conformer model on restricted defense speech corpora.
+- At CAIR-DRDO, used self-supervised contrastive learning objectives for pre-training.
+- At CAIR-DRDO, coupled Conformer model with Wav2Vec2 as a feature extractor.
+- At CAIR-DRDO, executed multi-GPU data-parallel training (DDP) in PyTorch on NVIDIA DGX hardware.
+- At CAIR-DRDO, reduced overall training time by 40% on 1,000+ hours of speech data.
+- At CAIR-DRDO, fine-tuned the Conformer-Wav2Vec2 architecture end-to-end using Connectionist Temporal Classification (CTC) as training objective.
+- At CAIR-DRDO, used Byte Pair Encoding (BPE) tokenization for subword vocabulary construction.
+- At CAIR-DRDO, improved recognition for low-resource Indian languages: Assamese and Bengali.
+- At CAIR-DRDO, achieved 8.3% Word Error Rate (WER) on low-resource language benchmarks.
+- At CAIR-DRDO, reduced vocabulary size by 30%.
+- At CAIR-DRDO, deployed Voice Activity Detection (VAD) and noise-reduction pipelines in production.
+- At CAIR-DRDO, increased transcription accuracy by 15% in real-world noisy environments.
+- At CAIR-DRDO, worked with classified/restricted defense datasets in a high-security environment.
 
 ----------------------------------------------------------------
 SECTION 5: PROJECTS
@@ -164,35 +177,37 @@ Type: Personal / Portfolio Project
 Domain: Agentic AI / Multi-Agent Systems / Productivity Automation
 
 Description:
-OrchesterAI is a stateful multi-agent orchestration framework built using LangGraph and LangChain. It coordinates 7 specialized LLM agents operating as a Directed Acyclic Graph (DAG) with autonomous conditional edge routing and type-safe inter-agent schema validation.
+OrchesterAI is a stateful multi-agent orchestration framework built by Ankith Reddy Subhanpuram using LangGraph and LangChain. It coordinates 7 specialized LLM agents operating as a Directed Acyclic Graph (DAG) with autonomous conditional edge routing and type-safe inter-agent schema validation.
 
 Key Features:
-- 7 specialized LLM agents, each with defined roles and scoped capabilities.
-- Stateful DAG orchestration with conditional routing between agents.
-- Type-safe inter-agent communication using schema validation.
-- Autonomous email and calendar execution layer:
+[Project: OrchesterAI | Owner: Ankith Reddy Subhanpuram]
+- OrchesterAI has 7 specialized LLM agents, each with defined roles and scoped capabilities.
+- OrchesterAI uses stateful DAG orchestration with conditional routing between agents.
+- OrchesterAI implements type-safe inter-agent communication using schema validation.
+- OrchesterAI includes an autonomous email and calendar execution layer:
   * Integrates with Gmail, Outlook, and Calendar APIs.
   * OAuth 2.0 authentication for secure API access.
   * Fuzzy-match contact resolution for natural language email targeting.
-- Built with FastAPI backend and Gradio frontend.
-- End-to-end distributed tracing via LangSmith for full agent observability.
+- OrchesterAI is built with a FastAPI backend and Gradio frontend.
+- OrchesterAI uses end-to-end distributed tracing via LangSmith for full agent observability.
 
 --- PROJECT 2: Virtual Surya Namaskar Coach ---
 Type: Personal / Portfolio Project
 Domain: Computer Vision / Pose Estimation / Real-Time AI / Health Tech
 
 Description:
-A real-time yoga posture analysis system that uses full-body landmark tracking and joint-angle extraction to classify and correct 12 Surya Namaskar (Sun Salutation) poses.
+The Virtual Surya Namaskar Coach is a real-time yoga posture analysis system built by Ankith Reddy Subhanpuram. It uses full-body landmark tracking and joint-angle extraction to classify and correct 12 Surya Namaskar (Sun Salutation) poses.
 
 Key Features:
-- Uses OpenCV, TensorFlow, and MediaPipe for landmark detection and classification.
-- Achieves sub-100ms inference latency on live webcam input (real-time capable).
-- Classifies all 12 poses in the Surya Namaskar sequence.
-- Engineered a pose-correction pipeline:
+[Project: Virtual Surya Namaskar Coach | Owner: Ankith Reddy Subhanpuram]
+- The Virtual Surya Namaskar Coach uses OpenCV, TensorFlow, and MediaPipe for landmark detection and classification.
+- The Virtual Surya Namaskar Coach achieves sub-100ms inference latency on live webcam input (real-time capable).
+- The Virtual Surya Namaskar Coach classifies all 12 poses in the Surya Namaskar sequence.
+- The Virtual Surya Namaskar Coach includes an engineered pose-correction pipeline:
   * Reference angle schemas for each correct pose.
   * Data augmentation for training robustness.
   * Per-joint deviation detection that flags incorrect form in real time.
-- Designed with accessibility in mind — works with a standard webcam.
+- The Virtual Surya Namaskar Coach is designed with accessibility in mind — works with a standard webcam.
 
 ----------------------------------------------------------------
 SECTION 6: TECHNICAL SKILLS
@@ -322,38 +337,47 @@ Aug 2024: Started M.S. in AI Systems at University of Florida
 May 2025 – Aug 2025: AI Engineer Intern at Scholarship Auditions, Nashville TN
 Aug 2025 – Present: Research Assistant at UF IC3/PRISMAp (Clinical AI)
 Aug 2025 – Present: AI Engineer Co-op at UF IPPD / Oelrich Construction
-May 2026: Expected graduation from UF M.S. program
+May 2026: Graduated – M.S. in Artificial Intelligence Systems, University of Florida
 
 ----------------------------------------------------------------
 SECTION 9: KEY ACHIEVEMENTS & METRICS
 ----------------------------------------------------------------
-- 36% reduction in dataset redundancy through semantic deduplication on 110K+ EHR samples
-- 4% improvement in downstream model accuracy after deduplication
-- 40% reduction in training time for defense speech model using DDP on NVIDIA DGX
-- 8.3% Word Error Rate (WER) on low-resource language ASR (Assamese, Bengali)
-- 30% vocabulary size reduction using BPE tokenization
-- 15% transcription accuracy improvement using VAD and noise-reduction in production
-- 25% improvement in retrieval relevance using hybrid retrieval + reranking
-- 35% reduction in RAG response latency
-- 90%+ accuracy on music transcription image classification (ResNet-50)
-- 100,000+ records generated via automated scraping pipelines from 50+ sources
-- 20,000+ documents indexed in production RAG system
+- At UF IC3/PRISMAp: 36% reduction in dataset redundancy through semantic deduplication on 110K+ EHR samples
+- At UF IC3/PRISMAp: 4% improvement in downstream model accuracy after deduplication
+- At CAIR-DRDO: 40% reduction in training time for defense speech model using DDP on NVIDIA DGX
+- At CAIR-DRDO: 8.3% Word Error Rate (WER) on low-resource language ASR (Assamese, Bengali)
+- At CAIR-DRDO: 30% vocabulary size reduction using BPE tokenization
+- At CAIR-DRDO: 15% transcription accuracy improvement using VAD and noise-reduction in production
+- At Scholarship Auditions: 25% improvement in retrieval relevance using hybrid retrieval + reranking
+- At Scholarship Auditions: 35% reduction in RAG response latency
+- At Scholarship Auditions: 90%+ accuracy on music transcription image classification (ResNet-50)
+- At Scholarship Auditions: 100,000+ records generated via automated scraping pipelines from 50+ sources
+- At Scholarship Auditions: 20,000+ documents indexed in production RAG system
 - GPA: 3.89/4.00 at University of Florida
 
 ----------------------------------------------------------------
-SECTION 10: PERSONALITY & WORKING STYLE (To Be Expanded)
+SECTION 10: PERSONALITY & WORKING STYLE
 ----------------------------------------------------------------
+
+Hobbies & Personal Interests:
+- Watching movies and TV series
+- Listening to early 2000s music from Tollywood (Telugu) and Bollywood (Hindi) film industries
+
+Research Interests & Career Aspirations:
+- Deeply passionate about AI research in the domains of:
+  * Image Processing & Computer Vision
+  * Video Understanding & Generation
+  * Audio Processing & Speech AI
+- Aspires to pursue research roles where deep learning meets multimodal perception
+- Particularly drawn to problems at the intersection of these modalities (e.g., audio-visual learning, video+language models)
+
 [PLACEHOLDER – To be filled from follow-up Q&A]
-- Interests outside of work
 - How he approaches problem solving
 - Preferred collaboration style
-- Career goals and aspirations
-- What excites him most about AI
 - Open source contributions
 - Publications or papers
 - Certifications
-- Hobbies and personal interests
 
 ================================================================
-END OF KNOWLEDGE BASE v1.0
+END OF KNOWLEDGE BASE v2.1
 ================================================================
