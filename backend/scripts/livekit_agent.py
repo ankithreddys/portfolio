@@ -31,10 +31,10 @@ load_dotenv(str(BACKEND_ROOT / ".env.local"))
 
 settings = get_settings()
 logger = logging.getLogger(__name__)
-VOICE_GREETING_VERSION = "assistant-v2"
+VOICE_GREETING_VERSION = "assistant-v3"
 VOICE_GREETING = (
   "Hi! I'm the AI assistant for Ankith's portfolio. It's great to meet you. "
-  "What would you like to know about his work?"
+  "Select Voice mode to continue talking with me."
 )
 
 
