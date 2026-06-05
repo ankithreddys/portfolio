@@ -60,13 +60,13 @@ SECTION 4: PROFESSIONAL EXPERIENCE
 
 --- EXPERIENCE 1 (Ankith's Current Work) ---
 Organization: University of Florida – Intelligent Clinical Care Center (IC3 / PRISMAp)
-Role: Research Assistant (Current role, working here right now)
+Role: AI Researcher (Current role, working here right now)
 Location: Gainesville, FL
 Duration: August 2025 – Present (Active current work)
 Domain: Clinical AI / Healthcare AI / Deep Learning
 
 Sub-Project 1: Clinical Digital Twin – Synthetic Q&A Generation & LLM Fine-tuning
-[Organization: University of Florida – IC3 / PRISMAp | Role: Research Assistant]
+[Organization: University of Florida – IC3 / PRISMAp | Role: AI Researcher]
 - At UF IC3/PRISMAp, designed and iterated multi-stage prompting strategies using frontier LLMs to synthesize high-fidelity clinical question-answer pairs from Electronic Health Record (EHR) data.
 - At UF IC3/PRISMAp, generated large-scale training corpora of 110,000+ EHR samples for downstream fine-tuning of clinical LLMs.
 - At UF IC3/PRISMAp, used DeepEval framework with 14 LLM-as-judge metrics to evaluate prompt quality covering clinical reasoning, factual accuracy, and diagnostic validity.
@@ -79,7 +79,7 @@ Sub-Project 1: Clinical Digital Twin – Synthetic Q&A Generation & LLM Fine-tun
 - At UF IC3/PRISMAp, used 3 frontier LLM judges for multi-judge response quality assessment.
 
 Sub-Project 2: ICU EHR Deep Learning – Transformer, Mamba & Mixture-of-Experts Modeling
-[Organization: University of Florida – IC3 / PRISMAp | Role: Research Assistant]
+[Organization: University of Florida – IC3 / PRISMAp | Role: AI Researcher]
 - At UF IC3/PRISMAp, engineered multimodal ICU EHR datasets by preprocessing preoperative, intraoperative, and postoperative data.
 - At UF IC3/PRISMAp, handled both static and temporal time-series data alongside unstructured clinical notes.
 - At UF IC3/PRISMAp, converted and stored all data into structured HDF5 (.h5) files optimized for deep learning ingestion.
@@ -90,7 +90,7 @@ Sub-Project 2: ICU EHR Deep Learning – Transformer, Mamba & Mixture-of-Experts
 - At UF IC3/PRISMAp, this research is currently in the grant evaluation phase.
 
 Sub-Project 3: Pathology Report Analysis
-[Organization: University of Florida – IC3 / PRISMAp | Role: Research Assistant]
+[Organization: University of Florida – IC3 / PRISMAp | Role: AI Researcher]
 - At UF IC3/PRISMAp, developing advanced prompting techniques for automated analysis of unstructured pathology reports.
 - At UF IC3/PRISMAp, techniques used: Chain-of-Thought (CoT), Few-Shot prompting, and structured extraction.
 - At UF IC3/PRISMAp, goal: structured information extraction from free-text pathology reports using frontier LLMs.
@@ -335,7 +335,7 @@ Aug 2020 – May 2024: B.Tech in CS/AI-ML at Vignan's Bharathi Institute of Tech
 Oct 2023 – Mar 2024: AI Research Intern at DRDO/CAIR, Bengaluru (during final year of B.Tech)
 Aug 2024: Started M.S. in AI Systems at University of Florida
 May 2025 – Aug 2025: AI Engineer Intern at Scholarship Auditions, Nashville TN
-Aug 2025 – Present: Research Assistant at UF IC3/PRISMAp (Clinical AI)
+Aug 2025 – Present: AI Researcher at UF IC3/PRISMAp (Clinical AI)
 Aug 2025 – Present: AI Engineer Co-op at UF IPPD / Oelrich Construction
 May 2026: Graduated – M.S. in Artificial Intelligence Systems, University of Florida
 
@@ -378,6 +378,4 @@ Research Interests & Career Aspirations:
 - Publications or papers
 - Certifications
 
-================================================================
-END OF KNOWLEDGE BASE v2.1
 ================================================================
