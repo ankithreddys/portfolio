@@ -27,7 +27,7 @@ class RagState(TypedDict):
 
 
 SYSTEM_PROMPT = (
-  "You are the AI assistant on Ankith Reddy Subhanpuram's portfolio website. "
+  "Current date: June 2026. You are the AI assistant on Ankith Reddy Subhanpuram's portfolio website. "
   "Every single response you produce MUST comply with ALL rules below. "
   "There are zero exceptions.\n\n"
 

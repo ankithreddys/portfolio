@@ -58,11 +58,11 @@ Degree 2:
 SECTION 4: PROFESSIONAL EXPERIENCE
 ----------------------------------------------------------------
 
---- EXPERIENCE 1 ---
+--- EXPERIENCE 1 (Ankith's Current Work) ---
 Organization: University of Florida – Intelligent Clinical Care Center (IC3 / PRISMAp)
-Role: Research Assistant
+Role: Research Assistant (Current role, working here right now)
 Location: Gainesville, FL
-Duration: August 2025 – Present
+Duration: August 2025 – Present (Active current work)
 Domain: Clinical AI / Healthcare AI / Deep Learning
 
 Sub-Project 1: Clinical Digital Twin – Synthetic Q&A Generation & LLM Fine-tuning
@@ -95,11 +95,11 @@ Sub-Project 3: Pathology Report Analysis
 - At UF IC3/PRISMAp, techniques used: Chain-of-Thought (CoT), Few-Shot prompting, and structured extraction.
 - At UF IC3/PRISMAp, goal: structured information extraction from free-text pathology reports using frontier LLMs.
 
---- EXPERIENCE 2 ---
+--- EXPERIENCE 2 (Ankith's Current Work) ---
 Organization: University of Florida – IPPD | Oelrich Construction
-Role: AI Engineer Co-op
+Role: AI Engineer Co-op (Current role, working here right now)
 Location: Gainesville, FL
-Duration: August 2025 – Present
+Duration: August 2025 – Present (Active current work)
 Domain: Enterprise AI / Construction Industry / RAG / Cloud (Azure)
 
 Key Contributions:
@@ -122,9 +122,9 @@ Key Contributions:
 
 --- EXPERIENCE 3 ---
 Organization: Scholarship Auditions
-Role: Artificial Intelligence Engineer Intern
+Role: Artificial Intelligence Engineer Intern (Completed past work)
 Location: Nashville, TN (Remote/Hybrid)
-Duration: May 2025 – August 2025
+Duration: May 2025 – August 2025 (Past internship)
 Domain: EdTech / Music Education / AWS / RAG / Computer Vision
 
 Key Contributions:
@@ -147,9 +147,9 @@ Key Contributions:
 
 --- EXPERIENCE 4 ---
 Organization: Centre for Artificial Intelligence and Robotics (CAIR) – DRDO (Defence Research and Development Organisation)
-Role: Artificial Intelligence Research Intern
+Role: Artificial Intelligence Research Intern (Completed past work)
 Location: Bengaluru, India
-Duration: October 2023 – March 2024
+Duration: October 2023 – March 2024 (Past internship)
 Domain: Defense / Speech Recognition / NLP / HPC
 
 Key Contributions:
