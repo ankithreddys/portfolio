@@ -210,13 +210,13 @@ function Hero() {
             {/* Title with typing effect style */}
             <div className="hero-title-wrapper animate-fade-in-up delay-2">
               <h2 className="hero-title">
-                ML Engineer & AI <span className="gradient-text">Researcher</span> @ University of Florida
+                AI <span className="gradient-text">Researcher</span> & ML Engineer @ University of Florida
               </h2>
             </div>
 
             {/* Description */}
             <p className="hero-description animate-fade-in-up delay-3">
-            Master’s student building production LLM systems, enterprise RAG pipelines, and clinical AI across AWS, Azure, and HPC clusters. Research focus on LLM fine-tuning and evaluation at UF's IC3.
+            AI Researcher & ML Engineer specializing in fine-tuning clinical foundation models, synthetic EHR generation, and advanced deep learning architectures (Transformers, Mamba, MoEs) on high-performance computing clusters.
             </p>
 
             {/* CTA Buttons */}

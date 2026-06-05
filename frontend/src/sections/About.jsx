@@ -38,7 +38,7 @@ function About() {
 
   const experience = [
     {
-      role: 'Research Assistant',
+      role: 'AI Researcher',
       company: 'University of Florida - IC3 / PRISMAp',
       period: 'Aug 2025 - Present',
       type: 'Research'
@@ -46,7 +46,7 @@ function About() {
     {
       role: 'AI Engineer Co-op',
       company: 'University of Florida - IPPD | Oelrich Construction',
-      period: 'Aug 2025 - Present',
+      period: 'Aug 2025 - May 2026',
       type: 'Industry'
     },
     {
@@ -78,22 +78,15 @@ function About() {
           {/* Left Column - Text */}
           <div className="about-text">
             <p className="about-intro">
-              I'm an <strong>ML Engineer and AI Researcher</strong> at the University of Florida,
-              splitting time between the Intelligent Clinical Care Center (IC3) and an enterprise
-              AI Co-op building Azure-native RAG systems.
+              I'm an <strong>AI Researcher and ML Engineer</strong> at the University of Florida's Intelligent Clinical Care Center (IC3). I recently graduated with my M.S. in AI Systems from UF, where I also completed an enterprise AI Co-op architecting Azure-native RAG systems.
             </p>
             
             <p>
-              At IC3, I fine-tune 120B+ clinical LLMs on NVIDIA B200 clusters, evaluate synthetic
-              EHR datasets with LLM-as-Judge frameworks, and model ICU trajectories with Transformer,
-              Mamba, and MoE architectures. On the enterprise side, I architect permissions-aware
-              RAG pipelines on Azure with DiskANN, Cosmos DB, and RBAC-scoped retrieval.
+              At IC3, my research focuses on fine-tuning 120B+ clinical LLMs on NVIDIA B200 clusters, evaluating synthetic EHR datasets with LLM-as-Judge frameworks, and modeling temporal ICU trajectories using Transformer, Mamba, and Mixture-of-Experts (MoE) architectures. On the engineering side, I have architected production-grade, permissions-aware RAG pipelines on Azure and AWS.
             </p>
 
             <p>
-              Before UF, I shipped a production RAG chatbot on AWS (ECS/Fargate, Bedrock, OpenSearch)
-              at Scholarship Auditions and designed a Conformer-Wav2Vec2 ASR system at DRDO,
-              achieving 8.3% WER for low-resource languages on DGX hardware.
+              My background bridges the gap between deep learning research and robust system implementation. Before UF, I designed a Conformer-Wav2Vec2 ASR speech model at DRDO (CAIR), achieving a low 8.3% WER on low-resource languages, and engineered containerized search-and-retrieval systems at Scholarship Auditions.
             </p>
 
             <div className="about-stats">
