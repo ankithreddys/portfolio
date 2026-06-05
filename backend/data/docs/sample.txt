@@ -95,11 +95,11 @@ Sub-Project 3: Pathology Report Analysis
 - At UF IC3/PRISMAp, techniques used: Chain-of-Thought (CoT), Few-Shot prompting, and structured extraction.
 - At UF IC3/PRISMAp, goal: structured information extraction from free-text pathology reports using frontier LLMs.
 
---- EXPERIENCE 2 (Ankith's Current Work) ---
+--- EXPERIENCE 2 ---
 Organization: University of Florida – IPPD | Oelrich Construction
-Role: AI Engineer Co-op (Current role, working here right now)
+Role: AI Engineer Co-op (Completed past work)
 Location: Gainesville, FL
-Duration: August 2025 – Present (Active current work)
+Duration: August 2025 – May 2026 (Completed co-op)
 Domain: Enterprise AI / Construction Industry / RAG / Cloud (Azure)
 
 Key Contributions:
@@ -336,7 +336,7 @@ Oct 2023 – Mar 2024: AI Research Intern at DRDO/CAIR, Bengaluru (during final 
 Aug 2024: Started M.S. in AI Systems at University of Florida
 May 2025 – Aug 2025: AI Engineer Intern at Scholarship Auditions, Nashville TN
 Aug 2025 – Present: AI Researcher at UF IC3/PRISMAp (Clinical AI)
-Aug 2025 – Present: AI Engineer Co-op at UF IPPD / Oelrich Construction
+Aug 2025 – May 2026: AI Engineer Co-op at UF IPPD / Oelrich Construction
 May 2026: Graduated – M.S. in Artificial Intelligence Systems, University of Florida
 
 ----------------------------------------------------------------
