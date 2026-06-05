@@ -55,7 +55,7 @@ function Skills() {
       <div className="container">
         {/* Section Header */}
         <div className="section-header">
-          <span className="section-tag">// Tech Stack</span>
+          <span className="section-tag">Tech Stack</span>
           <h2 className="section-title">
             Skills & <span className="gradient-text">Technologies</span>
           </h2>

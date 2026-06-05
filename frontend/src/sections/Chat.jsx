@@ -12,7 +12,7 @@ function ChatSection() {
     <section className="chat section" id="chat">
       <div className="container">
         <div className="section-header chat-header">
-          <span className="section-tag">// Portfolio Assistant</span>
+          <span className="section-tag">Portfolio Assistant</span>
           <h2 className="section-title">
             Ask The <span className="gradient-text">Chatbot</span>
           </h2>

@@ -68,7 +68,7 @@ function About() {
       <div className="container">
         {/* Section Header */}
         <div className="section-header">
-          <span className="section-tag">// About Me</span>
+          <span className="section-tag">About Me</span>
           <h2 className="section-title">
             Turning <span className="gradient-text">Data</span> into Intelligence
           </h2>

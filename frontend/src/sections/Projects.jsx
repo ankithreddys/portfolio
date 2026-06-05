@@ -142,7 +142,7 @@ function Projects() {
       <div className="container">
         {/* Section Header */}
         <div className="section-header">
-          <span className="section-tag">// My Work</span>
+          <span className="section-tag">My Work</span>
           <h2 className="section-title">
             Featured <span className="gradient-text">Projects</span>
           </h2>

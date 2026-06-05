@@ -96,7 +96,7 @@ function Contact() {
       <div className="container">
         {/* Section Header */}
         <div className="section-header contact-header">
-          <span className="section-tag">// Let's Connect</span>
+          <span className="section-tag">Let's Connect</span>
           <h2 className="section-title">
             Get In <span className="gradient-text">Touch</span>
           </h2>

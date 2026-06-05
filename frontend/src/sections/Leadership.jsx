@@ -25,7 +25,7 @@ function Leadership() {
     <section className="leadership section" id="leadership">
       <div className="container">
         <div className="section-header">
-          <span className="section-tag">// Community</span>
+          <span className="section-tag">Community</span>
           <h2 className="section-title">
             Leadership & <span className="gradient-text">Volunteer Experience</span>
           </h2>

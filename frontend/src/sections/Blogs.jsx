@@ -16,7 +16,7 @@ function Blogs() {
     <section className="blogs section" id="blogs">
       <div className="container">
         <div className="section-header">
-          <span className="section-tag">// Writing</span>
+          <span className="section-tag">Writing</span>
           <h2 className="section-title">
             Latest <span className="gradient-text">Blogs</span>
           </h2>
