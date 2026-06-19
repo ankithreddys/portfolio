@@ -10,9 +10,13 @@ sys.path.append(str(ROOT))
 
 from langchain_core.documents import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from qdrant_client.http import models as qmodels
+from dotenv import load_dotenv
 
 from app.config import get_settings
 from app.services.vectorstore import get_vectorstore
+
+load_dotenv(str(ROOT / ".env"))
 
 
 def _hash_text(text: str) -> str:
@@ -49,10 +53,7 @@ def _split_documents(docs: list[tuple[str, str]]) -> list[Document]:
   return chunks
 
 
-def _collection_get(vectorstore, **kwargs):
-  if hasattr(vectorstore, "get"):
-    return vectorstore.get(**kwargs)
-  return vectorstore._collection.get(**kwargs)
+# Chroma collection helper removed since we now use Qdrant.
 
 
 def main() -> None:
@@ -78,12 +79,32 @@ def main() -> None:
 
   for source, source_chunks in chunks_by_source.items():
     file_hash = source_chunks[0].metadata["file_hash"]
-    existing = _collection_get(vectorstore, where={"source": source})
-    existing_ids = existing.get("ids", [])
+    client = vectorstore.client
+    collection_name = vectorstore.collection_name
+
+    try:
+      scroll_result = client.scroll(
+        collection_name=collection_name,
+        scroll_filter=qmodels.Filter(
+          must=[
+            qmodels.FieldCondition(
+              key="metadata.source",
+              match=qmodels.MatchValue(value=source)
+            )
+          ]
+        ),
+        with_payload=True,
+        with_vectors=False,
+      )
+      records = scroll_result[0]
+    except Exception:
+      records = []
+
+    existing_ids = [record.id for record in records]
     existing_hashes = {
-      meta.get("file_hash")
-      for meta in existing.get("metadatas", [])
-      if meta
+      record.payload.get("metadata", {}).get("file_hash")
+      for record in records
+      if record.payload and "metadata" in record.payload
     }
 
     if existing_ids and existing_hashes == {file_hash}:

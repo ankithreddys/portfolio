@@ -238,6 +238,28 @@ def _lexical_score(query_tokens: set[str], content: str) -> float:
 
 
 def _all_docs_from_collection(vectorstore: Any) -> list[Document]:
+  if hasattr(vectorstore, "client"):
+    client = vectorstore.client
+    collection_name = vectorstore.collection_name
+    try:
+      scroll_result = client.scroll(
+        collection_name=collection_name,
+        limit=10000,
+        with_payload=True,
+        with_vectors=False,
+      )
+      records = scroll_result[0]
+    except Exception:
+      records = []
+    docs: list[Document] = []
+    for record in records:
+      payload = record.payload or {}
+      content = payload.get("page_content", "")
+      metadata = payload.get("metadata", {})
+      if content:
+        docs.append(Document(page_content=content, metadata=metadata or {}))
+    return docs
+
   if hasattr(vectorstore, "get"):
     raw = vectorstore.get(include=["documents", "metadatas"])
   else:

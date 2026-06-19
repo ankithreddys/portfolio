@@ -38,6 +38,8 @@ class Settings(BaseSettings):
   session_max_entries: int = Field(default=1000, env="SESSION_MAX_ENTRIES")
   chroma_persist_dir: str = Field(default="", env="CHROMA_PERSIST_DIR")
   docs_dir: str = Field(default="", env="DOCS_DIR")
+  qdrant_url: str = Field(default="", env="QDRANT_URL")
+  qdrant_api_key: str = Field(default="", env="QDRANT_API_KEY")
   rag_enable_llm_reranker: bool = Field(default=False, env="RAG_ENABLE_LLM_RERANKER")
   rag_llm_reranker_model: str = Field(default="", env="RAG_LLM_RERANKER_MODEL")
   rag_llm_reranker_top_k: int = Field(default=6, env="RAG_LLM_RERANKER_TOP_K")

@@ -1,5 +1,5 @@
 fastapi
-chromadb
+qdrant-client
 openai
 pydantic
 pydantic-settings
@@ -8,7 +8,7 @@ langchain-community
 langchain-openai
 langchain-text-splitters
 langgraph
-langchain-chroma
+langchain-qdrant
 livekit-api
 livekit-agents[openai,silero]
 python-dotenv
