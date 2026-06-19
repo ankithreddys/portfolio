@@ -22,7 +22,6 @@ if str(BACKEND_ROOT) not in sys.path:
   sys.path.insert(0, str(BACKEND_ROOT))
 
 from app.config import get_settings
-from app.services.conversation import generate_and_store_reply
 from app.services.uf_kokoro_tts import UFKokoroTTS
 
 
@@ -56,14 +55,31 @@ async def _speak_reply(session: AgentSession, room_name: str, message: str) -> N
   except RuntimeError:
     pass
 
-  response = await asyncio.to_thread(
-    generate_and_store_reply,
-    room_name,
-    message,
-    "voice",
-  )
+  import httpx
+  import os
+
+  port = os.environ.get("PORT", "8000")
+  url = f"http://127.0.0.1:{port}/api/chat"
+  reply_text = ""
+
+  try:
+    async with httpx.AsyncClient(timeout=60.0) as client:
+      response = await client.post(
+        url,
+        json={
+          "session_id": room_name,
+          "message": message,
+          "response_mode": "voice"
+        },
+      )
+      response.raise_for_status()
+      data = response.json()
+      reply_text = data.get("reply", "")
+  except Exception as exc:
+    logger.exception("Failed to get chat reply from local FastAPI endpoint")
+
   rag_ms = (time.perf_counter() - started_at) * 1000
-  if not response:
+  if not reply_text:
     await session.say(
       "I'm having trouble answering that right now. Please try again.",
       allow_interruptions=True,
@@ -73,7 +89,7 @@ async def _speak_reply(session: AgentSession, room_name: str, message: str) -> N
 
   logger.info("Voice reply ready rag_ms=%.1f", rag_ms)
   await session.say(
-    response["reply"],
+    reply_text,
     allow_interruptions=True,
     add_to_chat_ctx=False,
   )

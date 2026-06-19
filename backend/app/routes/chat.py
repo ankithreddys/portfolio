@@ -21,6 +21,7 @@ class ChatRequest(BaseModel):
     pattern=r"^[A-Za-z0-9._:-]+$",
   )
   message: str = Field(..., min_length=1, max_length=4000)
+  response_mode: str = Field(default="text", max_length=10)
 
 
 class ChatResponse(BaseModel):
@@ -41,16 +42,21 @@ class ContactResponse(BaseModel):
 def chat(request: ChatRequest, http_request: Request) -> ChatResponse:
   settings = get_settings()
   client_ip = http_request.client.host if http_request.client else "unknown"
-  try:
-    enforce_rate_limit(
-      f"chat:{client_ip}",
-      settings.chat_rate_limit_max,
-      settings.chat_rate_limit_window_seconds,
-    )
-  except PermissionError as exc:
-    raise HTTPException(status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail=str(exc)) from exc
+  if client_ip not in {"127.0.0.1", "localhost"}:
+    try:
+      enforce_rate_limit(
+        f"chat:{client_ip}",
+        settings.chat_rate_limit_max,
+        settings.chat_rate_limit_window_seconds,
+      )
+    except PermissionError as exc:
+      raise HTTPException(status_code=status.HTTP_429_TOO_MANY_REQUESTS, detail=str(exc)) from exc
 
-  response = generate_and_store_reply(request.session_id, request.message)
+  response = generate_and_store_reply(
+    request.session_id,
+    request.message,
+    response_mode=request.response_mode,
+  )
 
   if response is None:
     raise HTTPException(
