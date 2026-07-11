@@ -60,6 +60,8 @@ class Settings(BaseSettings):
   smtp_user: str = Field(default="", env="SMTP_USER")
   smtp_password: str = Field(default="", env="SMTP_PASSWORD")
   contact_recipient: str = Field(default="", env="CONTACT_RECIPIENT")
+  verify_ssl: bool = Field(default=True, env="VERIFY_SSL")
+
 
   @field_validator("cors_origins")
   def _validate_cors_origins(cls, value: str) -> str:

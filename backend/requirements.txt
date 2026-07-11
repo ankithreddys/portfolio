@@ -3,12 +3,6 @@ qdrant-client
 openai
 pydantic
 pydantic-settings
-langchain
-langchain-community
-langchain-openai
-langchain-text-splitters
-langgraph
-langchain-qdrant
 livekit-api
 livekit-agents[openai,silero]
 python-dotenv

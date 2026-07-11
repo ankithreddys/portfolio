@@ -8,13 +8,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.append(str(ROOT))
 
-from langchain_core.documents import Document
-from langchain_text_splitters import RecursiveCharacterTextSplitter
 from qdrant_client.http import models as qmodels
 from dotenv import load_dotenv
 
 from app.config import get_settings
-from app.services.vectorstore import get_vectorstore
+from app.services.vectorstore import get_vectorstore, Document
 
 load_dotenv(str(ROOT / ".env"))
 
@@ -38,12 +36,49 @@ def _load_documents(docs_dir: Path) -> list[tuple[str, str]]:
   return documents
 
 
+def _split_text(text: str, chunk_size: int = 900, chunk_overlap: int = 120) -> list[str]:
+  if len(text) <= chunk_size:
+    return [text]
+
+  chunks = []
+  start = 0
+  while start < len(text):
+    end = start + chunk_size
+    if end >= len(text):
+      chunks.append(text[start:])
+      break
+
+    # Try to split at a clean boundary in the overlap region
+    overlap_area = text[end - chunk_overlap:end]
+    split_idx = overlap_area.rfind('\n\n')
+    if split_idx != -1:
+      actual_end = end - chunk_overlap + split_idx + 2
+    else:
+      split_idx = overlap_area.rfind('\n')
+      if split_idx != -1:
+        actual_end = end - chunk_overlap + split_idx + 1
+      else:
+        split_idx = overlap_area.rfind(' ')
+        if split_idx != -1:
+          actual_end = end - chunk_overlap + split_idx + 1
+        else:
+          actual_end = end
+
+    chunks.append(text[start:actual_end])
+    start = actual_end - chunk_overlap
+    if start < 0:
+      start = 0
+    if actual_end <= start:
+      start = actual_end
+  return chunks
+
+
 def _split_documents(docs: list[tuple[str, str]]) -> list[Document]:
-  splitter = RecursiveCharacterTextSplitter(chunk_size=900, chunk_overlap=120)
   chunks: list[Document] = []
   for source, content in docs:
     file_hash = _hash_text(content)
-    for chunk in splitter.split_text(content):
+    split_chunks = _split_text(content, chunk_size=900, chunk_overlap=120)
+    for chunk in split_chunks:
       chunks.append(
         Document(
           page_content=chunk,
@@ -51,9 +86,6 @@ def _split_documents(docs: list[tuple[str, str]]) -> list[Document]:
         )
       )
   return chunks
-
-
-# Chroma collection helper removed since we now use Qdrant.
 
 
 def main() -> None:
@@ -120,7 +152,7 @@ def main() -> None:
   if to_add:
     vectorstore.add_documents(to_add)
 
-  print(f"Indexed {len(to_add)} new chunks into Chroma.")
+  print(f"Indexed {len(to_add)} new chunks into Qdrant.")
   if deleted:
     print(f"Removed {deleted} stale chunks.")
   if skipped:
