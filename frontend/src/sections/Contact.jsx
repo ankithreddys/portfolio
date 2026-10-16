@@ -1,16 +1,4 @@
-/*
-  ================================
-  CONTACT SECTION
-  ================================
-  
-  React Concept #10: Forms & Event Handling
-  
-  We'll handle form submission with React state.
-  (For now it's a demo - you can connect it to a backend later!)
-*/
-
 import { useState } from 'react'
-import { sendContactMessage } from '../services/api'
 import './Contact.css'
 
 function Contact() {
@@ -20,9 +8,7 @@ function Contact() {
     email: '',
     message: ''
   })
-  const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
-  const [error, setError] = useState('')
 
   // React Concept: Event Handlers
   // This function updates state when form fields change
@@ -34,20 +20,15 @@ function Contact() {
     }))
   }
 
-  // Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault()  // Prevent page reload
-    setIsSubmitting(true)
-    setError('')
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    const subject = encodeURIComponent(`Portfolio contact from ${formData.name}`)
+    const body = encodeURIComponent(
+      `Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`,
+    )
 
-    try {
-      await sendContactMessage(formData)
-      setSubmitted(true)
-    } catch (err) {
-      setError('Unable to send right now. Please try again in a moment.')
-    } finally {
-      setIsSubmitting(false)
-    }
+    window.location.href = `mailto:ankithreddy653@gmail.com?subject=${subject}&body=${body}`
+    setSubmitted(true)
   }
 
   // Social links data - your actual links!
@@ -111,9 +92,9 @@ function Contact() {
           <div className="contact-form-wrapper">
             {submitted ? (
               <div className="form-success">
-                <span className="success-icon">✨</span>
-                <h3>Message Sent!</h3>
-                <p>Thanks for reaching out. I'll get back to you soon!</p>
+                <span className="success-icon" aria-hidden="true">@</span>
+                <h3>Email Draft Ready</h3>
+                <p>Your email app should open with your message. Send the draft to complete delivery.</p>
                 <button 
                   className="btn btn-outline"
                   onClick={() => {
@@ -126,7 +107,6 @@ function Contact() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="contact-form">
-                {error ? <p className="form-error">{error}</p> : null}
                 <div className="form-group">
                   <label htmlFor="name">Name</label>
                   <input
@@ -166,25 +146,12 @@ function Contact() {
                   />
                 </div>
 
-                <button 
-                  type="submit" 
-                  className="btn btn-primary submit-btn"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? (
-                    <>
-                      <span className="spinner" />
-                      Sending...
-                    </>
-                  ) : (
-                    <>
-                      <span>Send Message</span>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <line x1="22" y1="2" x2="11" y2="13"/>
-                        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-                      </svg>
-                    </>
-                  )}
+                <button type="submit" className="btn btn-primary submit-btn">
+                  <span>Open Email Draft</span>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <line x1="22" y1="2" x2="11" y2="13"/>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                  </svg>
                 </button>
               </form>
             )}
