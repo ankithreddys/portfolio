@@ -139,7 +139,7 @@ function Intro() {
               <a href="/RESEARCH_CV.pdf" className="btn btn-outline" target="_blank" rel="noopener noreferrer">Research CV</a>
             </div>
             <div className="intro-attention">
-              <BrandMark expanded />
+              <BrandMark />
               <p>Attention is earned, not demanded.</p>
             </div>
           </div>

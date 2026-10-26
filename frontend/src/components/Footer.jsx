@@ -40,6 +40,13 @@ function Footer() {
           </p>
         </div>
       </div>
+      <div className="container footer-formula-row">
+        <span className="footer-formula-label">The idea behind the mark</span>
+        <div className="footer-formula-content">
+          <BrandMark expanded />
+          <span className="footer-formula-note">R: queries · S: keys and values</span>
+        </div>
+      </div>
     </footer>
   )
 }

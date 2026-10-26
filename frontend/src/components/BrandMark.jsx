@@ -10,11 +10,13 @@ function BrandMark({ expanded = false }) {
     >
       <span className="brand-mark-name">
         <span className="brand-mark-a">A</span>
-        <span className="brand-mark-punctuation">(</span>
-        <span className="brand-mark-symbol">R</span>
-        <span className="brand-mark-comma">,</span>
-        <span className="brand-mark-symbol">S</span>
-        <span className="brand-mark-punctuation">)</span>
+        <span className="brand-mark-arguments">
+          <span className="brand-mark-punctuation">(</span>
+          <span className="brand-mark-symbol">R</span>
+          <span className="brand-mark-comma">,</span>
+          <span className="brand-mark-symbol">S</span>
+          <span className="brand-mark-punctuation">)</span>
+        </span>
       </span>
       {expanded && (
         <span className="brand-mark-definition" aria-hidden="true">

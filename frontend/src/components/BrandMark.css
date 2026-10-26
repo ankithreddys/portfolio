@@ -15,11 +15,22 @@
   align-items: baseline;
 }
 
+.brand-mark-name {
+  gap: .05em;
+}
+
 .brand-mark-a {
   color: var(--brand-mark-accent);
-  font-size: 1.12em;
+  font-size: 1.2em;
   font-style: italic;
-  letter-spacing: -.075em;
+  letter-spacing: -.09em;
+}
+
+.brand-mark-arguments {
+  display: inline-flex;
+  align-items: baseline;
+  font-size: .82em;
+  letter-spacing: -.025em;
 }
 
 .brand-mark-symbol,
