@@ -221,6 +221,11 @@
   gap: 24px;
 }
 
+.education-title {
+  grid-column: 1 / -1;
+  color: var(--text-primary);
+}
+
 .education-card {
   background: var(--bg-card);
   border: 1px solid var(--bg-tertiary);

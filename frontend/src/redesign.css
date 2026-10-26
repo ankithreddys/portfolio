@@ -97,7 +97,7 @@ html { scroll-padding-top: 88px; }
 .highlight-icon { display: none; }
 .highlight-title, .experience-role, .category-title, .leadership-head h3, .recognition-card h4 { font: 500 1.32rem/1.2 var(--font-editorial); }
 .highlight-card:hover, .experience-card:hover, .skill-category:hover, .project-card:hover { box-shadow: 0 12px 32px rgba(26, 65, 112, .09); transform: translateY(-3px); }
-.experience-title, .recognitions-title { font: 500 2rem/1.2 var(--font-editorial); }
+.experience-title, .education-title, .recognitions-title { font: 500 2rem/1.2 var(--font-editorial); }
 .experience-section, .education-section { margin-top: 80px; }
 .stat-number { font-family: var(--font-editorial); font-size: 2.7rem; font-weight: 400; }
 .stat-label { color: var(--text-secondary); }

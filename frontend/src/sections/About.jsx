@@ -136,6 +136,7 @@ function About() {
 
         {/* Education */}
         <div className="education-section">
+          <h3 className="education-title">Education</h3>
           <div className="education-card">
             <div className="education-icon">🎓</div>
             <div className="education-content">
