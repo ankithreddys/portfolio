@@ -26,12 +26,13 @@
 .intro .btn-primary:hover { color: #fff; background: #4d8dde; box-shadow: 0 8px 26px rgba(51, 116, 210, .28); }
 .intro .btn-outline { color: #e9f0fa; border: 1px solid rgba(212, 228, 251, .36); }
 .intro .btn-outline:hover { color: #fff; background: rgba(255, 255, 255, .12); }
-.intro-attention { display: flex; flex-wrap: wrap; align-items: center; gap: 13px; color: #9aabc5; font: .78rem/1.5 var(--font-mono); letter-spacing: .02em; }
-.intro-attention .brand-mark { width: 57px; height: 31px; color: #e9f2ff; --brand-mark-accent: #9fc4ff; }
+.intro-attention { display: flex; flex-direction: column; align-items: flex-start; gap: 9px; color: #9aabc5; font: .78rem/1.5 var(--font-mono); letter-spacing: .02em; }
+.intro-attention .brand-mark { color: #e9f2ff; --brand-mark-accent: #9fc4ff; }
+.intro-attention p { margin: 0; }
 .intro-portrait { justify-self: end; width: 100%; max-width: 385px; }
 .intro-image-frame { aspect-ratio: 4 / 5; padding: 8px; border: 1px solid rgba(189, 213, 248, .4); border-radius: 12px; background: rgba(224, 236, 255, .08); box-shadow: 0 28px 72px rgba(0, 0, 0, .23); }
 .intro-image { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; border-radius: 7px; }
 .intro-caption { display: block; margin-top: 14px; color: #91a7c6; font: .64rem var(--font-mono); letter-spacing: .11em; text-transform: uppercase; }
 .intro-bottom { position: absolute; z-index: 2; bottom: 24px; left: max(24px, calc((100vw - var(--max-width)) / 2)); right: max(24px, calc((100vw - var(--max-width)) / 2)); display: flex; justify-content: space-between; padding-top: 17px; border-top: 1px solid rgba(209, 224, 246, .19); color: #9badc6; font: .67rem var(--font-mono); letter-spacing: .1em; text-transform: uppercase; }
 @media (max-width: 900px) { .intro { min-height: auto; padding: 150px 0 94px; } .intro-layout { grid-template-columns: minmax(0, 1fr); } .intro-portrait { justify-self: start; max-width: 380px; } }
-@media (max-width: 600px) { .intro { padding: 130px 0 92px; } .intro-name { font-size: clamp(2.2rem, 10vw, 3.3rem); } .intro-name span { overflow-wrap: anywhere; } .intro-buttons { margin-bottom: 38px; } .intro-portrait { max-width: 300px; } .intro-bottom { font-size: .55rem; } }
+@media (max-width: 600px) { .intro { padding: 130px 0 92px; } .intro-name { font-size: clamp(2.2rem, 10vw, 3.3rem); } .intro-name span { overflow-wrap: anywhere; } .intro-buttons { margin-bottom: 38px; } .intro-attention .brand-mark { font-size: 1.15rem; } .intro-portrait { max-width: 300px; } .intro-bottom { font-size: .55rem; } }

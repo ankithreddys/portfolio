@@ -1,22 +1,35 @@
 import './BrandMark.css'
 
-function BrandMark({ className = '' }) {
+function BrandMark({ expanded = false }) {
   return (
-    <svg
-      className={`brand-mark ${className}`.trim()}
-      viewBox="0 0 112 60"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-      focusable="false"
+    <span
+      className={`brand-mark${expanded ? ' brand-mark-expanded' : ''}`}
+      role={expanded ? 'math' : undefined}
+      aria-label={expanded ? 'Attention of R and S equals softmax of R S transpose divided by the square root of d, multiplied by S' : undefined}
+      aria-hidden={expanded ? undefined : 'true'}
     >
-      <text className="brand-mark-letter" x="3" y="43">A</text>
-      <text className="brand-mark-letter" x="39" y="43">R</text>
-      <text className="brand-mark-letter brand-mark-letter-last" x="76" y="43">S</text>
-      <path className="brand-mark-thread" d="M12 53 Q56 46 100 53" />
-      <circle className="brand-mark-node" cx="12" cy="53" r="2" />
-      <circle className="brand-mark-node brand-mark-node-focus" cx="56" cy="49.5" r="3" />
-      <circle className="brand-mark-node" cx="100" cy="53" r="2" />
-    </svg>
+      <span className="brand-mark-name">
+        <span className="brand-mark-a">A</span>
+        <span className="brand-mark-punctuation">(</span>
+        <span className="brand-mark-symbol">R</span>
+        <span className="brand-mark-comma">,</span>
+        <span className="brand-mark-symbol">S</span>
+        <span className="brand-mark-punctuation">)</span>
+      </span>
+      {expanded && (
+        <span className="brand-mark-definition" aria-hidden="true">
+          <span className="brand-mark-equals">=</span>
+          <span className="brand-mark-operator">softmax</span>
+          <span className="brand-mark-punctuation">(</span>
+          <span className="brand-mark-fraction">
+            <span className="brand-mark-numerator"><i>R</i><i>S</i><sup>⊤</sup></span>
+            <span className="brand-mark-denominator">√<i>d</i></span>
+          </span>
+          <span className="brand-mark-punctuation">)</span>
+          <span className="brand-mark-value">S</span>
+        </span>
+      )}
+    </span>
   )
 }
 

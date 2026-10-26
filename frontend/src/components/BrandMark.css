@@ -1,36 +1,84 @@
 .brand-mark {
-  display: block;
-  width: 82px;
-  height: 44px;
+  display: inline-flex;
+  align-items: baseline;
   flex: none;
-  overflow: visible;
+  white-space: nowrap;
   color: inherit;
+  font: 400 1.7rem/1 'DM Serif Display', Georgia, serif;
+  letter-spacing: -.035em;
   --brand-mark-accent: var(--accent-primary);
 }
 
-.brand-mark-letter {
-  fill: currentColor;
-  font: 43px 'DM Serif Display', Georgia, serif;
+.brand-mark-name,
+.brand-mark-definition {
+  display: inline-flex;
+  align-items: baseline;
 }
 
-.brand-mark-letter-last {
-  fill: var(--brand-mark-accent);
+.brand-mark-a {
+  color: var(--brand-mark-accent);
+  font-size: 1.12em;
+  font-style: italic;
+  letter-spacing: -.075em;
+}
+
+.brand-mark-symbol,
+.brand-mark-value {
   font-style: italic;
 }
 
-.brand-mark-thread {
-  fill: none;
-  stroke: var(--brand-mark-accent);
-  stroke-width: 1.2;
-  stroke-linecap: round;
-  opacity: .65;
+.brand-mark-punctuation {
+  opacity: .78;
 }
 
-.brand-mark-node {
-  fill: var(--brand-mark-accent);
-  opacity: .64;
+.brand-mark-comma {
+  margin-right: .08em;
+  color: var(--brand-mark-accent);
 }
 
-.brand-mark-node-focus {
-  opacity: 1;
+.brand-mark-expanded {
+  align-items: center;
+  font-size: 1.75rem;
+}
+
+.brand-mark-definition {
+  align-items: center;
+  font-size: .94em;
+  letter-spacing: -.015em;
+}
+
+.brand-mark-equals {
+  margin: 0 .36em;
+}
+
+.brand-mark-operator {
+  font: 500 .82em/1 var(--font-display);
+  letter-spacing: 0;
+}
+
+.brand-mark-fraction {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
+  margin: 0 .15em;
+  font-size: .78em;
+  line-height: 1.02;
+  text-align: center;
+}
+
+.brand-mark-numerator {
+  border-bottom: 1px solid currentColor;
+  padding: 0 .23em .16em;
+}
+
+.brand-mark-numerator sup {
+  font-size: .6em;
+}
+
+.brand-mark-denominator {
+  padding-top: .17em;
+}
+
+.brand-mark-value {
+  margin-left: .12em;
 }
