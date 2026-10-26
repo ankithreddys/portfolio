@@ -26,15 +26,8 @@ function Leadership() {
       location: 'Hyderabad, India',
       period: '2023',
       points: [
-        'Delivered an AI seminar to an audience of approximately 500.',
+        'Delivered an AI/ML lecture to an audience of approximately 500.',
       ],
-    },
-  ]
-
-  const recognitions = [
-    {
-      title: 'Letter of Appreciation - ML Guest Lecture',
-      description: 'Recognition for delivering a machine learning lecture to college students.',
       filePath: '/VBIT%20LOA.pdf',
     },
   ]
@@ -63,28 +56,18 @@ function Leadership() {
                   <li key={point}>{point}</li>
                 ))}
               </ul>
-            </article>
-          ))}
-        </div>
-
-        <div className="recognitions">
-          <h3 className="recognitions-title">Letters & Certificates</h3>
-          <div className="recognitions-grid">
-            {recognitions.map((item) => (
-              <article key={item.title} className="recognition-card">
-                <h4>{item.title}</h4>
-                <p>{item.description}</p>
+              {item.filePath && (
                 <a
                   className="btn btn-outline recognition-link"
                   href={item.filePath}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  View Document
+                  View Appreciation Letter
                 </a>
-              </article>
-            ))}
-          </div>
+              )}
+            </article>
+          ))}
         </div>
       </div>
     </section>
