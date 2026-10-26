@@ -64,7 +64,7 @@ html { scroll-padding-top: 88px; }
 .btn-outline { border-width: 1px; }
 :root[data-theme='dark'] .btn-primary { background: #80aeed; color: #0d1a2d; }
 
-/* A restrained header lets the attention mark remain the identity. */
+/* A restrained header lets the monogram remain the identity. */
 .navbar, .navbar.scrolled {
   padding: 13px 0;
   background: var(--navbar-scrolled-bg);
@@ -72,9 +72,7 @@ html { scroll-padding-top: 88px; }
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--bg-tertiary);
 }
-.navbar-logo { gap: 4px; font: 500 1.35rem/1 var(--font-editorial); letter-spacing: -.03em; }
-.logo-sigma { font-size: 1.6rem; }
-.logo-dot { color: var(--accent-primary); }
+.navbar-logo .brand-mark { width: 78px; height: 42px; }
 .navbar-links { gap: clamp(15px, 2vw, 30px); }
 .nav-link { font: 500 .77rem/1.4 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; }
 .navbar-cta { border-radius: 999px; padding: 10px 17px; }
@@ -144,7 +142,7 @@ html { scroll-padding-top: 88px; }
 .footer-logo, .footer-logo:hover { color: #fff; }
 .footer-tagline, .footer-copyright, .footer-built, .footer-nav a { color: #afc0d7; }
 .footer-nav a:hover { color: #fff; }
-.footer-logo .logo-sup { color: #afc0d7; }
+.footer-logo .brand-mark { width: 90px; height: 48px; --brand-mark-accent: #9fc4ff; }
 
 @media (max-width: 1050px) {
   .navbar-links { gap: 13px; }

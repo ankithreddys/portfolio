@@ -27,8 +27,7 @@
 .intro .btn-outline { color: #e9f0fa; border: 1px solid rgba(212, 228, 251, .36); }
 .intro .btn-outline:hover { color: #fff; background: rgba(255, 255, 255, .12); }
 .intro-attention { display: flex; flex-wrap: wrap; align-items: center; gap: 13px; color: #9aabc5; font: .78rem/1.5 var(--font-mono); letter-spacing: .02em; }
-.intro-attention > span { color: #9fc4ff; letter-spacing: .09em; font-weight: 700; }
-.intro-attention sup { font-size: .55em; }
+.intro-attention .brand-mark { width: 57px; height: 31px; color: #e9f2ff; --brand-mark-accent: #9fc4ff; }
 .intro-portrait { justify-self: end; width: 100%; max-width: 385px; }
 .intro-image-frame { aspect-ratio: 4 / 5; padding: 8px; border: 1px solid rgba(189, 213, 248, .4); border-radius: 12px; background: rgba(224, 236, 255, .08); box-shadow: 0 28px 72px rgba(0, 0, 0, .23); }
 .intro-image { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; border-radius: 7px; }

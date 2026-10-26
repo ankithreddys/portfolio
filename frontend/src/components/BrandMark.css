@@ -1,0 +1,36 @@
+.brand-mark {
+  display: block;
+  width: 82px;
+  height: 44px;
+  flex: none;
+  overflow: visible;
+  color: inherit;
+  --brand-mark-accent: var(--accent-primary);
+}
+
+.brand-mark-letter {
+  fill: currentColor;
+  font: 43px 'DM Serif Display', Georgia, serif;
+}
+
+.brand-mark-letter-last {
+  fill: var(--brand-mark-accent);
+  font-style: italic;
+}
+
+.brand-mark-thread {
+  fill: none;
+  stroke: var(--brand-mark-accent);
+  stroke-width: 1.2;
+  stroke-linecap: round;
+  opacity: .65;
+}
+
+.brand-mark-node {
+  fill: var(--brand-mark-accent);
+  opacity: .64;
+}
+
+.brand-mark-node-focus {
+  opacity: 1;
+}

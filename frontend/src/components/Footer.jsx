@@ -4,6 +4,7 @@
   ================================
 */
 
+import BrandMark from './BrandMark'
 import './Footer.css'
 
 function Footer() {
@@ -14,13 +15,7 @@ function Footer() {
       <div className="container footer-container">
         <div className="footer-left">
           <a href="#" className="footer-logo" aria-label="Ankith Reddy Subhanpuram">
-            <span className="logo-sigma">Σ</span>
-            <span className="logo-attn">
-              <span className="logo-letter">A</span>
-              <span className="logo-dot" aria-hidden="true">·</span>
-              <span className="logo-letter">R</span>
-              <sup className="logo-sup">S</sup>
-            </span>
+            <BrandMark />
           </a>
           <p className="footer-tagline">
             Building intelligent systems that matter.

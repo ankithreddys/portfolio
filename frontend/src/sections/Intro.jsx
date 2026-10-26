@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import BrandMark from '../components/BrandMark'
 import profileImage from '../assets/profile.jpg'
 import './Intro.css'
 
@@ -137,7 +138,7 @@ function Intro() {
               <a href="#projects" className="btn btn-primary">Explore my work <span aria-hidden="true">↗</span></a>
               <a href="/RESEARCH_CV.pdf" className="btn btn-outline" target="_blank" rel="noopener noreferrer">Research CV</a>
             </div>
-            <p className="intro-attention"><span aria-hidden="true">Σ A·R<sup>S</sup></span> Attention is earned, not demanded.</p>
+            <p className="intro-attention"><BrandMark /> Attention is earned, not demanded.</p>
           </div>
           <div className="intro-portrait">
             <div className="intro-image-frame">

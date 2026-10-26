@@ -18,50 +18,13 @@
 
 /* Footer Logo */
 .footer-logo {
-  font-family: var(--font-mono);
-  font-size: 1.3rem;
-  font-weight: 700;
   color: var(--text-primary);
   display: flex;
   align-items: center;
-  gap: 6px;
 }
 
 .footer-logo:hover {
   color: var(--text-primary);
-}
-
-.footer-logo .logo-sigma {
-  color: var(--accent-primary);
-  font-size: 1.5rem;
-  line-height: 1;
-}
-
-.footer-logo .logo-attn {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-}
-
-.footer-logo .logo-letter {
-  background: var(--accent-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.footer-logo .logo-dot {
-  color: var(--accent-primary);
-  font-size: 1.1rem;
-  line-height: 1;
-  transform: translateY(-1px);
-}
-
-.footer-logo .logo-sup {
-  font-size: 0.7rem;
-  color: var(--text-secondary);
-  margin-left: 1px;
-  transform: translateY(-4px);
 }
 
 .footer-tagline {

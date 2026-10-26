@@ -20,6 +20,7 @@
 */
 
 import { useState, useEffect } from 'react'
+import BrandMark from './BrandMark'
 import './Navbar.css'
 
 function Navbar({ theme, onToggleTheme }) {
@@ -80,13 +81,7 @@ function Navbar({ theme, onToggleTheme }) {
       <div className="navbar-container">
         {/* Logo */}
         <a href="/" className="navbar-logo" aria-label="Ankith Reddy Subhanpuram">
-          <span className="logo-sigma">Σ</span>
-          <span className="logo-attn">
-            <span className="logo-letter">A</span>
-            <span className="logo-dot" aria-hidden="true">·</span>
-            <span className="logo-letter">R</span>
-            <sup className="logo-sup">S</sup>
-          </span>
+          <BrandMark />
         </a>
 
         {/* Desktop Navigation */}
