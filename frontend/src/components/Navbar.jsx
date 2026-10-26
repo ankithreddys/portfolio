@@ -126,6 +126,8 @@ function Navbar({ theme, onToggleTheme }) {
             className={`mobile-menu-btn ${isMobileMenuOpen ? 'open' : ''}`}
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle menu"
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-navigation"
           >
             <span></span>
             <span></span>
@@ -135,7 +137,7 @@ function Navbar({ theme, onToggleTheme }) {
       </div>
 
       {/* Mobile Menu */}
-      <div className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}>
+      <div id="mobile-navigation" className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`} inert={!isMobileMenuOpen}>
         {navLinks.map((link) => (
           <a 
             key={link.name} 

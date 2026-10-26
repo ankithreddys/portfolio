@@ -1,4 +1,4 @@
-:root {
+:root, :root[data-theme='light'] {
   --bg-primary: #f4f7fb;
   --bg-secondary: #ffffff;
   --bg-tertiary: #dfe7f0;
@@ -154,6 +154,7 @@ html { scroll-padding-top: 88px; }
 }
 @media (max-width: 768px) {
   :root { --section-padding: 78px; }
+  .navbar, .navbar.scrolled { backdrop-filter: none; }
   .navbar-links, .navbar-cta { display: none; }
   .projects-grid, .skills-grid, .about-cards { grid-template-columns: 1fr; }
   .highlight-card { min-height: auto; }
