@@ -44,7 +44,7 @@ function App() {
       return savedTheme
     }
 
-    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'
+    return 'light'
   })
 
   useEffect(() => {

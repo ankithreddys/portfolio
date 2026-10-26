@@ -13,16 +13,12 @@ import './Projects.css'
 
 // ProjectCard is a CHILD component
 // It receives props from the parent (Projects)
-function ProjectCard({ project }) {
+function ProjectCard({ project, index }) {
   return (
     <article className="project-card">
-      {/* Project Image */}
       <div className="project-image">
-        <div 
-          className="project-image-bg" 
-          style={{ background: project.gradient }}
-        />
-        <span className="project-emoji">{project.emoji}</span>
+        <span className="project-index">{String(index + 1).padStart(2, '0')} / Selected work</span>
+        <span className="project-domain">{project.tags[0]}</span>
       </div>
 
       {/* Project Content */}
@@ -157,6 +153,7 @@ function Projects() {
             <ProjectCard 
               key={project.title} 
               project={project}
+              index={index}
             />
           ))}
         </div>

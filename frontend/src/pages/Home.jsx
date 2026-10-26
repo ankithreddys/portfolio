@@ -4,7 +4,7 @@
   ================================
 */
 
-import Hero from '../sections/Hero'
+import Intro from '../sections/Intro'
 import About from '../sections/About'
 import Projects from '../sections/Projects'
 import Skills from '../sections/Skills'
@@ -14,7 +14,7 @@ import Contact from '../sections/Contact'
 function Home() {
   return (
     <main>
-      <Hero />
+      <Intro />
       <About />
       <Projects />
       <Skills />
