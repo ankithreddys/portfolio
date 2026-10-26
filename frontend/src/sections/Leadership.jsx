@@ -24,9 +24,10 @@ function Leadership() {
       organization: 'VBIT AI Days 2023',
       role: 'Invited Speaker',
       location: 'Hyderabad, India',
-      period: '2023',
+      period: 'Sep 2023',
       points: [
-        'Delivered an AI/ML lecture to an audience of approximately 500.',
+        'Presented “The ML Edge” to approximately 500 attendees, introducing supervised, unsupervised, and reinforcement learning.',
+        'Explained why evaluating AI models matters alongside building them, with a focus on AI ethics and justice.',
       ],
       filePath: '/VBIT%20LOA.pdf',
     },
