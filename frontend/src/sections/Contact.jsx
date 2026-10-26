@@ -82,7 +82,7 @@ function Contact() {
             Get In <span className="gradient-text">Touch</span>
           </h2>
           <p className="section-subtitle">
-            Interested in research collaborations, AI projects, or just want to chat about ML? 
+            Interested in multimodal ML research, AI projects, or just want to chat about ML?
             I'd love to hear from you!
           </p>
         </div>
@@ -162,8 +162,8 @@ function Contact() {
             <div className="info-card">
               <h3>Let's build something amazing together</h3>
               <p>
-                Whether you're interested in clinical AI research, LLM applications, 
-                or want to collaborate on cutting-edge ML projects, feel free to reach out.
+                Whether you're interested in multimodal foundation models, clinical AI,
+                or applied ML systems, feel free to reach out.
               </p>
 
               <div className="contact-socials">
@@ -186,7 +186,7 @@ function Contact() {
             {/* Location / Availability */}
             <div className="availability-card">
               <div className="status-dot" />
-              <span>Open to research collaborations & internship opportunities</span>
+              <span>Open to research collaborations & Fall 2027 PhD opportunities</span>
             </div>
 
             {/* Location Card */}

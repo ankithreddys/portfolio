@@ -3,12 +3,30 @@ import './Leadership.css'
 function Leadership() {
   const experiences = [
     {
+      organization: 'Vignana Bharathi Institute of Technology',
+      role: 'Teaching Assistant, Foundations of Machine Learning',
+      location: 'Hyderabad, India',
+      period: '2022 - 2023',
+      points: [
+        'Supported Foundations of Machine Learning teaching across two semesters.',
+      ],
+    },
+    {
       organization: 'EpsilonPi, ML Club in VBIT',
       role: 'ML Associate',
       location: 'Hyderabad, India',
       period: 'Jul 2023 - May 2024',
       points: [
         'Led a team of four members in research and AI application development for university initiatives.',
+      ],
+    },
+    {
+      organization: 'VBIT AI Days 2023',
+      role: 'Invited Speaker',
+      location: 'Hyderabad, India',
+      period: '2023',
+      points: [
+        'Delivered an AI seminar to an audience of approximately 500.',
       ],
     },
   ]

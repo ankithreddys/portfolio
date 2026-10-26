@@ -16,30 +16,30 @@ function About() {
   const highlights = [
     {
       icon: '🧠',
-      title: 'LLMs & Fine-tuning',
-      description: 'Fine-tuning 120B+ models with Axolotl/LoRA on NVIDIA B200 clusters, LLM-as-Judge evaluation with DeepEval'
+      title: 'Multimodal EHR models',
+      description: 'Collaborative work on typed EHR representations, long-history compression, and note fusion in MySurgeryRisk.'
     },
     {
       icon: '☁️',
-      title: 'Enterprise RAG',
-      description: 'Production RAG on AWS (ECS, Bedrock, OpenSearch) and Azure (Cosmos DB, DiskANN, RBAC-scoped retrieval)'
+      title: 'Language-model adaptation',
+      description: 'Built 97,000+ accepted instruction examples from clinician-designed frameworks and fine-tuned three model families for PRISMA-ICU.'
     },
     {
       icon: '🔬',
-      title: 'Clinical & Research AI',
-      description: 'Synthetic EHR generation, Transformer/Mamba/MoE modeling on ICU data, pathology report extraction'
+      title: 'MoE capability retention',
+      description: 'Independently designed shared/router/expert training comparisons across domain and general instruction data.'
     },
     {
       icon: '⚡',
-      title: 'MLOps & HPC',
-      description: 'FSDP2 distributed training on DGX/HiPerGator, Docker, Airflow, MLflow, Terraform'
+      title: 'Low-resource speech',
+      description: 'Fine-tuned pretrained wav2vec 2.0 for Bengali ASR and compared character-level with BPE output vocabularies.'
     }
   ]
 
   const experience = [
     {
-      role: 'AI Researcher',
-      company: 'University of Florida - IC3 / PRISMAp',
+      role: 'ML Researcher',
+      company: 'University of Florida - IC3 / PRISMAp Lab',
       period: 'Aug 2025 - Present',
       type: 'Research'
     },
@@ -78,25 +78,25 @@ function About() {
           {/* Left Column - Text */}
           <div className="about-text">
             <p className="about-intro">
-              I'm an <strong>AI Researcher and ML Engineer</strong> at the University of Florida's Intelligent Clinical Care Center (IC3). I recently graduated with my M.S. in AI Systems from UF, where I also completed an enterprise AI Co-op architecting Azure-native RAG systems.
+              I'm an <strong>ML Researcher</strong> at the University of Florida's Intelligent Clinical Care Center (IC3) and PRISMAp Lab. I joined as a research assistant in August 2025 and have worked full-time as a researcher since May 2026. I earned an M.S. in Artificial Intelligence Systems from UF.
             </p>
             
             <p>
-              At IC3, my research focuses on fine-tuning 120B+ clinical LLMs on NVIDIA B200 clusters, evaluating synthetic EHR datasets with LLM-as-Judge frameworks, and modeling temporal ICU trajectories using Transformer, Mamba, and Mixture-of-Experts (MoE) architectures. On the engineering side, I have architected production-grade, permissions-aware RAG pipelines on Azure and AWS.
+              My research spans collaborative work on a multimodal EHR Transformer for surgical-risk prediction and PRISMA-ICU, a conversational LLM adaptation effort. I independently designed a controlled MoE fine-tuning study to examine how updating shared, router, and expert weights relates to capability retention. Earlier, I fine-tuned wav2vec 2.0 for low-resource Bengali speech recognition at DRDO CAIR.
             </p>
 
             <p>
-              My background bridges the gap between deep learning research and robust system implementation. Before UF, I designed a Conformer-Wav2Vec2 ASR speech model at DRDO (CAIR), achieving a low 8.3% WER on low-resource languages, and engineered containerized search-and-retrieval systems at Scholarship Auditions.
+              For doctoral research, I want to investigate architectures and training strategies for multimodal foundation models across language, video, and audio. Alongside research, I have built permissions-aware RAG systems for construction documents and conversational AI for a scholarship platform.
             </p>
 
             <div className="about-stats">
               <div className="stat">
-                <span className="stat-number">3.89</span>
+                <span className="stat-number">3.90</span>
                 <span className="stat-label">GPA at UF</span>
               </div>
               <div className="stat">
-                <span className="stat-number">3+</span>
-                <span className="stat-label">Research Projects</span>
+                <span className="stat-number">4</span>
+                <span className="stat-label">Research efforts</span>
               </div>
             </div>
           </div>
@@ -141,7 +141,7 @@ function About() {
             <div className="education-content">
               <h4>University of Florida</h4>
               <p className="education-degree">M.S. in Artificial Intelligence Systems</p>
-              <p className="education-details">Aug 2024 - May 2026 • GPA: 3.89/4.00</p>
+              <p className="education-details">Aug 2024 - May 2026 • GPA: 3.90/4.00</p>
             </div>
           </div>
           <div className="education-card">
@@ -149,7 +149,7 @@ function About() {
             <div className="education-content">
               <h4>Vignana Bharathi Institute of Technology</h4>
               <p className="education-degree">B.Tech in Computer Science (AI & ML)</p>
-              <p className="education-details">May 2020 - May 2024 • GPA: 8.76/10.0</p>
+              <p className="education-details">Aug 2020 - May 2024 • CGPA: 8.76/10.0</p>
             </div>
           </div>
         </div>

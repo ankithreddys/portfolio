@@ -61,21 +61,26 @@ function ProjectCard({ project, index }) {
 }
 
 function Projects() {
-  // Project data - your actual projects from the resume!
+  // Research and applied projects shown in the same card layout.
   const projects = [
     {
-      title: 'Clinical Digital Twin — Synthetic EHR & LLM Fine-tuning',
-      description: 'Multi-stage prompting pipeline generating clinical Q&A from EHR data, validated with 14 LLM-as-Judge metrics (DeepEval) across 110K+ samples. Semantic dedup via ClinicalBERT/FAISS reduced redundancy 36%. Fine-tuned 120B and 70B models with Axolotl + FSDP2 on NVIDIA B200 clusters.',
-      tags: ['LLMs', 'DeepEval', 'FAISS', 'Axolotl', 'FSDP2'],
+      title: 'MySurgeryRisk — Multimodal Perioperative Risk',
+      description: 'Collaborated on a roughly 1.7M-parameter multitask Transformer for preoperative, end-of-surgery, and daily postoperative risk prediction. Contributed to typed variable–value–time tokens, six-hour postoperative summaries, 4,096-token history handling, and cross-attention from task tokens to frozen clinical-note embeddings. Participated in implementation and training; manuscript complete, preprint in preparation.',
+      tags: ['Multimodal EHR', 'Transformer', 'Time series', 'Cross-attention'],
       emoji: '🏥',
       gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
     },
     {
-      title: 'ICU EHR Deep Learning — Transformer, Mamba & MoE',
-      description: 'Engineered multimodal ICU EHR datasets by preprocessing preoperative, intraoperative, and postoperative static/temporal time-series data with unstructured clinical notes into HDF5 files. Trained and benchmarked Transformer, Mamba (state space model), and Mixture-of-Experts architectures on longitudinal ICU patient data to model complex clinical trajectories.',
-      tags: ['Mamba', 'MoE', 'Transformer', 'HDF5', 'ICU'],
+      title: 'PRISMA-ICU — Conversational LLM Adaptation',
+      description: 'Built more than 97,000 accepted question–answer examples from clinician-designed question frameworks using natural-language rewriting, synthetic answers, and a three-judge quality workflow. Fine-tuned Llama 3.3 70B, gpt-oss 20B, and Gemma 4 31B, then compared outputs with a separate judging framework. Clinical evaluation of base versus tuned Gemma is ongoing.',
+      tags: ['Instruction data', 'SFT', 'LLM evaluation', 'ICU'],
       emoji: '🧬',
       gradient: 'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)'
+    },
+    {
+      title: 'MoE Fine-Tuning — Capability Retention',
+      description: 'Independently designed a controlled study of shared, router, and expert weight updates across all eight train/freeze combinations and two instruction-data regimes. Training and generation for 14 runs and 112 checkpoints are complete; evaluation of reasoning, safety, instruction following, and tool-calling trajectories is ongoing. No causal conclusion is claimed yet.',
+      tags: ['Mixture-of-Experts', 'Ablations', 'Capability retention', 'Evaluation']
     },
     {
       title: 'Pathology Report Analysis',
@@ -116,9 +121,9 @@ function Projects() {
       github: 'https://github.com/ankithreddys/OrchestrAI'
     },
     {
-      title: 'Conformer-Wav2Vec2 ASR (DRDO)',
-      description: 'Pre-trained a Conformer with self-supervised contrastive learning on defense speech corpora, coupled with Wav2Vec2 feature extraction. Multi-GPU DDP training on NVIDIA DGX cut training time 40%. BPE tokenization + CTC fine-tuning achieved 8.3% WER for low-resource languages.',
-      tags: ['Conformer', 'Wav2Vec2', 'DDP', 'CTC', 'PyTorch'],
+      title: 'Low-Resource Bengali ASR (DRDO CAIR)',
+      description: 'Surveyed speech-recognition models and fine-tuned a pretrained wav2vec 2.0 encoder for Bengali audio and transcripts. Compared character-level and BPE output vocabularies; BPE performed better in the tested setup. The underlying speech corpus is non-public.',
+      tags: ['wav2vec 2.0', 'Bengali ASR', 'BPE', 'Speech recognition'],
       emoji: '🎤',
       gradient: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
       github: 'https://github.com/ankithreddys/wav2_vec2_low_resource'
@@ -143,7 +148,7 @@ function Projects() {
             Featured <span className="gradient-text">Projects</span>
           </h2>
           <p className="section-subtitle">
-            Research and engineering projects spanning clinical AI, enterprise RAG, cloud-native ML, speech recognition, and computer vision.
+            Research in multimodal learning, language-model adaptation, MoE evaluation, and speech—alongside applied AI systems.
           </p>
         </div>
 

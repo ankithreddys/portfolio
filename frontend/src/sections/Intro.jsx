@@ -125,16 +125,17 @@ function Intro() {
       <div className="container intro-content">
         <div className="intro-layout">
           <div className="intro-text">
-            <p className="intro-eyebrow">Research · Engineering · Attention</p>
+            <p className="intro-eyebrow">Multimodal ML · Model adaptation · Attention</p>
             <h1 className="intro-name">Ankith Reddy <span>Subhanpuram.</span></h1>
-            <p className="intro-role">AI researcher & ML engineer <span>at the University of Florida</span></p>
+            <p className="intro-role">ML researcher <span>at UF IC3 / PRISMAp Lab</span></p>
             <p className="intro-description">
-              I work at the intersection of clinical AI and reliable systems: fine-tuning foundation models,
-              modeling patient trajectories, and building AI that earns attention through useful work.
+              I study how representations and training choices shape AI systems—from multimodal EHR Transformers
+              and language-model adaptation to MoE capability retention and low-resource speech recognition.
+              My long-term focus is multimodal foundation models across language, video, and audio.
             </p>
             <div className="intro-buttons">
               <a href="#projects" className="btn btn-primary">Explore my work <span aria-hidden="true">↗</span></a>
-              <a href="/ANKITH%20SUBHANPURAM.pdf" className="btn btn-outline" target="_blank" rel="noopener noreferrer">View résumé</a>
+              <a href="/RESEARCH_CV.pdf" className="btn btn-outline" target="_blank" rel="noopener noreferrer">Research CV</a>
             </div>
             <p className="intro-attention"><span aria-hidden="true">Σ A·R<sup>S</sup></span> Attention is earned, not demanded.</p>
           </div>
@@ -142,7 +143,7 @@ function Intro() {
             <div className="intro-image-frame">
               <img src={profileImage} alt="Ankith Reddy Subhanpuram" className="intro-image" />
             </div>
-            <span className="intro-caption">Ankith Reddy Subhanpuram / AI & ML</span>
+            <span className="intro-caption">Ankith Reddy Subhanpuram / ML Researcher</span>
           </div>
         </div>
       </div>

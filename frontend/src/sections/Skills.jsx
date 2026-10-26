@@ -21,12 +21,12 @@ function Skills() {
     {
       title: 'AI / ML',
       icon: '🧠',
-      skills: ['LLM Fine-tuning (LoRA, QLoRA, PEFT)', 'RAG Systems', 'Hybrid Retrieval (BM25 + Dense)', 'Reranking', 'Prompt Engineering (CoT, Few-Shot)', 'Conformer', 'Mamba (SSM)', 'Mixture-of-Experts (MoE)', 'Computer Vision', 'Speech Recognition', 'CTC']
+      skills: ['Multimodal Fusion', 'Supervised Fine-tuning', 'LoRA / PEFT', 'Mixture-of-Experts (MoE)', 'LLM Evaluation', 'RAG Systems', 'Hybrid Retrieval (BM25 + Dense)', 'Reranking', 'Computer Vision', 'Low-resource ASR']
     },
     {
       title: 'Frameworks & Libraries',
       icon: '📦',
-      skills: ['PyTorch', 'TensorFlow', 'HuggingFace Transformers', 'LangChain', 'LangGraph', 'FastAPI', 'Gradio', 'scikit-learn', 'Axolotl', 'DeepEval', 'FAISS', 'DiskANN', 'Pandas', 'NumPy', 'Librosa', 'NLTK', 'spaCy']
+      skills: ['PyTorch', 'TensorFlow', 'Hugging Face Transformers', 'TRL', 'DeepSpeed', 'LangChain', 'LangGraph', 'FastAPI', 'Gradio', 'scikit-learn', 'FAISS', 'DiskANN', 'Pandas', 'NumPy', 'Librosa', 'NLTK', 'spaCy']
     },
     {
       title: 'AWS',
@@ -41,7 +41,7 @@ function Skills() {
     {
       title: 'MLOps & HPC',
       icon: '⚡',
-      skills: ['MLflow', 'FSDP2', 'DDP', 'NVIDIA DGX / B200', 'HiPerGator', 'Apache Airflow', 'Docker', 'Terraform', 'Git']
+      skills: ['vLLM', 'CUDA', 'Slurm', 'HiPerGator', 'MLflow', 'Apache Airflow', 'Docker', 'Terraform', 'Git']
     },
     {
       title: 'Data & Web',
@@ -91,9 +91,7 @@ function Skills() {
         <div className="skills-tagline">
           <p>
             <span className="tagline-icon">⚡</span>
-            Currently fine-tuning{' '}
-            <strong>clinical LLMs on NVIDIA B200 clusters</strong> and building{' '}
-            <strong>enterprise RAG on AWS & Azure</strong> at UF.
+            Currently studying <strong>multimodal EHR models, conversational LLM adaptation, and MoE capability retention</strong> at UF.
           </p>
         </div>
       </div>
